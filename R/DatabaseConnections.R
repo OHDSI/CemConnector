@@ -24,6 +24,11 @@ Connection <- R6Class(
       self$isActive <- TRUE
     },
 
+
+    getConnection = function() {
+      return(self$con)
+    },
+
     closeConnection = function() {
       if (DBI::dbIsValid(dbObj = self$con)) {
         DatabaseConnector::disconnect(self$con)
@@ -43,8 +48,8 @@ Connection <- R6Class(
         data <- DatabaseConnector::querySql(self$con, sql, snakeCaseToCamelCase = snakeCaseToCamelCase)
       }, error = function(e, ...) {
         ParallelLogger::logError(e)
-        if (self$connectionDetails$dbms == "postgresql") {
-          DatabaseConnector::dbExecute(dbConn, "ABORT;")
+        if (self$connectionDetails$dbms %in% c("postgresql", "redshift")) {
+          DatabaseConnector::dbExecute(self$con, "ABORT;")
         }
       })
       return(data)

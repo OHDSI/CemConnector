@@ -26,5 +26,6 @@ test_that("Database Connector Class works", {
 
 test_that("Pooled connector Class works", {
   conn <- PooledConnection$new(Eunomia::getEunomiaConnectionDetails())
+  expect_class(conn, "PooledConnection")
   genericTests(conn)
 })

@@ -4,3 +4,5 @@
 .Ruserdata
 /.Rprofile
 /renv/
+errorReportSql.txt
+.idea
