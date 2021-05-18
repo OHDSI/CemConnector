@@ -38,17 +38,17 @@ DBBackend <- R6Class(
       #' Reutrns set of ingredient concepts for a given conceptset of outcomes
       #'
     getConditionEvidenceSummary = function(conditionConceptSet,
-                                           parentLookUpLevels = 0) {
+                                           siblingLookupLevels = 0) {
 
       checkmate::assert_data_frame(conditionConceptSet)
       checkmate::checkNames(names(conditionConceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
       conditionConceptDesc <- conditionConceptSet[conditionConceptSet$isExcluded == 0 & conditionConceptSet$includeDescendants == 1,]$conceptId
       conditionConceptNoDesc <- conditionConceptSet[conditionConceptSet$isExcluded == 0 & conditionConceptSet$includeDescendants == 0,]$conceptId
-
       sql <- .loadSqlFile("getConditionEvidenceSummary.sql")
       self$connection$queryDb(sql,
                               vocabulary = self$vocabularySchema,
                               cem_schema = self$cemSchema,
+                              use_siblings = siblingLookupLevels,
                               condition_concept_desc = conditionConceptDesc,
                               condition_concept_no_desc = conditionConceptNoDesc)
     },

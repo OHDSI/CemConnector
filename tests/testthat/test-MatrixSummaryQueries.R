@@ -20,19 +20,35 @@ test_that("summary works", {
 })
 
 test_that("get exposure and outcome control concepts", {
-  srchOutcomeConceptSet <- data.frame(conceptId = c(4110112), includeDescendants = c(1), isExcluded = c(0))
+
+  # Mild Depression - doesn't map well in CEM
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
   ingredientConcepts <- backend$getConditionEvidenceSummary(srchOutcomeConceptSet)
+  expect_data_frame(ingredientConcepts)
+  expect_true(nrow(ingredientConcepts) == 0)
+
+  # Mild Depression, but use of sibling lookups
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
+  ingredientConcepts <- backend$getConditionEvidenceSummary(srchOutcomeConceptSet, siblingLookupLevels = 1)
   expect_data_frame(ingredientConcepts)
   expect_true(nrow(ingredientConcepts) > 100)
 
+  # Codene
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_data_frame(outcomeConcepts)
   expect_true(nrow(outcomeConcepts) > 100)
 
-  # ATC class test - should not be in ingredients but should return set
-  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+  # ATC class test (Other opioids) - should not be in ingredients but should return set
+  srchIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_data_frame(outcomeConcepts)
   expect_true(nrow(outcomeConcepts) > 100)
+
+  # Search grouped sets should not return repeat ids
+  srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1,0), isExcluded = c(0))
+  outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
+  expect_data_frame(outcomeConcepts)
+  expect_true(nrow(outcomeConcepts) > 100)
+  expect_true(length(outcomeConcepts$conceptId) == length(unique(outcomeConcepts$conceptId)))
 })
