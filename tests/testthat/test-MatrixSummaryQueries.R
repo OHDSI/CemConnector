@@ -29,4 +29,10 @@ test_that("get exposure and outcome control concepts", {
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_data_frame(outcomeConcepts)
   expect_true(nrow(outcomeConcepts) > 100)
+
+  # ATC class test - should not be in ingredients but should return set
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+  outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
+  expect_data_frame(outcomeConcepts)
+  expect_true(nrow(outcomeConcepts) > 100)
 })
