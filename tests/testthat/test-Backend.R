@@ -1,17 +1,23 @@
-connectionDetails <- DatabaseConnector::createConnectionDetails(server = "ohda-prod-1.cldcoxyrkflo.us-east-1.redshift.amazonaws.com/cem",
-                                                                user = "jgilber2",
-                                                                password = keyring::key_get("ohda-prod-1", username = "jgilber2"),
-                                                                port = 5439,
-                                                                dbms = "redshift",
-                                                                extraSettings = "ssl=true&sslfactory=com.amazon.redshift.ssl.NonValidatingFactory")
 
-backend <- DBBackend$new(connectionDetails,
-                         cemSchema = "cem_v3_0_0_20210308_evidence",
-                         vocabularySchema = "cem_v3_0_0_20210308_staging_vocabulary",
-                         sourceSchema = "cem_v3_0_0_20210308_translated")
+# In future this will be loaded as either a database backend or a webservice/plumber client backend
+# This will allow testing to see if the implementations return equivalent functioning responses
+backend <- CEMDatabaseBackend$new(connectionDetails,
+                                    cemSchema = cemTestSchema,
+                                    vocabularySchema = vocabularySchema,
+                                    sourceSchema = sourceInfoSchema)
 
 withr::defer({
   backend$finalize()
+}, testthat::teardown_env())
+
+
+test_that("Backend loads", {
+  expect_class(backend, "CEMDatabaseBackend")
+  expect_class(backend$connection, "ConnectionHandler")
+  expect_true(backend$connection$isActive)
+  expect_equal(backend$cemSchema, cemTestSchema)
+  expect_equal(backend$vocabularySchema, vocabularySchema)
+  expect_equal(backend$sourceSchema, sourceInfoSchema)
 })
 
 test_that("summary works", {
@@ -19,7 +25,7 @@ test_that("summary works", {
   expect_data_frame(sinfo)
 })
 
-test_that("get exposure and outcome control concepts", {
+test_that("get exposure and outcome control concepts evidence", {
 
   # Mild Depression - doesn't map well in CEM
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
@@ -33,7 +39,7 @@ test_that("get exposure and outcome control concepts", {
   expect_data_frame(ingredientConcepts)
   expect_true(nrow(ingredientConcepts) > 100)
 
-  # Codene
+  # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_data_frame(outcomeConcepts)
@@ -51,4 +57,13 @@ test_that("get exposure and outcome control concepts", {
   expect_data_frame(outcomeConcepts)
   expect_true(nrow(outcomeConcepts) > 100)
   expect_true(length(outcomeConcepts$conceptId) == length(unique(outcomeConcepts$conceptId)))
+})
+
+test_that("get exposure and outcome conceptset evidence", {
+  srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1,0), isExcluded = c(0))
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
+  relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
+
+  expect_data_frame(relationships)
+  expect_true(nrow(relationships) > 0)
 })
