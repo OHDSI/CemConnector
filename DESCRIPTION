@@ -1,20 +1,22 @@
 Package: CEMConnector
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Common Evidence Model Connector
 Version: 0.1.0
-Author: James Gilbert
-Maintainer: James Gilbert <jpg@azimov.co.uk>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Jamie Gilbert
+Maintainer: Jamie Gilbert <jpg@azimov.co.uk>
+Description: RESTFul API and Database Backend connections for the OHDSI Common Evidence Model
+    Built around an R Plumber api.
 Depends:
 	DatabaseConnector (>= 4.0.0),
 	pool,
 	R (>= 4.0.0),
 	checkmate,
-    R6,
-    ParallelLogger
+    ParallelLogger,
+    plumber,
+    keyring
 Imports:
-    R6
+    R6,
+    magrittr
 Suggests:
     testthat,
     Eunomia

@@ -1,0 +1,35 @@
+---
+title: "Using CEMConnector"
+date: "`r Sys.Date()`"
+always_allow_html: yes
+output:
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    template: null
+  html_document:
+    number_sections: yes
+    toc: yes
+  rmarkdown::html_vignette: default
+vignette: |
+  %\VignetteIndexEntry{Using SelfControlledCohort}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{css echo=FALSE}
+h1  {
+  margin-top: 60px;
+}
+```
+
+If you're reading this guide it is expected that you have some familiarity with the common
+evidence model (CEM) and have an installation set up and configured.
+

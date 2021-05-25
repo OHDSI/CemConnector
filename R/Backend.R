@@ -1,6 +1,6 @@
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of SelfControlledCohort
+# This file is part of CEMConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
 }
 
 #' @export
-CEMDatabaseBackend <- R6Class(
+CEMDatabaseBackend <- R6::R6Class(
   "CEMDatabaseBackend",
   public = list(
     connection = NULL,

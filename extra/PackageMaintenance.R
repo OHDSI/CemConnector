@@ -1,3 +1,5 @@
+# @file PackageMaintenance
+#
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
 # This file is part of CEMConnector
@@ -14,14 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' @keywords internal
-#' @aliases
-#' NULL CEMConnector-package
-#'
-#' @import DatabaseConnector
-#' @import R6
-#' @import magrittr
-#'
-"_PACKAGE"
+# Format and check code
+devtools::spell_check()
 
-`%>%` <- magrittr::`%>%`
+OhdsiRTools::formatRFolder()
+OhdsiRTools::checkUsagePackage("CEMConnector")
+
+OhdsiRTools::updateCopyrightYearFolder()

@@ -1,6 +1,6 @@
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of SelfControlledCohort
+# This file is part of CEMConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ConnectionHandler <- R6Class(
+ConnectionHandler <- R6::R6Class(
   "ConnectionHandler",
   public = list(
     connectionDetails = NULL,
@@ -32,7 +32,7 @@ ConnectionHandler <- R6Class(
     },
 
     initConnection = function() {
-      if(self$isActive) {
+      if (self$isActive) {
         warning("Closing existing connection")
         self$closeConnection()
       }
@@ -61,25 +61,29 @@ ConnectionHandler <- R6Class(
     queryDb = function(query, snakeCaseToCamelCase = TRUE, ...) {
       sql <- self$renderTranslateSql(query, ...)
       tryCatch({
-        data <- DatabaseConnector::querySql(self$con, sql, snakeCaseToCamelCase = snakeCaseToCamelCase)
-      }, error = function(e, ...) {
-        ParallelLogger::logError(e)
+        data <- self$queryFunction(sql, snakeCaseToCamelCase = snakeCaseToCamelCase)
+      }, error = function(error) {
+        ParallelLogger::logError(error)
         if (self$connectionDetails$dbms %in% c("postgresql", "redshift")) {
           DatabaseConnector::dbExecute(self$con, "ABORT;")
+          stop(error)
         }
       })
       return(data)
+    },
+    queryFunction = function(sql, snakeCaseToCamelCase = TRUE) {
+      DatabaseConnector::querySql(self$con, sql, snakeCaseToCamelCase = snakeCaseToCamelCase)
     }
   )
 )
 
-PooledConnectionHandler <- R6Class(
+PooledConnectionHandler <- R6::R6Class(
   "PooledConnectionHandler",
   inherit = ConnectionHandler,
   public = list(
 
     initConnection = function() {
-      if(self$isActive) {
+      if (self$isActive) {
         warning("Closing existing connection")
         self$closeConnection()
       }
@@ -102,8 +106,7 @@ PooledConnectionHandler <- R6Class(
       self$isActive <- FALSE
     },
 
-    queryDb = function(query, snakeCaseToCamelCase = TRUE, ...) {
-      sql <- self$renderTranslateSql(query, ...)
+    queryFunction = function(sql, snakeCaseToCamelCase = TRUE) {
       data <- DatabaseConnector::dbGetQuery(self$con, sql)
       if (snakeCaseToCamelCase) {
         colnames(data) <- SqlRender::snakeCaseToCamelCase(colnames(data))
