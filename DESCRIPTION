@@ -13,8 +13,6 @@ Depends:
 	checkmate,
     ParallelLogger,
     plumber,
-    keyring
-Imports:
     R6,
     magrittr
 Suggests:

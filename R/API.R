@@ -14,16 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' @export
+#'@title
+#'Load API
+#'@description
+#'Loads plumber API
+#'
+#'@returns Plumber router object
+#'@export
 loadApi <- function(connectionDetails,
+                    cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
+                    vocabularySchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
+                    sourceSchema = Sys.getenv("CEM_DATABASE_SOURCE_INFO_SCHEMA"),
                     pathToPlumberApi = system.file(file.path("api", "plumber.R"), package = "CEMConnector"),
                     envir = new.env(parent = .GlobalEnv)) {
+
   checkmate::assert_file_exists(pathToPlumberApi)
 
   envir$cemBackendApi <- CEMDatabaseBackend$new(connectionDetails,
-                                                cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
-                                                vocabularySchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
-                                                sourceSchema = Sys.getenv("CEM_DATABASE_SOURCE_INFO_SCHEMA"),
+                                                cemSchema = cemSchema,
+                                                vocabularySchema = vocabularySchema,
+                                                sourceSchema = sourceSchema,
                                                 usePooledConnection = getOption("CEMConnector.UsePooledConnection", TRUE))
 
 

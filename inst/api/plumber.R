@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 # The API must be loaded with CEMBackendApi variable that has a predicted interface
 # This class largely exposes database connections and passes them to a JSON serializer
 checkmate::assert_class(cemBackendApi, "CEMDatabaseBackend")
@@ -41,24 +40,41 @@ function() {
 }
 
 #* Get For a set of standard condition concepts get the evidence summary
+#* @param conditionConceptSet conceptset of conditions. Must be in conceptSet format and use only OMOP standard concepts
+#* @param siblingLookupLevels number of sibling levels to look up to find matches
 #* @get /conditionEvidenceSummary
 #* @serializer unboxedJSON
-function() {
-
+function(conditionConceptSet, siblingLookupLevels = 0) {
+  conditionConceptSet <- jsonlite::fromJSON(conditionConceptSet)
+  conceptSetDataFrame <- rbind.data.frame(conditionConceptSet)
+  cemBackendApi$getConditionEvidenceSummary(conceptSetDataFrame, siblingLookupLevels = siblingLookupLevels)
 }
 
 #* Get For a set of OMOP standard vocabulary ingredient concepts get the evidence summary of conditions
 #* This returns the set of sumarized evidence for every condition in the CEM
+#* @param ingredientConceptSet conceptset of drug ingredients. Must be in conceptSet format and use only OMOP standard concepts
 #* @get /ingredientEvidenceSummary
 #* @serializer unboxedJSON
-function() {
-
+function(ingredientConceptSet) {
+  ingredientConceptSet <- jsonlite::fromJSON(ingredientConceptSet)
+  ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
+  cemBackendApi$getIngredientEvidenceSummary(ingredientConceptSetDf)
 }
 
-#* Get For a set of OMOP standard vocabulary ingredient concepts get the evidence summary of conditions
+#* Get For a set of OMOP standard vocabulary ingredient and drug concepts get the evidence summary of conditions
 #* This returns the set of sumarized evidence for every condition in the CEM
+#* @param conditionConceptSet conceptset of conditions. Must be in conceptSet format and use only OMOP standard concepts
+#* @param ingredientConceptSet conceptset of drug ingredients. Must be in conceptSet format and use only OMOP standard concepts
 #* @get /relationships
 #* @serializer unboxedJSON
-function() {
+function(conditionConceptSet, ingredientConceptSet, conditionSiblingLookupLevels = 0) {
+  conditionConceptSet <- jsonlite::fromJSON(conditionConceptSet)
+  conditionConceptSetDf <- rbind.data.frame(conditionConceptSet)
 
+  ingredientConceptSet <- jsonlite::fromJSON(ingredientConceptSet)
+  ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
+
+  cemBackendApi$getRelationships(ingredientConceptSetDf,
+                                 conditionConceptSetDf,
+                                 conditionSiblingLookupLevels = conditionSiblingLookupLevels)
 }

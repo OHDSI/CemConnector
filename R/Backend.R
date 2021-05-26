@@ -35,6 +35,11 @@ CEMDatabaseBackend <- R6::R6Class(
                           vocabularySchema,
                           sourceSchema,
                           usePooledConnection = FALSE) {
+      checkmate::assert_class(connectionDetails, "connectionDetails")
+      checkmate::assert_string(cemSchema, min.chars = 1)
+      checkmate::assert_string(vocabularySchema, min.chars = 1)
+      checkmate::assert_string(sourceSchema, min.chars = 1)
+
       if (usePooledConnection) {
         self$connection <- PooledConnectionHandler$new(connectionDetails)
       } else {
@@ -50,9 +55,9 @@ CEMDatabaseBackend <- R6::R6Class(
       self$connection$finalize()
     },
 
-      #' @description
-      #' Reutrns set of ingredient concepts for a given conceptset of outcomes
-      #'
+    #' @description
+    #' Reutrns set of ingredient concepts for a given conceptset of outcomes
+    #'
     getConditionEvidenceSummary = function(conditionConceptSet,
                                            siblingLookupLevels = 0) {
 
@@ -70,9 +75,9 @@ CEMDatabaseBackend <- R6::R6Class(
                               condition_concept_no_desc = conditionConceptNoDesc)
     },
 
-      #' @description
-      #' Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
-      #'
+    #' @description
+    #' Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
+    #'
     getIngredientEvidenceSummary = function(ingredientConceptSet) {
       checkmate::assert_data_frame(ingredientConceptSet)
       checkmate::checkNames(names(ingredientConceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
