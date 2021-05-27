@@ -36,7 +36,7 @@ function() {
 #* @get /cemSourceInfo
 #* @serializer unboxedJSON
 function() {
-  cemBackendApi$getCemSourceInfo()
+  list(result = cemBackendApi$getCemSourceInfo())
 }
 
 #* Get For a set of standard condition concepts get the evidence summary
@@ -47,7 +47,9 @@ function() {
 function(conditionConceptSet, siblingLookupLevels = 0) {
   conditionConceptSet <- jsonlite::fromJSON(conditionConceptSet)
   conceptSetDataFrame <- rbind.data.frame(conditionConceptSet)
-  cemBackendApi$getConditionEvidenceSummary(conceptSetDataFrame, siblingLookupLevels = siblingLookupLevels)
+  result <- cemBackendApi$getConditionEvidenceSummary(conceptSetDataFrame, siblingLookupLevels = siblingLookupLevels)
+
+  list(result = result)
 }
 
 #* Get For a set of OMOP standard vocabulary ingredient concepts get the evidence summary of conditions
@@ -58,7 +60,9 @@ function(conditionConceptSet, siblingLookupLevels = 0) {
 function(ingredientConceptSet) {
   ingredientConceptSet <- jsonlite::fromJSON(ingredientConceptSet)
   ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
-  cemBackendApi$getIngredientEvidenceSummary(ingredientConceptSetDf)
+  result <- cemBackendApi$getIngredientEvidenceSummary(ingredientConceptSetDf)
+
+  list(result = result)
 }
 
 #* Get For a set of OMOP standard vocabulary ingredient and drug concepts get the evidence summary of conditions
@@ -74,7 +78,9 @@ function(conditionConceptSet, ingredientConceptSet, conditionSiblingLookupLevels
   ingredientConceptSet <- jsonlite::fromJSON(ingredientConceptSet)
   ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
 
-  cemBackendApi$getRelationships(ingredientConceptSetDf,
+  result <- cemBackendApi$getRelationships(ingredientConceptSetDf,
                                  conditionConceptSetDf,
                                  conditionSiblingLookupLevels = conditionSiblingLookupLevels)
+
+  list(result = result)
 }

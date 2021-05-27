@@ -24,7 +24,7 @@
 loadApi <- function(connectionDetails,
                     cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
                     vocabularySchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
-                    sourceSchema = Sys.getenv("CEM_DATABASE_SOURCE_INFO_SCHEMA"),
+                    sourceSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
                     pathToPlumberApi = system.file(file.path("api", "plumber.R"), package = "CEMConnector"),
                     envir = new.env(parent = .GlobalEnv)) {
 
@@ -37,9 +37,9 @@ loadApi <- function(connectionDetails,
                                                 usePooledConnection = getOption("CEMConnector.UsePooledConnection", TRUE))
 
 
-  plumb <- plumber::pr(pathToPlumberApi, envir = envir) %>%
-    plumber::pr_hook("exit", function() {
-      # Close down database connections
-      envir$cemBackendApi$finalize()
-    })
+  plumb <- plumber::pr(pathToPlumberApi, envir = envir)
+  plumb <- plumber::pr_hook(plumb, "exit", function() {
+    # Close down database connections
+    envir$cemBackendApi$finalize()
+  })
 }

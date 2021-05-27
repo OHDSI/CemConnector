@@ -21,7 +21,7 @@
 #' @import DatabaseConnector
 #' @import R6
 #' @import magrittr
+#' @importFrom magrittr `%>%`
 #'
 "_PACKAGE"
 
-`%>%` <- magrittr::`%>%`
