@@ -6,3 +6,5 @@
 /renv/
 errorReportSql.txt
 .idea
+plumbr_error.txt
+plumbr_out.log
