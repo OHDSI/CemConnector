@@ -14,13 +14,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#'@title
-#'Load API
-#'@description
-#'Loads plumber API
+#' @title
+#' Load API
+#' @description
+#' Loads plumber API for functions
+#' @param connectionDetails DatabaseConnector connection details object
+#' @param cemSchema schema where matrix summary and merged evidence are found
+#' @param vocabularySchema vocabulary schema on database
+#' @param sourceSchema schema for info about the CEM
+#' @param pathToPlumberApi path to plumber script (default is package's)
+#' @param envir R environment
+#' @returns Plumber router object
+#' @example
 #'
-#'@returns Plumber router object
-#'@export
+#'  connectionDetails <- DatabaseConnector::createConnectionDetails(server = "server path",
+#'                                                                  port = 5439,
+#'                                                                  dbms = "redshift",
+#'                                                                  user = "my_username",
+#'                                                                  password = "my_secret")
+#'  api <- loadApi(connectionDetails)
+#'  api$run()
+#'
+#' @export
 loadApi <- function(connectionDetails,
                     cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
                     vocabularySchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),

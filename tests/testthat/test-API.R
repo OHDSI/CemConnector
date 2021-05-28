@@ -44,12 +44,13 @@ test_that("Test get source info", {
 })
 
 
-test_that("Test get ingredient evidence", {
+test_that("Test get condition evidence", {
 
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
-  jsonParam <- jsonlite::toJSON(srchOutcomeConceptSet)
 
-  resp <- httr::GET(paste0(apiUrl, "/conditionEvidenceSummary"), query = list(conditionConceptSet = jsonParam, siblingLookupLevels = 1))
+  resp <- httr::POST(paste0(apiUrl, "/conditionEvidenceSummary"),
+                     body = list(conditionConceptSet = srchOutcomeConceptSet, siblingLookupLevels = 1),
+                     encode = "json")
   content <- httr::content(resp, as = "parsed")
   # Turn response in to data frame
   data <- do.call(rbind.data.frame, content$result)
@@ -60,9 +61,10 @@ test_that("Test get ingredient evidence", {
 test_that("Test get ingredient evidence", {
 
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
-  jsonParam <- jsonlite::toJSON(srchIngredientSet)
 
-  resp <- httr::GET(paste0(apiUrl, "/ingredientEvidenceSummary"), query = list(ingredientConceptSet = jsonParam))
+  resp <- httr::POST(paste0(apiUrl, "/ingredientEvidenceSummary"),
+                     body = list(ingredientConceptSet = srchIngredientSet),
+                     encode = "json")
   content <- httr::content(resp, as = "parsed")
   # Turn response in to data frame
   data <- do.call(rbind.data.frame, content$result)
@@ -75,9 +77,12 @@ test_that("Test get relationships", {
   srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1,0), isExcluded = c(0))
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
 
-  jsonParamIng <- jsonlite::toJSON(srchIngredientSet)
-  jsonParamCond <- jsonlite::toJSON(srchOutcomeConceptSet)
-  resp <- httr::GET(paste0(apiUrl, "/ingredientEvidenceSummary"), query = list(ingredientConceptSet = jsonParamIng, conditionConceptSet = jsonParamCond, conditionSiblingLookupLevels = 1))
+  resp <- httr::POST(paste0(apiUrl, "/ingredientEvidenceSummary"),
+                     body = list(ingredientConceptSet = srchIngredientSet,
+                                 conditionConceptSet = srchOutcomeConceptSet,
+                                 conditionSiblingLookupLevels = 1),
+                     encode = "json")
+
   content <- httr::content(resp, as = "parsed")
   # Turn response in to data frame
   data <- do.call(rbind.data.frame, content$result)
