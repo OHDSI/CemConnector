@@ -73,4 +73,4 @@ CEMConnector is being developed in R Studio and PyCharm (with R plugins).
 
 ### Development status
 
-Beta
+Early development - not intented for use
