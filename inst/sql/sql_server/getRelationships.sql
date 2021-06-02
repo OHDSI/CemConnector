@@ -1,8 +1,8 @@
 
 {@ingredient_concepts_desc != '' & @condition_concepts_desc != ''} ? {
 SELECT
-    c1.concept_name,
-    c2.concept_name,
+    c1.concept_name as concept_name_1,
+    c2.concept_name as concept_name_2,
     cu.*
 FROM @cem_schema.cem_unified cu
 

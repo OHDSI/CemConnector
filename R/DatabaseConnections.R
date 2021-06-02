@@ -69,7 +69,8 @@ ConnectionHandler <- R6::R6Class(
           stop(error)
         }
       })
-      return(data)
+
+      return(dplyr::as_tibble(data))
     },
     queryFunction = function(sql, snakeCaseToCamelCase = TRUE) {
       DatabaseConnector::querySql(self$con, sql, snakeCaseToCamelCase = snakeCaseToCamelCase)

@@ -118,7 +118,7 @@ CEMDatabaseBackend <- R6::R6Class(
                               ingredient_concepts_desc = ingredientConceptDesc,
                               ingredient_concepts_no_desc = ingredientConceptNoDesc,
                               condition_concepts_desc = conditionConceptDesc,
-                              condition_concepts_no_desc = conditionConceptNoDesc)
+                              condition_concepts_no_desc = conditionConceptNoDesc) %>% dplyr::select(-id)
     },
 
     getCemSourceInfo = function() {

@@ -16,7 +16,8 @@ Depends:
     R6,
     magrittr,
     SqlRender,
-    httpuv
+    httpuv,
+    dplyr
 Suggests:
     testthat,
     Eunomia,
