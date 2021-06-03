@@ -46,8 +46,8 @@ test_that("get exposure and outcome control concepts evidence", {
   # Mild Depression, but use of sibling lookups
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
   ingredientConcepts <- backend$getConditionEvidenceSummary(srchOutcomeConceptSet, siblingLookupLevels = 1)
-  expect_data_frame(ingredientConcepts)
-  expect_true(nrow(ingredientConcepts) > 100)
+  expect_data_frame(ingredientConcepts, min.rows = 100)
+
 
   ingredientConceptsWeb <- webBackend$getConditionEvidenceSummary(srchOutcomeConceptSet, siblingLookupLevels = 1)
   expect_true(dplyr::all_equal(ingredientConceptsWeb, ingredientConcepts))
@@ -55,8 +55,8 @@ test_that("get exposure and outcome control concepts evidence", {
   # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
-  expect_data_frame(outcomeConcepts)
-  expect_true(nrow(outcomeConcepts) > 100)
+  expect_data_frame(outcomeConcepts, min.rows = 100)
+
 
   outcomeConceptsWeb <- webBackend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_true(dplyr::all_equal(outcomeConcepts, outcomeConceptsWeb))
@@ -64,8 +64,8 @@ test_that("get exposure and outcome control concepts evidence", {
   # ATC class test (Other opioids) - should not be in ingredients but should return set
   srchIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
-  expect_data_frame(outcomeConcepts)
-  expect_true(nrow(outcomeConcepts) > 100)
+  expect_data_frame(outcomeConcepts, min.rows = 100)
+
 
   outcomeConceptsWeb <- webBackend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_true(dplyr::all_equal(outcomeConcepts, outcomeConceptsWeb))
@@ -74,8 +74,7 @@ test_that("get exposure and outcome control concepts evidence", {
   # Search grouped sets should not return repeat ids
   srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1, 0), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
-  expect_data_frame(outcomeConcepts)
-  expect_true(nrow(outcomeConcepts) > 100)
+  expect_data_frame(outcomeConcepts, min.rows = 100)
   expect_true(length(outcomeConcepts$conditionConceptId) == length(unique(outcomeConcepts$conditionConceptId)))
 
   outcomeConceptsWeb <- webBackend$getIngredientEvidenceSummary(srchIngredientSet)
@@ -87,8 +86,7 @@ test_that("get exposure and outcome conceptset evidence", {
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
   relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
 
-  expect_data_frame(relationships)
-  expect_true(nrow(relationships) > 0)
+  expect_data_frame(relationships, min.rows = 100)
 
   relationshipsWeb <- webBackend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
   # For some reason all_equal fails here. Solution: some manaul checks of data
