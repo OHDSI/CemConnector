@@ -24,8 +24,8 @@ AND ca2.ancestor_concept_id  IN (@condition_concepts_desc)
 UNION
     }
 SELECT
-    c1.concept_name,
-    c2.concept_name,
+    c1.concept_name as concept_name_1,
+    c2.concept_name as concept_name_2,
     cu.*
 FROM @cem_schema.cem_unified cu
 
@@ -42,8 +42,8 @@ AND cu.concept_id_2  IN (@condition_concepts_no_desc)
 UNION
     }
 SELECT
-    c1.concept_name,
-    c2.concept_name,
+    c1.concept_name as concept_name_1,
+    c2.concept_name as concept_name_2,
     cu.*
 FROM @cem_schema.cem_unified cu
 
@@ -66,8 +66,8 @@ AND cu.concept_id_1 IN (@ingredient_concepts_no_desc)
 UNION
     }
 SELECT
-    c1.concept_name,
-    c2.concept_name,
+    c1.concept_name as concept_name_1,
+    c2.concept_name as concept_name_2,
     cu.*
 FROM @cem_schema.cem_unified cu
 
