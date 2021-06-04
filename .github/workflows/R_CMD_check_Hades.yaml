@@ -16,19 +16,6 @@ jobs:
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     strategy:
       fail-fast: false
       matrix:
@@ -61,6 +48,7 @@ jobs:
       CEM_DATABASE_VOCAB_SCHEMA: ${{ secrets.CDM5_POSTGRESQL_CDM_SCHEMA }}
       CEM_DATABASE_INFO_SCHEMA: "CEM"
       CEM_DATABASE_DBMS: "postgresql"
+      CEM_DATABASE_PORT: 5432
       CEM_DATABASE_PASSWORD: ${{ secrets.CDM5_POSTGRESQL_PASSWORD }}
       CEM_DATABASE_SERVER: ${{ secrets.CDM5_POSTGRESQL_SERVER }}
       CEM_DATABASE_USER: ${{ secrets.CDM5_POSTGRESQL_USER }}

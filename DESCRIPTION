@@ -16,13 +16,13 @@ Depends:
     R6,
     magrittr,
     SqlRender,
-    httpuv,
+    httr,
     dplyr
 Suggests:
     testthat,
     Eunomia,
-    keyring,
-    callr
+    callr,
+    httpuv
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true
