@@ -1,11 +1,6 @@
+{DEFAULT @cem = 'cem'}
 
-DROP SCHEMA IF EXISTS @cem_schema CASCADE;
-DROP SCHEMA IF EXISTS @vocabulary_schema CASCADE;
-CREATE SCHEMA @cem_schema;
-CREATE SCHEMA IF NOT EXISTS @vocabulary_schema;
-
-
-CREATE TABLE @cem_info_schema.source
+CREATE TABLE @cem.source
 (
 	source_id VARCHAR(256)
 	,description VARCHAR(1000)
@@ -20,7 +15,7 @@ CREATE TABLE @cem_info_schema.source
 ;
 
 
-INSERT INTO @cem_info_schema.source (source_id,description,provenance,contributor_organization,contact_name,creation_date,coverage_start_date,coverage_end_date,version_identifier) VALUES
+INSERT INTO @cem.source (source_id,description,provenance,contributor_organization,contact_name,creation_date,coverage_start_date,coverage_end_date,version_identifier) VALUES
 	 ('AEOLUS','Spontaneous reports and signals from FDA Adverse Event Reporting System (FAERS) based on the paper Banda, J. M. et al. A curated and standardized adverse drug event resource to accelerate drug safety research. Sci. Data 3:160026 doi: 10.1038/sdata.2016.26 (2016).','AEOLUS','Center for Biomedical Informatics Research, Stanford University','Lee Evans (LTS Computing LLC)','2021-01-02','2004-01-01','2020-09-30',NULL),
 	 ('COMMONEVIDENCEMODEL','CommonEvidenceModel (CEM) is the infrastructure to pull together public sources of information on drugs and conditions and standardize their format and vocabularies.','COMMONEVIDENCEMODEL','OHDSI','Erica Voss','2020-02-26','1986-01-01','2020-01-23','V2.0.0'),
 	 ('EU_PL_ADR','From the PROTECT ADR database, this provided a list of ADRS on Summary of Product Characteristics (SPC) of products authorized in the European Union.  Pharmacoepidemiological Research on Outcomes of Therapeutics by a European Consortium (PROTECT), Adverse Drug Reactions Database, [webpage] (2015.05.07), Available from: <http://www.imi-protect.eu/adverseDrugReactions.shtml>','EU_PL_ADR','PROTECT','PROTECT','2020-12-20','1900-01-01','2017-06-30','20170630'),
@@ -32,30 +27,8 @@ INSERT INTO @cem_info_schema.source (source_id,description,provenance,contributo
 	 ('SHERLOCK','ClinicalTrials.gov publicly makes available information about clinical trials and is maintained by the U.S. National Library of Medicine (NLM) and the U.S. National Institutes of Health (NIH). Each trial, however, comes as an individual eXtensible Markup Language (XML) file which is difficult for summarizing information across trials. Instead of using the XMLs we leverage a tool called Sherlock which downloads trial information from ClinicalTrials.gov, and then parses and organizes that data for analysis. For more information on Sherlock:  Cepeda, M.S., V. Lobanov, and J.A. Berlin, Use of ClinicalTrials.gov to estimate condition-specific nocebo effects and other factors affecting outcomes of analgesic trials. J Pain, 2013. 14(4): p. 405-11.','SHERLOCK','Janssen R&D','Erica Voss','2020-01-27','1931-06-01','2020-01-23',NULL),
 	 ('SPLICER','Adverse drug reactions extracted from the Adverse Reactions or Post Marketing section of United States product labeling. Basd on publication J. Duke, J. Friedlin, X. Li, Consistency in the safety labeling of bioequivalent medications, Pharmacoepidemiol. Drug Saf. 22 (3) (2013) 294?301.','SPLICER','Georgia Tech','Jon Duke','2019-12-08','1990-12-01','2019-12-08',NULL);
 
-CREATE TABLE @vocabulary_schema.concept
-(
-	concept_id INTEGER NOT NULL
-	,concept_name VARCHAR(65535) NOT NULL
-	,domain_id VARCHAR(20) NOT NULL
-	,vocabulary_id VARCHAR(20) NOT NULL
-	,concept_class_id VARCHAR(20) NOT NULL
-	,standard_concept VARCHAR(1)  DEFAULT NULL
-	,concept_code VARCHAR(50) NOT NULL
-	,valid_start_date DATE NOT NULL
-	,valid_end_date DATE NOT NULL
-	,invalid_reason VARCHAR(1)  DEFAULT NULL
-)
-;
 
-CREATE TABLE @vocabulary_schema.concept_ancestor
-(
-    ancestor_concept_id INTEGER NOT NULL
-	,descendant_concept_id INTEGER NOT NULL
-	,min_levels_of_separation INTEGER NOT NULL
-	,max_levels_of_separation INTEGER NOT NULL
-);
-
-CREATE TABLE @cem_schema.cem_unified
+CREATE TABLE @cem.cem_unified
 (
     id INTEGER DEFAULT 0
 	,concept_id_1 INTEGER
@@ -74,7 +47,7 @@ CREATE TABLE @cem_schema.cem_unified
 	,count_how VARCHAR(255)
 );
 
-CREATE TABLE @cem_schema.matrix_summary
+CREATE TABLE @cem.matrix_summary
 (
     INGREDIENT_CONCEPT_ID INTEGER NOT NULL,
     CONDITION_CONCEPT_ID INTEGER NOT NULL,
