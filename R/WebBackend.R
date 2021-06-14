@@ -21,7 +21,7 @@
 #' @field apiUrl url for the common evidence model hosted api instance
 #' @export
 CemWebApiBackend <- R6::R6Class(
-  "CEMWebApiBackend",
+  "CemWebApiBackend",
   public = list(
     apiUrl = NULL,
 
