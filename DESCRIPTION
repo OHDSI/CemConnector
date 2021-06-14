@@ -1,6 +1,6 @@
-Package: CEMConnector
+Package: CemConnector
 Type: Package
-Title: Common Evidence Model Connector
+Title: OHDSI Common Evidence Model (CEM) Connector
 Version: 0.1.0
 Author: Jamie Gilbert
 Maintainer: Jamie Gilbert <jpg@azimov.co.uk>
@@ -17,11 +17,13 @@ Depends:
     magrittr,
     SqlRender,
     httr,
-    dplyr
+    dplyr,
+    DBI
 Suggests:
     testthat,
     Eunomia,
     callr,
+    withr,
     httpuv
 License: Apache License 2.0
 Encoding: UTF-8

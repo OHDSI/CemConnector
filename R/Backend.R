@@ -1,6 +1,6 @@
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of CEMConnector
+# This file is part of CemConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,19 +17,34 @@
 .loadSqlFile <- function(sqlFilename) {
   pathToSql <- system.file(paste("sql/sql_server"),
                            sqlFilename,
-                           package = "CEMConnector",
+                           package = "CemConnector",
                            mustWork = TRUE)
   sql <- SqlRender::readSql(pathToSql)
 }
 
+#' CEM Database Backend Class
+#' @description
+#' An interface to the common evidence model that uses works directly with a database schema
+#' @field connection ConnectionHandlder instance
+#' @field cemSchema schema of CEM database
+#' @field vocabularySchema OMOP vocabulary schema (must include concept and concept ancestor tables)
+#' @field sourceSchema schema containing source_info table
 #' @export
-CEMDatabaseBackend <- R6::R6Class(
+CemDatabaseBackend <- R6::R6Class(
   "CEMDatabaseBackend",
   public = list(
     connection = NULL,
     cemSchema = NULL,
     vocabularySchema = NULL,
     sourceSchema = NULL,
+
+    #' @description
+    #' initialize backend object.
+    #' @param connectionDetails DatabaseConnector connection details object
+    #' @param cemSchema Schema name including CEM unified and matrix_summary tables
+    #' @param vocabularySchema OMOP vocabulary
+    #' @param sourceSchema Schema containing CEM source information table
+    #' @param usePooledConnection Used a pooled connection object rather than a database connector object.
     initialize = function(connectionDetails,
                           cemSchema,
                           vocabularySchema,
@@ -51,13 +66,16 @@ CEMDatabaseBackend <- R6::R6Class(
       self$sourceSchema <- sourceSchema
     },
 
+    #' @description
+    #' Closes connection
     finalize = function() {
       self$connection$finalize()
     },
 
     #' @description
     #' Reutrns set of ingredient concepts for a given conceptset of outcomes
-    #'
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getConditionEvidenceSummary = function(conditionConceptSet,
                                            siblingLookupLevels = 0) {
 
@@ -77,7 +95,7 @@ CEMDatabaseBackend <- R6::R6Class(
 
     #' @description
     #' Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
-    #'
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     getIngredientEvidenceSummary = function(ingredientConceptSet) {
       checkmate::assert_data_frame(ingredientConceptSet)
       checkmate::checkNames(names(ingredientConceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
@@ -96,7 +114,9 @@ CEMDatabaseBackend <- R6::R6Class(
 
     #' @description
     #' From a unified CEM relationships table, for a conceptSet of drug ingredients and a conceptSet of conditions,
-    #' return all the related evidence across all sources
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param conditionSiblingLookupLevels integer - where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getRelationships = function(ingredientConceptSet, conditionConceptSet, conditionSiblingLookupLevels = 0) {
       checkmate::assert_data_frame(ingredientConceptSet)
       checkmate::checkNames(names(ingredientConceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
@@ -121,6 +141,9 @@ CEMDatabaseBackend <- R6::R6Class(
                               condition_concepts_no_desc = conditionConceptNoDesc) %>% dplyr::select(-id)
     },
 
+    #'@description
+    #' Get CEM source info as a dataframe
+    #' @returns data.frame of sources
     getCemSourceInfo = function() {
       return(self$connection$queryDb("SELECT * FROM @schema.source", schema = self$sourceSchema))
     }

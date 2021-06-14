@@ -1,6 +1,6 @@
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of CEMConnector
+# This file is part of CemConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-CEMWebApiBackend <- R6::R6Class(
+
+#' CEM Web Backend Class
+#' @description
+#' An interface to the common evidence model that uses http requests
+#' @field apiUrl url for the common evidence model hosted api instance
+#' @export
+CemWebApiBackend <- R6::R6Class(
   "CEMWebApiBackend",
   public = list(
     apiUrl = NULL,
 
-    initialize = function(apiUrl, testValidUrl = TRUE) {
+     #' @description
+     #' initialzie object
+     #' @param apiUrl String URL parameter for hosted
+    initialize = function(apiUrl) {
       self$apiUrl <- apiUrl
       assert(self$getStatus()$status == "alive")
     },
 
+
+    #' @description
+    #' Do a web request
+    #' @param method string "POST", "GET", "PUT" (not implemented), "DELETE" (not implemented)
+    #' @param endpoint URL endpoint string
+    #' @param ... list params for httr method
     request = function(method, endpoint, ...) {
       url <- paste(self$apiUrl, endpoint, sep = "/")
       callFunc <- switch(method,
@@ -34,12 +49,16 @@ CEMWebApiBackend <- R6::R6Class(
       httr::content(response, as = "parsed")
     },
 
+    #' @description
+    #' GET server status
     getStatus = function (){
       self$request("GET", "")
     },
 
     #' @description
     #' Reutrns set of ingredient concepts for a given conceptset of outcomes
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getConditionEvidenceSummary = function(conditionConceptSet,
                                            siblingLookupLevels = 0) {
       endpoint <- "conditionEvidenceSummary"
@@ -51,6 +70,7 @@ CEMWebApiBackend <- R6::R6Class(
 
     #' @description
     #' Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     getIngredientEvidenceSummary = function(ingredientConceptSet) {
       endpoint <- "ingredientEvidenceSummary"
       content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet))
@@ -59,7 +79,9 @@ CEMWebApiBackend <- R6::R6Class(
 
     #' @description
     #' From a unified CEM relationships table, for a conceptSet of drug ingredients and a conceptSet of conditions,
-    #' return all the related evidence across all sources
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param conditionSiblingLookupLevels integer - where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getRelationships = function(ingredientConceptSet, conditionConceptSet, conditionSiblingLookupLevels = 0) {
       endpoint <- "relationships"
       content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet,
@@ -68,12 +90,16 @@ CEMWebApiBackend <- R6::R6Class(
       dplyr::bind_rows(content$result)
     },
 
+    #' @description
+    #' Returns datframe of sources that made the CEM
     getCemSourceInfo = function() {
       endpoint <- "cemSourceInfo"
       content <- self$request("GET", endpoint)
       dplyr::bind_rows(content$result)
     },
 
+    #' @description
+    #' getVersion information from api
     getVersion = function() {
       endpoint <- "version"
       self$request("GET", endpoint)

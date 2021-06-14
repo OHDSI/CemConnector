@@ -8,7 +8,7 @@ test_that("Test api alive", {
 test_that("Test api version", {
   resp <- httr::GET(paste0(apiUrl, "/version"))
   info <- httr::content(resp, as = "parsed")
-  expect_equal(info$version, paste(packageVersion("CEMConnector")))
+  expect_equal(info$version, paste(packageVersion("CemConnector")))
 })
 
 test_that("Test get source info", {

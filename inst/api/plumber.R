@@ -1,6 +1,6 @@
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of CEMConnector
+# This file is part of CemConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,14 +25,14 @@ function() {
   list(status = 'alive')
 }
 
-#* Get CEMConnector API version info
+#* Get CemConnector API version info
 #* @get /version
 #* @serializer unboxedJSON
 function() {
-  list(version = paste0(packageVersion("CEMConnector")))
+  list(version = paste0(packageVersion("CemConnector")))
 }
 
-#* Get CEMConnector API version info
+#* Get CemConnector API version info
 #* @get /cemSourceInfo
 #* @serializer unboxedJSON
 function() {

@@ -1,7 +1,7 @@
 # Load API in separate process
 serverStart <- function(apiPort, cemSchema, vocabularySchema, sourceSchema, ...) {
   connectionDetails <- DatabaseConnector::createConnectionDetails(...)
-  api <- CEMConnector::loadApi(connectionDetails,
+  api <- CemConnector::loadApi(connectionDetails,
                                cemSchema = cemSchema,
                                vocabularySchema = vocabularySchema,
                                sourceSchema = sourceSchema)
@@ -10,6 +10,7 @@ serverStart <- function(apiPort, cemSchema, vocabularySchema, sourceSchema, ...)
 }
 
 jDriverPath <- tempfile("jDriverPath")
+dir.create(jDriverPath)
 DatabaseConnector::downloadJdbcDrivers(Sys.getenv("CEM_DATABASE_DBMS"), pathToDriver = jDriverPath)
 connectionParams <- list(server = Sys.getenv("CEM_DATABASE_SERVER"),
                          user = Sys.getenv("CEM_DATABASE_USER"),

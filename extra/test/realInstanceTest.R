@@ -17,7 +17,7 @@ apiUrl <- paste0("http://localhost:", apiPort)
 # Load API in separate process
 serverStart <- function(apiPort, ...) {
   connectionDetails <- DatabaseConnector::createConnectionDetails(...)
-  api <- CEMConnector::loadApi(connectionDetails)
+  api <- CemConnector::loadApi(connectionDetails)
   writeLines("*** API LOADED ***", con = stdout())
   api$run(port = apiPort)
 }

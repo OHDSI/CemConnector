@@ -2,7 +2,7 @@
 #
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of CEMConnector
+# This file is part of CemConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,6 +20,6 @@
 devtools::spell_check()
 
 OhdsiRTools::formatRFolder()
-OhdsiRTools::checkUsagePackage("CEMConnector")
+OhdsiRTools::checkUsagePackage("CemConnector")
 
 OhdsiRTools::updateCopyrightYearFolder()
