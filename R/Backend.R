@@ -31,7 +31,7 @@
 #' @field sourceSchema schema containing source_info table
 #' @export
 CemDatabaseBackend <- R6::R6Class(
-  "CEMDatabaseBackend",
+  "CemDatabaseBackend",
   public = list(
     connection = NULL,
     cemSchema = NULL,

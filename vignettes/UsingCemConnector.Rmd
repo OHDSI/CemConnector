@@ -1,17 +1,13 @@
 ---
 title: "Using CemConnector"
 date: "`r Sys.Date()`"
-always_allow_html: yes
 output:
   pdf_document:
-    number_sections: yes
     toc: yes
-    template: null
   html_document:
     number_sections: yes
     toc: yes
-  rmarkdown::html_vignette: default
-vignette: |
+vignette: >
   %\VignetteIndexEntry{Using CemConnector}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}

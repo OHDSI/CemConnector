@@ -35,17 +35,11 @@ sourceInfoSchema <- Sys.getenv("CEM_DATABASE_INFO_SCHEMA")
 apiPort <- httpuv::randomPort(8000, 8080)
 apiUrl <- paste0("http://localhost:", apiPort)
 
-sessionCommunication <- tempfile("CemConnector")
+sessionCommunication <- paste0("test_pipe_", apiPort)
 writeLines("", con = sessionCommunication)
 print("Starting api session...")
-apiSession <- callr::r_session$new()
 
-withr::defer({
-  apiSession$kill()
-  unlink(jDriverPath)
-}, testthat::teardown_env())
-
-apiSession$call(serverStart,
+apiSession <- callr::r_bg(serverStart,
                 args = list(pipe = sessionCommunication,
                             apiPort = apiPort,
                             server = Sys.getenv("CEM_DATABASE_SERVER"),
@@ -59,6 +53,13 @@ apiSession$call(serverStart,
                             vocabularySchema = vocabularySchema,
                             sourceSchema = sourceInfoSchema))
 
+withr::defer({
+  apiSession$kill()
+  unlink(jDriverPath)
+  unlink(sessionCommunication)
+}, testthat::teardown_env())
+
+
 apiSessionReady <- function() {
   if (apiSession$is_alive()) {
     input <- readLines(sessionCommunication)
@@ -70,7 +71,7 @@ apiSessionReady <- function() {
 
 # poll status until failure or load
 while(!apiSessionReady()) {
-  Sys.sleep(0.3) # Allow time for process to start, needs to connect to database...
+  Sys.sleep(0.161803398875) # Allow time for process to start, needs to connect to database...
 }
 
 print("Session started")

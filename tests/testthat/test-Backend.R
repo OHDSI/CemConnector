@@ -1,10 +1,10 @@
 # In future this will be loaded as either a database backend or a webservice/plumber client backend
 # This will allow testing to see if the implementations return equivalent functioning responses
+
 backend <- CemDatabaseBackend$new(connectionDetails,
                                   cemSchema = cemTestSchema,
                                   vocabularySchema = vocabularySchema,
                                   sourceSchema = sourceInfoSchema)
-
 webBackend <- CemWebApiBackend$new(apiUrl)
 
 withr::defer({
@@ -13,7 +13,7 @@ withr::defer({
 
 
 test_that("DB Backend loads", {
-  expect_class(backend, "CEMDatabaseBackend")
+  expect_class(backend, "CemDatabaseBackend")
   expect_class(backend$connection, "ConnectionHandler")
   expect_true(backend$connection$isActive)
   expect_equal(backend$cemSchema, cemTestSchema)
