@@ -4,9 +4,9 @@ serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema
 
   tryCatch({
     api <- CemConnector::loadApi(connectionDetails,
-                               cemSchema = cemSchema,
-                               vocabularySchema = vocabularySchema,
-                               sourceSchema = sourceSchema)
+                                 cemSchema = cemSchema,
+                                 vocabularySchema = vocabularySchema,
+                                 sourceSchema = sourceSchema)
     api$setDocs(FALSE)
     writeLines("API LOADED", con = pipe)
     api$run(port = apiPort, host = "0.0.0.0")
@@ -41,18 +41,18 @@ writeLines("", con = sessionCommunication)
 print("Starting api session...")
 
 apiSession <- callr::r_bg(serverStart,
-                args = list(pipe = sessionCommunication,
-                            apiPort = apiPort,
-                            server = Sys.getenv("CEM_DATABASE_SERVER"),
-                            user = Sys.getenv("CEM_DATABASE_USER"),
-                            password = Sys.getenv("CEM_DATABASE_PASSWORD"),
-                            port = Sys.getenv("CEM_DATABASE_PORT"),
-                            dbms = Sys.getenv("CEM_DATABASE_DBMS"),
-                            extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"),
-                            pathToDriver = jDriverPath,
-                            cemSchema = cemTestSchema,
-                            vocabularySchema = vocabularySchema,
-                            sourceSchema = sourceInfoSchema))
+                          args = list(pipe = sessionCommunication,
+                                      apiPort = apiPort,
+                                      server = Sys.getenv("CEM_DATABASE_SERVER"),
+                                      user = Sys.getenv("CEM_DATABASE_USER"),
+                                      password = Sys.getenv("CEM_DATABASE_PASSWORD"),
+                                      port = Sys.getenv("CEM_DATABASE_PORT"),
+                                      dbms = Sys.getenv("CEM_DATABASE_DBMS"),
+                                      extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"),
+                                      pathToDriver = jDriverPath,
+                                      cemSchema = cemTestSchema,
+                                      vocabularySchema = vocabularySchema,
+                                      sourceSchema = sourceInfoSchema))
 
 withr::defer({
   apiSession$kill()
@@ -64,14 +64,21 @@ withr::defer({
 apiSessionReady <- function() {
   if (apiSession$is_alive()) {
     input <- readLines(sessionCommunication)
-    return(any(grep("API LOADED", input) == 1))
+    failed <- any(grep("API FAILED", input) == 1)
+    loaded <- any(grep("API LOADED", input) == 1)
+
+    if (failed) {
+      stop("Failed to load API. Error in configuration?")
+    }
+
+    return(loaded)
   }
   # If the session is dead, stop
-  stop("Api session failed to load")
+  stop("Api session failed to start")
 }
 
 # poll status until failure or load
-while(!apiSessionReady()) {
+while (!apiSessionReady()) {
   Sys.sleep(0.1) # Allow time for process to start, needs to connect to database...
 }
 
