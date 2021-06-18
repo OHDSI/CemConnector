@@ -22,6 +22,7 @@ Depends:
     DBI
 Suggests:
     testthat,
+    devtools,
     Eunomia,
     callr,
     withr,
