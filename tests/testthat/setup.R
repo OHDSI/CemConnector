@@ -1,12 +1,13 @@
 # Load API in separate process
 serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...) {
+  library(CemConnector)
   connectionDetails <- DatabaseConnector::createConnectionDetails(...)
 
   tryCatch({
-    api <- CemConnector::loadApi(connectionDetails,
-                                 cemSchema = cemSchema,
-                                 vocabularySchema = vocabularySchema,
-                                 sourceSchema = sourceSchema)
+    api <- loadApi(connectionDetails,
+                   cemSchema = cemSchema,
+                   vocabularySchema = vocabularySchema,
+                   sourceSchema = sourceSchema)
     api$setDocs(FALSE)
     writeLines("API LOADED", con = pipe)
     api$run(port = apiPort, host = "0.0.0.0")
