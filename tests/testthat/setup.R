@@ -42,6 +42,8 @@ writeLines("", con = sessionCommunication)
 print("Starting api session...")
 
 apiSession <- callr::r_bg(serverStart,
+                          stdout = "plumberOut.txt",
+                          stderr = "plumberError.txt",
                           args = list(pipe = sessionCommunication,
                                       apiPort = apiPort,
                                       server = Sys.getenv("CEM_DATABASE_SERVER"),
@@ -69,13 +71,17 @@ apiSessionReady <- function() {
     loaded <- any(grep("API LOADED", input) == 1)
 
     if (failed) {
-      stop("Failed to load API. Error in configuration?")
+      errorLines <- readLines("plumberError.txt")
+      studOut <- readLines("plumberOut.txt")
+      stop("Failed to load API. Error in configuration?\n", errorLines, studOut)
     }
 
     return(loaded)
   }
   # If the session is dead, stop
-  stop("Api session failed to start")
+  errorLines <- readLines("plumberError.txt")
+  studOut <- readLines("plumberOut.txt")
+  stop(paste("Api session failed to start\n", errorLines, studOut))
 }
 
 # poll status until failure or load
