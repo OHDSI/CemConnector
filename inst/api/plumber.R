@@ -16,7 +16,7 @@
 
 # The API must be loaded with CEMBackendApi variable that has a predicted interface
 # This class largely exposes database connections and passes them to a JSON serializer
-checkmate::assert_class(cemBackendApi, "CEMDatabaseBackend")
+checkmate::assert_class(cemBackendApi, "CemDatabaseBackend")
 
 #* Get API status
 #* @get /

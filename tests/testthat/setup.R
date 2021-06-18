@@ -7,8 +7,9 @@ serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema
                                cemSchema = cemSchema,
                                vocabularySchema = vocabularySchema,
                                sourceSchema = sourceSchema)
+    api$setDocs(FALSE)
     writeLines("API LOADED", con = pipe)
-    api$run(port = apiPort)
+    api$run(port = apiPort, host = "0.0.0.0")
   }, error = function(err) {
     writeLines("API FAILED", con = pipe)
     writeLines(err, con = pipe)
@@ -71,7 +72,7 @@ apiSessionReady <- function() {
 
 # poll status until failure or load
 while(!apiSessionReady()) {
-  Sys.sleep(0.161803398875) # Allow time for process to start, needs to connect to database...
+  Sys.sleep(0.1) # Allow time for process to start, needs to connect to database...
 }
 
 print("Session started")

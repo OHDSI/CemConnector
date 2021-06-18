@@ -47,4 +47,6 @@ loadApi <- function(connectionDetails,
     # Close down database connections
     envir$cemBackendApi$finalize()
   })
+
+  plumb
 }
