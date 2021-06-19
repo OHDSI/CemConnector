@@ -49,7 +49,7 @@ function(req) {
   conceptSetDataFrame <- rbind.data.frame(conditionConceptSet)
 
   siblingLookupLevels <- req$body$siblingLookupLevels
-  if (is.null(siblingLookupLevels)){
+  if (is.null(siblingLookupLevels)) {
     siblingLookupLevels <- 0
   }
   result <- cemBackendApi$getConditionEvidenceSummary(conceptSetDataFrame, siblingLookupLevels = siblingLookupLevels)
@@ -81,7 +81,7 @@ function(req) {
   conditionConceptSetDf <- rbind.data.frame(conditionConceptSet)
 
   conditionSiblingLookupLevels <- req$body$conditionSiblingLookupLevels
-  if (is.null(conditionSiblingLookupLevels)){
+  if (is.null(conditionSiblingLookupLevels)) {
     conditionSiblingLookupLevels <- 0
   }
 
@@ -89,8 +89,43 @@ function(req) {
   ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
 
   result <- cemBackendApi$getRelationships(ingredientConceptSetDf,
-                                 conditionConceptSetDf,
-                                 conditionSiblingLookupLevels = conditionSiblingLookupLevels)
+                                           conditionConceptSetDf,
+                                           conditionSiblingLookupLevels = conditionSiblingLookupLevels)
+
+  list(result = result)
+}
+
+
+#* Get For a set of OMOP standard vocabulary ingredient and drug concepts get the evidence summary of conditions
+#* This returns the set of sumarized evidence for every condition in the CEM
+#* @param ingredientConceptSet conceptset of drug ingredients. Must be in conceptSet format and use only OMOP standard concepts
+#* @post /ingredientRelationships
+#* @serializer unboxedJSON
+function(req) {
+  ingredientConceptSet <- req$body$ingredientConceptSet
+  ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
+
+  result <- cemBackendApi$getIngredientRelationships(ingredientConceptSetDf)
+
+  list(result = result)
+}
+
+
+#* Get For a set of OMOP standard vocabulary ingredient and drug concepts get the evidence summary of conditions
+#* This returns the set of sumarized evidence for every condition in the CEM
+#* @param conditionConceptSet conceptset of conditions. Must be in conceptSet format and use only OMOP standard concepts
+#* @post /conditionRelationships
+#* @serializer unboxedJSON
+function(req) {
+  conditionConceptSet <- req$body$conditionConceptSet
+  conditionConceptSetDf <- rbind.data.frame(conditionConceptSet)
+  conditionSiblingLookupLevels <- req$body$conditionSiblingLookupLevels
+  if (is.null(conditionSiblingLookupLevels)) {
+    conditionSiblingLookupLevels <- 0
+  }
+
+  result <- cemBackendApi$getConditionRelationships(conditionConceptSetDf,
+                                                    conditionSiblingLookupLevels = conditionSiblingLookupLevels)
 
   list(result = result)
 }

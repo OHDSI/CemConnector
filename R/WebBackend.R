@@ -30,7 +30,7 @@ CemWebApiBackend <- R6::R6Class(
      #' @param apiUrl String URL parameter for hosted
     initialize = function(apiUrl) {
       self$apiUrl <- apiUrl
-      assert(self$getStatus()$status == "alive")
+      checkmate::assert(self$getStatus()$status == "alive")
     },
 
 
@@ -87,6 +87,26 @@ CemWebApiBackend <- R6::R6Class(
       content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet,
                                                             conditionConceptSet = conditionConceptSet,
                                                             conditionSiblingLookupLevels = conditionSiblingLookupLevels))
+      dplyr::bind_rows(content$result)
+    },
+
+    #' @description
+    #' From a unified CEM relationships table, for a conceptSet of conditions
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param conditionSiblingLookupLevels integer - where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
+    getConditionRelationships = function(conditionConceptSet, conditionSiblingLookupLevels = 0) {
+      endpoint <- "conditionRelationships"
+      content <- self$request("POST", endpoint, body = list(conditionConceptSet = conditionConceptSet,
+                                                            conditionSiblingLookupLevels = conditionSiblingLookupLevels))
+      dplyr::bind_rows(content$result)
+    },
+
+    #' @description
+    #' From a unified CEM relationships table, for a conceptSet of drug ingredients get related items
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    getIngredientRelationships = function(ingredientConceptSet) {
+      endpoint <- "ingredientRelationships"
+      content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet))
       dplyr::bind_rows(content$result)
     },
 
