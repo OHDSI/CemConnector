@@ -92,4 +92,13 @@ test_that("get exposure and outcome conceptset evidence", {
   # For some reason all_equal fails here. Solution: some manaul checks of data
   expect_equal(nrow(relationships), nrow(relationshipsWeb))
   expect_set_equal(colnames(relationships), colnames(relationshipsWeb))
+
+  ingredientRelationships <- backend$getIngredientRelationships(ingredientConceptSet = srchIngredientSet)
+  ingredientRelationshipsWeb <- webBackend$getIngredientRelationships(ingredientConceptSet = srchIngredientSet)
+  expect_set_equal(colnames(ingredientRelationships), colnames(ingredientRelationshipsWeb))
+
+  conditionRelationships <- backend$getConditionRelationships(conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
+  conditionRelationshipsWe <- webBackend$getConditionRelationships(conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
+
+  expect_set_equal(colnames(conditionRelationshipsWe), colnames(conditionRelationships))
 })
