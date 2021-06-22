@@ -4,7 +4,7 @@ cemTestSchema <- getOption("cemTestSchema")
 vocabularySchema <- getOption("cemVocabularySchema")
 sourceInfoSchema <- getOption("cemSourceInfoSchema")
 
-if (is.null(apiUrl) | !checkmate::checkClass(connectionDetails, "connectionDetails")) {
+if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   # Load API in separate process
   serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...) {
     connectionDetails <- DatabaseConnector::createConnectionDetails(...)
