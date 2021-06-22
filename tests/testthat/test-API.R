@@ -1,29 +1,3 @@
-port <- httpuv::randomPort(8000, 8080)
-
-# Load API in separate process
-serverStart <- function(apiPort, ...) {
-  connectionDetails <- DatabaseConnector::createConnectionDetails(...)
-  api <- CEMConnector::loadApi(connectionDetails)
-  api$run(port = apiPort)
-}
-
-apiProcess <- callr::r_bg(serverStart,
-                          args = list(apiPort = port,
-                                      server = Sys.getenv("CEM_DATABASE_SERVER"),
-                                      user = dbUser,
-                                      password = keyring::key_get(keyringService, username = dbUser),
-                                      port = Sys.getenv("CEM_DATABASE_PORT"),
-                                      dbms = Sys.getenv("CEM_DATABASE_DBMS"),
-                                      extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS")),
-                          stderr = "plumbr_error.txt",
-                          stdout = "plumbr_out.log")
-withr::defer({
-  apiProcess$kill()
-}, testthat::teardown_env())
-
-
-apiUrl <- paste0("http://localhost:", port)
-Sys.sleep(5) # Allow time for process to start, needs to connect to database
 
 test_that("Test api alive", {
   resp <- httr::GET(apiUrl)
@@ -34,7 +8,7 @@ test_that("Test api alive", {
 test_that("Test api version", {
   resp <- httr::GET(paste0(apiUrl, "/version"))
   info <- httr::content(resp, as = "parsed")
-  expect_equal(info$version, paste(packageVersion("CEMConnector")))
+  expect_equal(info$version, paste(packageVersion("CemConnector")))
 })
 
 test_that("Test get source info", {

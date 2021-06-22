@@ -1,4 +1,4 @@
 library(testthat)
-library(CEMConnector)
+library(CemConnector)
 
-test_check("CEMConnector")
+test_check("CemConnector")

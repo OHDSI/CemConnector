@@ -1,6 +1,6 @@
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of CEMConnector
+# This file is part of CemConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,22 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-.loadSqlFile <- function(sqlFilename) {
-  pathToSql <- system.file(paste("sql/sql_server"),
-                           sqlFilename,
-                           package = "CEMConnector",
-                           mustWork = TRUE)
-  sql <- SqlRender::readSql(pathToSql)
-}
-
+#' CEM Database Backend Class
+#' @description
+#' An interface to the common evidence model that uses works directly with a database schema
+#' @field connection ConnectionHandlder instance
+#' @field cemSchema schema of CEM database
+#' @field vocabularySchema OMOP vocabulary schema (must include concept and concept ancestor tables)
+#' @field sourceSchema schema containing source_info table
 #' @export
-CEMDatabaseBackend <- R6::R6Class(
-  "CEMDatabaseBackend",
+CemDatabaseBackend <- R6::R6Class(
+  "CemDatabaseBackend",
   public = list(
     connection = NULL,
     cemSchema = NULL,
     vocabularySchema = NULL,
     sourceSchema = NULL,
+
+    #' @description
+    #' initialize backend object.
+    #' @param connectionDetails DatabaseConnector connection details object
+    #' @param cemSchema Schema name including CEM unified and matrix_summary tables
+    #' @param vocabularySchema OMOP vocabulary
+    #' @param sourceSchema Schema containing CEM source information table
+    #' @param usePooledConnection Used a pooled connection object rather than a database connector object.
     initialize = function(connectionDetails,
                           cemSchema,
                           vocabularySchema,
@@ -51,21 +58,24 @@ CEMDatabaseBackend <- R6::R6Class(
       self$sourceSchema <- sourceSchema
     },
 
+    #' @description
+    #' Closes connection
     finalize = function() {
       self$connection$finalize()
     },
 
     #' @description
     #' Reutrns set of ingredient concepts for a given conceptset of outcomes
-    #'
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getConditionEvidenceSummary = function(conditionConceptSet,
                                            siblingLookupLevels = 0) {
 
-      checkmate::assert_data_frame(conditionConceptSet)
-      checkmate::checkNames(names(conditionConceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
-      conditionConceptDesc <- conditionConceptSet[conditionConceptSet$isExcluded == 0 & conditionConceptSet$includeDescendants == 1,]$conceptId
-      conditionConceptNoDesc <- conditionConceptSet[conditionConceptSet$isExcluded == 0 & conditionConceptSet$includeDescendants == 0,]$conceptId
-      sql <- .loadSqlFile("getConditionEvidenceSummary.sql")
+      private$checkConceptSet(conditionConceptSet)
+      conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
+      conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
+
+      sql <- private$loadSqlFile("getConditionEvidenceSummary.sql")
       self$connection$queryDb(sql,
                               vocabulary = self$vocabularySchema,
                               cem_schema = self$cemSchema,
@@ -77,14 +87,13 @@ CEMDatabaseBackend <- R6::R6Class(
 
     #' @description
     #' Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
-    #'
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     getIngredientEvidenceSummary = function(ingredientConceptSet) {
-      checkmate::assert_data_frame(ingredientConceptSet)
-      checkmate::checkNames(names(ingredientConceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
-      ingredientConceptDesc <- ingredientConceptSet[ingredientConceptSet$isExcluded == 0 & ingredientConceptSet$includeDescendants == 1,]$conceptId
-      ingredientConceptNoDesc <- ingredientConceptSet[ingredientConceptSet$isExcluded == 0 & ingredientConceptSet$includeDescendants == 0,]$conceptId
+      private$checkConceptSet(ingredientConceptSet)
+      ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
+      ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
 
-      sql <- .loadSqlFile("getIngredientEvidenceSummary.sql")
+      sql <- private$loadSqlFile("getIngredientEvidenceSummary.sql")
       self$connection$queryDb(sql,
                               vocabulary = self$vocabularySchema,
                               cem_schema = self$cemSchema,
@@ -93,23 +102,23 @@ CEMDatabaseBackend <- R6::R6Class(
 
     },
 
-
     #' @description
     #' From a unified CEM relationships table, for a conceptSet of drug ingredients and a conceptSet of conditions,
-    #' return all the related evidence across all sources
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param conditionSiblingLookupLevels integer - where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getRelationships = function(ingredientConceptSet, conditionConceptSet, conditionSiblingLookupLevels = 0) {
-      checkmate::assert_data_frame(ingredientConceptSet)
-      checkmate::checkNames(names(ingredientConceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
-      ingredientConceptDesc <- ingredientConceptSet[ingredientConceptSet$isExcluded == 0 & ingredientConceptSet$includeDescendants == 1,]$conceptId
-      ingredientConceptNoDesc <- ingredientConceptSet[ingredientConceptSet$isExcluded == 0 & ingredientConceptSet$includeDescendants == 0,]$conceptId
+      private$checkConceptSet(ingredientConceptSet)
+      private$checkConceptSet(conditionConceptSet)
 
-      checkmate::assert_data_frame(conditionConceptSet)
-      checkmate::checkNames(names(conditionConceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
-      conditionConceptDesc <- conditionConceptSet[conditionConceptSet$isExcluded == 0 & conditionConceptSet$includeDescendants == 1,]$conceptId
-      conditionConceptNoDesc <- conditionConceptSet[conditionConceptSet$isExcluded == 0 & conditionConceptSet$includeDescendants == 0,]$conceptId
+      ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
+      ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
+
+      conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
+      conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
 
 
-      sql <- .loadSqlFile("getRelationships.sql")
+      sql <- private$loadSqlFile("getRelationships.sql")
       self$connection$queryDb(sql,
                               vocabulary = self$vocabularySchema,
                               cem_schema = self$cemSchema,
@@ -118,11 +127,72 @@ CEMDatabaseBackend <- R6::R6Class(
                               ingredient_concepts_desc = ingredientConceptDesc,
                               ingredient_concepts_no_desc = ingredientConceptNoDesc,
                               condition_concepts_desc = conditionConceptDesc,
-                              condition_concepts_no_desc = conditionConceptNoDesc)
+                              condition_concepts_no_desc = conditionConceptNoDesc) %>% dplyr::select(-id)
     },
 
+    #' @description
+    #' From a unified CEM relationships table, for a conceptSet of conditions
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param conditionSiblingLookupLevels integer - where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
+    getConditionRelationships = function(conditionConceptSet, conditionSiblingLookupLevels = 0) {
+      private$checkConceptSet(conditionConceptSet)
+      conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
+      conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
+
+      sql <- private$loadSqlFile("getConditionRelationships.sql")
+      self$connection$queryDb(sql,
+                              vocabulary = self$vocabularySchema,
+                              cem_schema = self$cemSchema,
+                              use_siblings = conditionSiblingLookupLevels > 0,
+                              sibling_lookup_levels = conditionSiblingLookupLevels,
+                              condition_concepts_desc = conditionConceptDesc,
+                              condition_concepts_no_desc = conditionConceptNoDesc) %>% dplyr::select(-id)
+    },
+
+    #' @description
+    #' From a unified CEM relationships table, for a conceptSet of drug ingredients get related items
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    getIngredientRelationships = function(ingredientConceptSet) {
+      private$checkConceptSet(ingredientConceptSet)
+      ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
+      ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
+
+      sql <- private$loadSqlFile("getIngredientRelationships.sql")
+      self$connection$queryDb(sql,
+                              vocabulary = self$vocabularySchema,
+                              cem_schema = self$cemSchema,
+                              ingredient_concepts_desc = ingredientConceptDesc,
+                              ingredient_concepts_no_desc = ingredientConceptNoDesc) %>% dplyr::select(-id)
+    },
+
+    #'@description
+    #' Get CEM source info as a dataframe
+    #' @returns data.frame of sources
     getCemSourceInfo = function() {
       return(self$connection$queryDb("SELECT * FROM @schema.source", schema = self$sourceSchema))
+    }
+  ),
+
+  private = list(
+    loadSqlFile = function(sqlFilename) {
+      pathToSql <- system.file(paste("sql/sql_server"),
+                               sqlFilename,
+                               package = "CemConnector",
+                               mustWork = TRUE)
+      sql <- SqlRender::readSql(pathToSql)
+    },
+
+    checkConceptSet = function(conceptSet) {
+      checkmate::assert_data_frame(conceptSet)
+      checkmate::checkNames(names(conceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
+    },
+
+    getConceptIdsWithoutDescendants = function(conceptSet) {
+      conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 0,]$conceptId
+    },
+
+    getConceptIdsWithDescendants = function(conceptSet) {
+      conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 1,]$conceptId
     }
   )
 )

@@ -4,3 +4,4 @@
 ^\.Rproj\.user$
 ^.idea
 errorReportSql.txt
+.github/*

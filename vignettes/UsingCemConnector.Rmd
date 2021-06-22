@@ -1,0 +1,92 @@
+---
+title: "Using CemConnector"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    number_sections: yes
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{Using CemConnector}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{css echo=FALSE}
+h1  {
+  margin-top: 60px;
+}
+```
+
+If you're reading this guide it is expected that you have some familiarity with the common
+evidence model (CEM) and have an installation set up and configured.
+In the following example we will observe all of the relevant evidence for the drug `codine` with the outcome of `depression`.
+
+# Using CEMConnector with a web backend
+The simplest way to connect with the CEM is to connect to a host web instance, for example the public API available at https://cem.ohdsi.org/api/v1/ .
+To do this we will use a web backend.
+First we need to create a connection to the web api:
+```{r, eval = FALSE}
+baseUrl <- "https://cem.ohdsi.org/api/v1/"
+cemConnection <- CemConnector::CemWebApiBackend$new(baseUrl)
+```
+
+This should connect to the server without error.
+If you get an error please check that the URL is valid, you may need to contact your adminstrator.
+
+## Constructing conceptset defintions
+To generate concept sets we recommend using [PHEOBE](https://data.ohdsi.org/PHOEBE/).
+This is a simple way of finding standard concepts (SNOMED or RxNorm) that relate to diseases and outcomes of interest for which real world evidence has been observed.
+For this example we will use the concept for moderate depression as a disease outcome and the ingredient exposure codeine.
+It is important to note that the CEM stores information in the standard vocabulary only.
+Similarly drug concepts are mapped at the ingredient level, so you will want to map specific ingredient concepts not drug formulations.
+For example, instead  of using a specific drug dose such as 'codeine 30 MG' it would be advisable to use only the ingredient 'codeine'.
+Naturally, designing concept sets is highly specific to a phenotype of interest and careful consideration should go into the concepts used.
+
+In this example, we would like to both find any existing evidence that relates these two diseases as well as select potential negative controls that can be used
+to calibrate p-values and confidence intervals from effect estimates that we may generate in observational studies.
+
+
+### Searching for outcomes
+The simplest drug concept set is of one ingredient.
+```{r}
+ingreditentConceptSet <- data.frame(conceptId = c(1201620), includeDescendants = c(0), isExcluded = c(0))
+```
+Though not necessary for this ingredient set, we allow the utility to look for descendants.
+This may be useful for an entire class of medications such as the ATC classification 'Other opioids':
+
+```{r}
+parentIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0))
+```
+
+We would like to search for any related disease concepts to this query.
+Cem connector provides a simple evidence summary for all resulting concepts that are in the database.
+
+```{r, eval = FALSE}
+outcomeConcepts <- backend$getIngredientEvidenceSummary(ingreditentConceptSet)
+outcomeConcepts
+```
+
+The resulting data frame is of ingredient concepts with a 1 or 0 if any evidence exists within the CEM.
+
+For an item here, we may want to look at the specific evidence that is involved.
+To do this we would look at an exposure outcome pair from the concept set.
+
+
+To get all the evidence found in the CEM for the ingredient concept set, what source its from and what the counts or statistics are, we can look at the entire search universe.
+```
+outcomeConcepts <- backend$getIngredientEvidenceSummary(ingreditentConceptSet)
+```
+
+### Searching for exposures
+
+### Searching for evidence pairs
+It is often desirable to find out what information relates exposures and outcomes.

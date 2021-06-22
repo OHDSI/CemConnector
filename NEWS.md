@@ -1,2 +1,2 @@
-CEMConnector 0.1.0
+CemConnector 0.1.0
 ==================

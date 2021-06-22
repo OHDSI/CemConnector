@@ -1,6 +1,6 @@
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of CEMConnector
+# This file is part of CemConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 # The API must be loaded with CEMBackendApi variable that has a predicted interface
 # This class largely exposes database connections and passes them to a JSON serializer
-checkmate::assert_class(cemBackendApi, "CEMDatabaseBackend")
+checkmate::assert_class(cemBackendApi, "CemDatabaseBackend")
 
 #* Get API status
 #* @get /
@@ -25,14 +25,14 @@ function() {
   list(status = 'alive')
 }
 
-#* Get CEMConnector API version info
+#* Get CemConnector API version info
 #* @get /version
 #* @serializer unboxedJSON
 function() {
-  list(version = paste0(packageVersion("CEMConnector")))
+  list(version = paste0(packageVersion("CemConnector")))
 }
 
-#* Get CEMConnector API version info
+#* Get CemConnector API version info
 #* @get /cemSourceInfo
 #* @serializer unboxedJSON
 function() {
@@ -49,7 +49,7 @@ function(req) {
   conceptSetDataFrame <- rbind.data.frame(conditionConceptSet)
 
   siblingLookupLevels <- req$body$siblingLookupLevels
-  if (is.null(siblingLookupLevels)){
+  if (is.null(siblingLookupLevels)) {
     siblingLookupLevels <- 0
   }
   result <- cemBackendApi$getConditionEvidenceSummary(conceptSetDataFrame, siblingLookupLevels = siblingLookupLevels)
@@ -81,7 +81,7 @@ function(req) {
   conditionConceptSetDf <- rbind.data.frame(conditionConceptSet)
 
   conditionSiblingLookupLevels <- req$body$conditionSiblingLookupLevels
-  if (is.null(conditionSiblingLookupLevels)){
+  if (is.null(conditionSiblingLookupLevels)) {
     conditionSiblingLookupLevels <- 0
   }
 
@@ -89,8 +89,43 @@ function(req) {
   ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
 
   result <- cemBackendApi$getRelationships(ingredientConceptSetDf,
-                                 conditionConceptSetDf,
-                                 conditionSiblingLookupLevels = conditionSiblingLookupLevels)
+                                           conditionConceptSetDf,
+                                           conditionSiblingLookupLevels = conditionSiblingLookupLevels)
+
+  list(result = result)
+}
+
+
+#* Get For a set of OMOP standard vocabulary ingredient and drug concepts get the evidence summary of conditions
+#* This returns the set of sumarized evidence for every condition in the CEM
+#* @param ingredientConceptSet conceptset of drug ingredients. Must be in conceptSet format and use only OMOP standard concepts
+#* @post /ingredientRelationships
+#* @serializer unboxedJSON
+function(req) {
+  ingredientConceptSet <- req$body$ingredientConceptSet
+  ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
+
+  result <- cemBackendApi$getIngredientRelationships(ingredientConceptSetDf)
+
+  list(result = result)
+}
+
+
+#* Get For a set of OMOP standard vocabulary ingredient and drug concepts get the evidence summary of conditions
+#* This returns the set of sumarized evidence for every condition in the CEM
+#* @param conditionConceptSet conceptset of conditions. Must be in conceptSet format and use only OMOP standard concepts
+#* @post /conditionRelationships
+#* @serializer unboxedJSON
+function(req) {
+  conditionConceptSet <- req$body$conditionConceptSet
+  conditionConceptSetDf <- rbind.data.frame(conditionConceptSet)
+  conditionSiblingLookupLevels <- req$body$conditionSiblingLookupLevels
+  if (is.null(conditionSiblingLookupLevels)) {
+    conditionSiblingLookupLevels <- 0
+  }
+
+  result <- cemBackendApi$getConditionRelationships(conditionConceptSetDf,
+                                                    conditionSiblingLookupLevels = conditionSiblingLookupLevels)
 
   list(result = result)
 }

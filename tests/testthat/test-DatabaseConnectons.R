@@ -1,5 +1,12 @@
 # Implementations of database connection should function in the same way
-genericTests <- function(conn) {
+genericTests <- function(connClass, classes) {
+  conn <- connClass$new(Eunomia::getEunomiaConnectionDetails())
+  expect_class(conn, classes)
+
+  on.exit({
+    conn$finalize()
+  }, add = TRUE)
+
   expect_class(conn, "ConnectionHandler")
   expect_true(conn$isActive)
   expect_true(DBI::dbIsValid(dbObj = conn$con))
@@ -20,13 +27,9 @@ genericTests <- function(conn) {
 }
 
 test_that("Database Connector Class works", {
-  conn <- ConnectionHandler$new(Eunomia::getEunomiaConnectionDetails())
-  expect_class(conn, c("ConnectionHandler"))
-  genericTests(conn)
+  genericTests(ConnectionHandler, c("ConnectionHandler"))
 })
 
 test_that("Pooled connector Class works", {
-  conn <- PooledConnectionHandler$new(Eunomia::getEunomiaConnectionDetails())
-  expect_class(conn, c("PooledConnectionHandler", "ConnectionHandler"))
-  genericTests(conn)
+  genericTests(PooledConnectionHandler, c("PooledConnectionHandler", "ConnectionHandler"))
 })

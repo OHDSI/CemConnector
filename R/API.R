@@ -1,6 +1,6 @@
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of CEMConnector
+# This file is part of CemConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,31 +25,21 @@
 #' @param pathToPlumberApi path to plumber script (default is package's)
 #' @param envir R environment
 #' @returns Plumber router object
-#' @example
-#'
-#'  connectionDetails <- DatabaseConnector::createConnectionDetails(server = "server path",
-#'                                                                  port = 5439,
-#'                                                                  dbms = "redshift",
-#'                                                                  user = "my_username",
-#'                                                                  password = "my_secret")
-#'  api <- loadApi(connectionDetails)
-#'  api$run()
-#'
 #' @export
 loadApi <- function(connectionDetails,
                     cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
                     vocabularySchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
                     sourceSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
-                    pathToPlumberApi = system.file(file.path("api", "plumber.R"), package = "CEMConnector"),
+                    pathToPlumberApi = system.file(file.path("api", "plumber.R"), package = "CemConnector"),
                     envir = new.env(parent = .GlobalEnv)) {
 
   checkmate::assert_file_exists(pathToPlumberApi)
 
-  envir$cemBackendApi <- CEMDatabaseBackend$new(connectionDetails,
+  envir$cemBackendApi <- CemDatabaseBackend$new(connectionDetails,
                                                 cemSchema = cemSchema,
                                                 vocabularySchema = vocabularySchema,
                                                 sourceSchema = sourceSchema,
-                                                usePooledConnection = getOption("CEMConnector.UsePooledConnection", TRUE))
+                                                usePooledConnection = getOption("CemConnector.UsePooledConnection", TRUE))
 
 
   plumb <- plumber::pr(pathToPlumberApi, envir = envir)
@@ -57,4 +47,6 @@ loadApi <- function(connectionDetails,
     # Close down database connections
     envir$cemBackendApi$finalize()
   })
+
+  plumb
 }

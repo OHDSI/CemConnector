@@ -1,6 +1,6 @@
 # Copyright 2021 Observational Health Data Sciences and Informatics
 #
-# This file is part of CEMConnector
+# This file is part of CemConnector
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -69,7 +69,8 @@ ConnectionHandler <- R6::R6Class(
           stop(error)
         }
       })
-      return(data)
+
+      return(dplyr::as_tibble(data))
     },
     queryFunction = function(sql, snakeCaseToCamelCase = TRUE) {
       DatabaseConnector::querySql(self$con, sql, snakeCaseToCamelCase = snakeCaseToCamelCase)

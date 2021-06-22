@@ -1,10 +1,10 @@
-CEMConnector
+CemConnector
 ====================
 
-[![Build Status](https://github.com/OHDSI/CEMConnector/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/CEMConnector/actions?query=workflow%3AR-CMD-check)
-[![codecov.io](https://codecov.io/github/OHDSI/CEMConnector/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/CEMConnector?branch=master)
+[![Build Status](https://github.com/OHDSI/CemConnector/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/CemConnector/actions?query=workflow%3AR-CMD-check)
+[![codecov.io](https://codecov.io/github/OHDSI/CemConnector/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/CemConnector?branch=master)
 
-CEMConnector is part of [HADES](https://ohdsi.github.io/Hades).
+CemConnector is part of [HADES](https://ohdsi.github.io/Hades).
 
 Introduction
 ============
@@ -23,7 +23,7 @@ Features
 Example
 ========
 ```r
-library(CEMConnector)
+library(CemConnector)
 
 
 
@@ -31,22 +31,22 @@ library(CEMConnector)
 
 Technology
 ============
-CEMConnector is an R package.
+CemConnector is an R package.
 
 System Requirements
 ============
-Requires R. Libraries used in CEMConnector require Java.
+Requires R. Libraries used in CemConnector require Java.
 
 Getting Started
 ===============
 
 1. See the instructions [here](https://ohdsi.github.io/Hades/rSetup.html) for configuring your R environment, including Java.
 
-2. In R, use the following commands to download and install CEMConnector:
+2. In R, use the following commands to download and install CemConnector:
 
   ```r
   install.packages("remotes")
-  remotes::install_github("ohdsi/CEMConnector")
+  remotes::install_github("ohdsi/CemConnector")
   ```
 
 User Documentation
@@ -56,7 +56,7 @@ User Documentation
 Support
 =======
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
-* We use the <a href="https://github.com/OHDSI/CEMConnector/issues">GitHub issue tracker</a> for all bugs/issues/enhancements
+* We use the <a href="https://github.com/OHDSI/CemConnector/issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
 Contributing
 ============
@@ -65,11 +65,11 @@ Read [here](https://ohdsi.github.io/Hades/contribute.html) how you can contribut
 
 License
 =======
-CEMConnector is licensed under Apache License 2.0
+CemConnector is licensed under Apache License 2.0
 
 Development
 ===========
-CEMConnector is being developed in R Studio and PyCharm (with R plugins).
+CemConnector is being developed in R Studio and PyCharm (with R plugins).
 
 ### Development status
 
