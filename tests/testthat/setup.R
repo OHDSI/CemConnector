@@ -81,7 +81,7 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
 
       if (failed) {
         errorLines <- readLines(errorOut)
-        studLines <- readLines(studLines)
+        studLines <- readLines(stdOut)
         stop("Failed to load API. Error in configuration?\n", errorLines, studLines)
       }
 
