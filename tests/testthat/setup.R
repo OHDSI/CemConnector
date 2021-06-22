@@ -16,7 +16,7 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
                                    sourceSchema = sourceSchema)
       api$setDocs(FALSE)
       writeLines("API LOADED", con = pipe)
-      api$run(port = apiPort, host = "0.0.0.0")
+      api$run(port = apiPort)
     }, error = function(err) {
       writeLines("API FAILED", con = pipe)
       writeLines(err, con = pipe)
@@ -43,13 +43,16 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   apiPort <- httpuv::randomPort(8000, 8080)
   apiUrl <- paste0("http://localhost:", apiPort)
 
-  sessionCommunication <- paste0("test_pipe_", apiPort)
+  sessionCommunication <- tempfile(paste0("test_pipe_", apiPort))
   writeLines("", con = sessionCommunication)
   print("Starting api session...")
 
+  stdOut <- tempfile("plumberOut.log")
+  errorOut <- tempfile("plumberError.log")
+
   apiSession <- callr::r_bg(serverStart,
-                            stdout = "plumberOut.txt",
-                            stderr = "plumberError.txt",
+                            stdout = stdOut,
+                            stderr = errorOut,
                             args = list(pipe = sessionCommunication,
                                         apiPort = apiPort,
                                         server = Sys.getenv("CEM_DATABASE_SERVER"),
@@ -77,17 +80,17 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
       loaded <- any(grep("API LOADED", input) == 1)
 
       if (failed) {
-        errorLines <- readLines("plumberError.txt")
-        studOut <- readLines("plumberOut.txt")
-        stop("Failed to load API. Error in configuration?\n", errorLines, studOut)
+        errorLines <- readLines(errorOut)
+        studLines <- readLines(studLines)
+        stop("Failed to load API. Error in configuration?\n", errorLines, studLines)
       }
 
       return(loaded)
     }
     # If the session is dead, stop
-    errorLines <- readLines("plumberError.txt")
-    studOut <- readLines("plumberOut.txt")
-    stop(paste("Api session failed to start\n", errorLines, studOut))
+    errorLines <- readLines(errorOut)
+    studLines <- readLines(stdOut)
+    stop(paste("Api session failed to start\n", errorLines, studLines))
   }
 
   # poll status until failure or load
