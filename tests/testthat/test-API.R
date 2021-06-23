@@ -1,17 +1,20 @@
 
 test_that("Test api alive", {
+  skip_if_not(useTestPlumber, "Test plumber not loaded")
   resp <- httr::GET(apiUrl)
   info <- httr::content(resp, as = "parsed")
   expect_equal(info$status, "alive")
 })
 
 test_that("Test api version", {
+  skip_if_not(useTestPlumber, "Test plumber not loaded")
   resp <- httr::GET(paste0(apiUrl, "/version"))
   info <- httr::content(resp, as = "parsed")
   expect_equal(info$version, paste(packageVersion("CemConnector")))
 })
 
 test_that("Test get source info", {
+  skip_if_not(useTestPlumber, "Test plumber not loaded")
   resp <- httr::GET(paste0(apiUrl, "/cemSourceInfo"))
   content <- httr::content(resp, as = "parsed")
   expect_true(length(content$result) > 5)
@@ -19,7 +22,7 @@ test_that("Test get source info", {
 
 
 test_that("Test get condition evidence", {
-
+  skip_if_not(useTestPlumber, "Test plumber not loaded")
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
 
   resp <- httr::POST(paste0(apiUrl, "/conditionEvidenceSummary"),
@@ -33,7 +36,7 @@ test_that("Test get condition evidence", {
 })
 
 test_that("Test get ingredient evidence", {
-
+  skip_if_not(useTestPlumber, "Test plumber not loaded")
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
 
   resp <- httr::POST(paste0(apiUrl, "/ingredientEvidenceSummary"),
@@ -47,7 +50,7 @@ test_that("Test get ingredient evidence", {
 })
 
 test_that("Test get relationships", {
-
+  skip_if_not(useTestPlumber, "Test plumber not loaded")
   srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1,0), isExcluded = c(0))
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
 

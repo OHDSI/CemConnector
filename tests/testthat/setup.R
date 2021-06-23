@@ -3,6 +3,7 @@ connectionDetails <- getOption("CemConnectionDetails")
 cemTestSchema <- getOption("cemTestSchema")
 vocabularySchema <- getOption("cemVocabularySchema")
 sourceInfoSchema <- getOption("cemSourceInfoSchema")
+useTestPlumber <- FALSE
 
 if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   # Load API in separate process
@@ -93,12 +94,18 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
     stop(paste("Api session failed to start\n", errorLines, studLines))
   }
 
-  # poll status until failure or load
-  while (!apiSessionReady()) {
-    Sys.sleep(0.1) # Allow time for process to start, needs to connect to database...
-  }
-
+  tryCatch({
+    # poll status until failure or load
+    while (!apiSessionReady()) {
+      Sys.sleep(0.1) # Allow time for process to start, needs to connect to database...
+    }
+    useTestPlumber <- TRUE
+  }, error = function(err) {
+    message("Failed to load API will skip web request tests")
+    print(err)
+  })
   print("Session started")
 } else {
+  useTestPlumber <- TRUE
   message(paste("Using live web backend at", apiUrl))
 }
