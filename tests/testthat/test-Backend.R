@@ -60,9 +60,6 @@ test_that("get exposure and outcome control concepts evidence", {
   expect_data_frame(outcomeConcepts, min.rows = 100)
   expect_true(length(outcomeConcepts$conditionConceptId) == length(unique(outcomeConcepts$conditionConceptId)))
 
-})
-
-test_that("get exposure and outcome conceptset evidence", {
   srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1, 0), isExcluded = c(0))
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
   relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
@@ -112,11 +109,4 @@ test_that("web backend returns equivalent results", {
   expect_equal(nrow(relationships), nrow(relationshipsWeb))
   expect_set_equal(colnames(relationships), colnames(relationshipsWeb))
 
-  ingredientRelationships <- backend$getIngredientRelationships(ingredientConceptSet = srchIngredientSet)
-  ingredientRelationshipsWeb <- webBackend$getIngredientRelationships(ingredientConceptSet = srchIngredientSet)
-  expect_set_equal(colnames(ingredientRelationships), colnames(ingredientRelationshipsWeb))
-
-  conditionRelationships <- backend$getConditionRelationships(conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
-  conditionRelationshipsWe <- webBackend$getConditionRelationships(conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
-  expect_set_equal(colnames(conditionRelationshipsWe), colnames(conditionRelationships))
 })
