@@ -1,13 +1,22 @@
 test_that("load function works", {
+  jDriverPath <- tempfile("testsDriverPath")
+  dir.create(jDriverPath)
+  DatabaseConnector::downloadJdbcDrivers(Sys.getenv("CEM_DATABASE_DBMS"), pathToDriver = jDriverPath)
+  connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
+                                                                  user = Sys.getenv("CEM_DATABASE_USER"),
+                                                                  password = Sys.getenv("CEM_DATABASE_PASSWORD"),
+                                                                  port = Sys.getenv("CEM_DATABASE_PORT"),
+                                                                  dbms = Sys.getenv("CEM_DATABASE_DBMS"),
+                                                                  extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"),
+                                                                  pathToDriver = jDriverPath)
+  withr::defer({ unlink(jDriverPath) }, testthat::teardown_env())
   tenv <- environment()
-  api <- CemConnector::loadApi(connectionDetails,
-                               cemSchema = cemTestSchema,
-                               vocabularySchema = vocabularySchema,
-                               sourceSchema = sourceInfoSchema,
-                               envir = tenv)
-  api$setDocs(FALSE)
+  api <- loadApi(connectionDetails,
+                 cemSchema = cemTestSchema,
+                 vocabularySchema = vocabularySchema,
+                 sourceSchema = sourceInfoSchema,
+                 envir = tenv)
   expect_s3_class(api, "Plumber")
-
   # Test load endpoints
   expect_class(tenv$cemBackendApi, "CemDatabaseBackend")
   tenv$cemBackendApi$finalize()

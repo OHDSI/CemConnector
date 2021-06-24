@@ -100,11 +100,11 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
       Sys.sleep(0.1) # Allow time for process to start, needs to connect to database...
     }
     useTestPlumber <- TRUE
+    print("Session started")
   }, error = function(err) {
     message("Failed to load API will skip web request tests")
     print(err)
   })
-  print("Session started")
 } else {
   useTestPlumber <- TRUE
   message(paste("Using live web backend at", apiUrl))
