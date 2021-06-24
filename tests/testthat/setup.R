@@ -24,7 +24,7 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
     })
   }
 
-  jDriverPath <- tempfile("jDriverPath")
+  jDriverPath <- normalizePath("jDriverPath")
   dir.create(jDriverPath)
   DatabaseConnector::downloadJdbcDrivers(Sys.getenv("CEM_DATABASE_DBMS"), pathToDriver = jDriverPath)
   connectionParams <- list(server = Sys.getenv("CEM_DATABASE_SERVER"),
@@ -44,12 +44,12 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   apiPort <- httpuv::randomPort(8000, 8080)
   apiUrl <- paste0("http://localhost:", apiPort)
 
-  sessionCommunication <- tempfile(paste0("test_pipe_", apiPort))
+  sessionCommunication <- normalizePath(paste0("~/test_pipe_", apiPort))
   writeLines("", con = sessionCommunication)
   print("Starting api session...")
 
-  stdOut <- tempfile("plumberOut.log")
-  errorOut <- tempfile("plumberError.log")
+  stdOut <- normalizePath("~/plumberOut.log")
+  errorOut <- normalizePath("~/plumberError.log")
 
   apiSession <- callr::r_bg(serverStart,
                             stdout = stdOut,

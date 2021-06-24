@@ -1,5 +1,5 @@
 test_that("load function works", {
-  jDriverPath <- tempfile("testsDriverPath")
+  jDriverPath <- normalizePath("~/testsDriverPath")
   dir.create(jDriverPath)
   DatabaseConnector::downloadJdbcDrivers(Sys.getenv("CEM_DATABASE_DBMS"), pathToDriver = jDriverPath)
   connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
