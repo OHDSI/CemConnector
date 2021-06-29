@@ -40,7 +40,6 @@ ConnectionHandler <- R6::R6Class(
       self$isActive <- TRUE
     },
 
-
     getConnection = function() {
       return(self$con)
     },

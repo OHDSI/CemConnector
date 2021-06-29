@@ -90,6 +90,7 @@ CemDatabaseBackend <- R6::R6Class(
       self$connection$finalize()
     },
 
+    #' Condition evidence summary
     #' @description
     #' Reutrns set of ingredient concepts for a given conceptset of outcomes
     #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
@@ -111,6 +112,28 @@ CemDatabaseBackend <- R6::R6Class(
                               condition_concept_no_desc = conditionConceptNoDesc)
     },
 
+    #' Condition evidence
+    #' @description
+    #' Reutrns set of relationships that exist within CEM for a condition conceptset of interest
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
+    getConditionEvidence = function(conditionConceptSet, siblingLookupLevels = 0) {
+
+      private$checkConceptSet(conditionConceptSet)
+      conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
+      conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
+
+      sql <- private$loadSqlFile("getConditionRelationships.sql")
+      self$connection$queryDb(sql,
+                              vocabulary = self$vocabularySchema,
+                              cem_schema = self$cemSchema,
+                              use_siblings = siblingLookupLevels > 0,
+                              sibling_lookup_levels = siblingLookupLevels,
+                              condition_concept_desc = conditionConceptDesc,
+                              condition_concept_no_desc = conditionConceptNoDesc)
+    },
+
+    #' Ingredient evidence summary
     #' @description
     #' Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
     #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
@@ -120,6 +143,25 @@ CemDatabaseBackend <- R6::R6Class(
       ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
 
       sql <- private$loadSqlFile("getIngredientEvidenceSummary.sql")
+      self$connection$queryDb(sql,
+                              vocabulary = self$vocabularySchema,
+                              cem_schema = self$cemSchema,
+                              concept_desc = ingredientConceptDesc,
+                              concept_no_desc = ingredientConceptNoDesc)
+
+    },
+
+    #' Ingredient conceptset evidence
+    #' @description
+    #' for a concept set of rxnorm ingredients (or their ancestors) list the evidence stored in the CEM
+    #' Utilises matrix summary table for optimisation.
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    getIngredientEvidence = function(ingredientConceptSet) {
+      private$checkConceptSet(ingredientConceptSet)
+      ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
+      ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
+
+      sql <- private$loadSqlFile("getIngredientRelationships.sql")
       self$connection$queryDb(sql,
                               vocabulary = self$vocabularySchema,
                               cem_schema = self$cemSchema,

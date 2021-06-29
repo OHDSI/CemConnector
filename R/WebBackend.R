@@ -69,10 +69,32 @@ CemWebApiBackend <- R6::R6Class(
     },
 
     #' @description
-    #' Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
+    #' Reutrns set of outcome concepts for a given conceptset of ingredients
     #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     getIngredientEvidenceSummary = function(ingredientConceptSet) {
       endpoint <- "ingredientEvidenceSummary"
+      content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet))
+      dplyr::bind_rows(content$result)
+    },
+
+    #' @description
+    #' Reutrns ingredient evidence for a given conceptset of conditions
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
+    getConditionEvidence = function(conditionConceptSet,
+                                    siblingLookupLevels = 0) {
+      endpoint <- "conditionEvidence"
+      content <- self$request("POST", endpoint, body = list(conditionConceptSet = conditionConceptSet,
+                                                            siblingLookupLevels = siblingLookupLevels))
+
+      dplyr::bind_rows(content$result)
+    },
+
+    #' @description
+    #' Reutrns condtion evidence for a given conceptset of ingredients
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    getIngredientEvidence = function(ingredientConceptSet) {
+      endpoint <- "ingredientEvidence"
       content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet))
       dplyr::bind_rows(content$result)
     },

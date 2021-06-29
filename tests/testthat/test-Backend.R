@@ -27,6 +27,7 @@ test_that("summary works", {
 
 test_that("summary works web", {
   skip_if_not(useTestPlumber, "Test plumber not loaded")
+  webBackend <- CemWebApiBackend$new(apiUrl)
   sinfo <- webBackend$getCemSourceInfo()
   expect_data_frame(sinfo)
 })
@@ -44,6 +45,9 @@ test_that("get exposure and outcome control concepts evidence", {
   ingredientConcepts <- backend$getConditionEvidenceSummary(srchOutcomeConceptSet, siblingLookupLevels = 1)
   expect_data_frame(ingredientConcepts, min.rows = 100)
 
+  ingredientConceptEvdience <- backend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
+  expect_data_frame(ingredientConceptEvdience, min.rows = 100)
+
   # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
@@ -59,6 +63,9 @@ test_that("get exposure and outcome control concepts evidence", {
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_data_frame(outcomeConcepts, min.rows = 100)
   expect_true(length(outcomeConcepts$conditionConceptId) == length(unique(outcomeConcepts$conditionConceptId)))
+
+  outcomeConceptEvidence <- backend$getIngredientEvidence(srchIngredientSet)
+  expect_data_frame(outcomeConceptEvidence, min.rows = 100)
 
   srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1, 0), isExcluded = c(0))
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
@@ -82,12 +89,20 @@ test_that("web backend returns equivalent results", {
   ingredientConceptsWeb <- webBackend$getConditionEvidenceSummary(srchOutcomeConceptSet, siblingLookupLevels = 1)
   expect_true(dplyr::all_equal(ingredientConceptsWeb, ingredientConcepts))
 
+  ingredientConceptEvdience <- backend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
+  ingredientConceptEvdienceWeb <- webBackend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
+
+  expect_true(dplyr::all_equal(ingredientConceptEvdience, ingredientConceptEvdienceWeb))
+
   # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
 
   outcomeConceptsWeb <- webBackend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_true(dplyr::all_equal(outcomeConcepts, outcomeConceptsWeb))
+
+  outcomeConceptEvidence <- backend$getIngredientEvidence(srchIngredientSet)
+  outcomeConceptEvidenceWeb <- webBackend$getIngredientEvidence(srchIngredientSet)
 
   # ATC class test (Other opioids) - should not be in ingredients but should return set
   srchIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0))

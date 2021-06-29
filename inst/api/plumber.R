@@ -57,6 +57,24 @@ function(req) {
   list(result = result)
 }
 
+#* Get For a set of standard condition concepts get the evidence that is related to them
+#* @param conditionConceptSet conceptset of conditions. Must be in conceptSet format and use only OMOP standard concepts
+#* @param siblingLookupLevels number of sibling levels to look up to find matches
+#* @post /conditionEvidence
+#* @serializer unboxedJSON
+function(req) {
+  conditionConceptSet <- req$body$conditionConceptSet
+  conceptSetDataFrame <- rbind.data.frame(conditionConceptSet)
+
+  siblingLookupLevels <- req$body$siblingLookupLevels
+  if (is.null(siblingLookupLevels)) {
+    siblingLookupLevels <- 0
+  }
+  result <- cemBackendApi$getConditionEvidence(conceptSetDataFrame, siblingLookupLevels = siblingLookupLevels)
+
+  list(result = result)
+}
+
 #* Get For a set of OMOP standard vocabulary ingredient concepts get the evidence summary of conditions
 #* This returns the set of sumarized evidence for every condition in the CEM
 #* @param ingredientConceptSet conceptset of drug ingredients. Must be in conceptSet format and use only OMOP standard concepts
@@ -66,6 +84,19 @@ function(req) {
   ingredientConceptSet <- req$body$ingredientConceptSet
   ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
   result <- cemBackendApi$getIngredientEvidenceSummary(ingredientConceptSetDf)
+
+  list(result = result)
+}
+
+#* Get For a set of OMOP standard vocabulary ingredient concepts get the evidence summary of conditions
+#* This returns the evidence for every condition in the CEM
+#* @param ingredientConceptSet conceptset of drug ingredients. Must be in conceptSet format and use only OMOP standard concepts
+#* @post /ingredientEvidence
+#* @serializer unboxedJSON
+function(req) {
+  ingredientConceptSet <- req$body$ingredientConceptSet
+  ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
+  result <- cemBackendApi$getIngredientEvidence(ingredientConceptSetDf)
 
   list(result = result)
 }
