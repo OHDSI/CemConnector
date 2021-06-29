@@ -1,15 +1,4 @@
 test_that("load function works", {
-  jDriverPath <- normalizePath("~/testsDriverPath")
-  dir.create(jDriverPath)
-  DatabaseConnector::downloadJdbcDrivers(Sys.getenv("CEM_DATABASE_DBMS"), pathToDriver = jDriverPath)
-  connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
-                                                                  user = Sys.getenv("CEM_DATABASE_USER"),
-                                                                  password = Sys.getenv("CEM_DATABASE_PASSWORD"),
-                                                                  port = Sys.getenv("CEM_DATABASE_PORT"),
-                                                                  dbms = Sys.getenv("CEM_DATABASE_DBMS"),
-                                                                  extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"),
-                                                                  pathToDriver = jDriverPath)
-  withr::defer({ unlink(jDriverPath) }, testthat::teardown_env())
   tenv <- environment()
   api <- loadApi(connectionDetails,
                  cemSchema = cemTestSchema,

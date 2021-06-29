@@ -10,7 +10,6 @@ withr::defer({
   backend$finalize()
 }, testthat::teardown_env())
 
-
 test_that("DB Backend loads", {
   expect_class(backend, "CemDatabaseBackend")
   expect_class(backend$connection, "ConnectionHandler")
