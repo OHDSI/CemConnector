@@ -22,6 +22,7 @@
 #' @export
 CemWebApiBackend <- R6::R6Class(
   "CemWebApiBackend",
+  inherit = AbstractCemBackend,
   public = list(
     apiUrl = NULL,
 

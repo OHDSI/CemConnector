@@ -19,7 +19,10 @@ Depends:
     SqlRender,
     httr,
     dplyr,
-    DBI
+    DBI,
+    shinydashboard,
+    shiny,
+    shinycssloaders
 Suggests:
     testthat,
     devtools,

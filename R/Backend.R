@@ -130,7 +130,7 @@ CemDatabaseBackend <- R6::R6Class(
                               use_siblings = siblingLookupLevels > 0,
                               sibling_lookup_levels = siblingLookupLevels,
                               condition_concept_desc = conditionConceptDesc,
-                              condition_concept_no_desc = conditionConceptNoDesc)
+                              condition_concept_no_desc = conditionConceptNoDesc) %>% dplyr::select(-id)
     },
 
     #' Ingredient evidence summary
@@ -166,7 +166,7 @@ CemDatabaseBackend <- R6::R6Class(
                               vocabulary = self$vocabularySchema,
                               cem_schema = self$cemSchema,
                               concept_desc = ingredientConceptDesc,
-                              concept_no_desc = ingredientConceptNoDesc)
+                              concept_no_desc = ingredientConceptNoDesc) %>% dplyr::select(-id)
 
     },
 

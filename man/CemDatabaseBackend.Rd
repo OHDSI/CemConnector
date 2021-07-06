@@ -9,6 +9,9 @@ data.frame of sources
 \description{
 An interface to the common evidence model that uses works directly with a database schema
 }
+\section{Super class}{
+\code{\link[CemConnector:AbstractCemBackend]{CemConnector::AbstractCemBackend}} -> \code{CemDatabaseBackend}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -28,11 +31,19 @@ An interface to the common evidence model that uses works directly with a databa
 \item \href{#method-new}{\code{CemDatabaseBackend$new()}}
 \item \href{#method-finalize}{\code{CemDatabaseBackend$finalize()}}
 \item \href{#method-getConditionEvidenceSummary}{\code{CemDatabaseBackend$getConditionEvidenceSummary()}}
+\item \href{#method-getConditionEvidence}{\code{CemDatabaseBackend$getConditionEvidence()}}
 \item \href{#method-getIngredientEvidenceSummary}{\code{CemDatabaseBackend$getIngredientEvidenceSummary()}}
+\item \href{#method-getIngredientEvidence}{\code{CemDatabaseBackend$getIngredientEvidence()}}
 \item \href{#method-getRelationships}{\code{CemDatabaseBackend$getRelationships()}}
 \item \href{#method-getCemSourceInfo}{\code{CemDatabaseBackend$getCemSourceInfo()}}
 \item \href{#method-clone}{\code{CemDatabaseBackend$clone()}}
 }
+}
+\if{html}{
+\out{<details open ><summary>Inherited methods</summary>}
+\itemize{
+}
+\out{</details>}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
@@ -70,6 +81,7 @@ initialize backend object.
 \if{latex}{\out{\hypertarget{method-finalize}{}}}
 \subsection{Method \code{finalize()}}{
 Closes connection
+Condition evidence summary
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$finalize()}\if{html}{\out{</div>}}
 }
@@ -92,7 +104,31 @@ Reutrns set of ingredient concepts for a given conceptset of outcomes
 \describe{
 \item{\code{conditionConceptSet}}{data.frame conforming to conceptset format, must be standard SNOMED conditions}
 
-\item{\code{siblingLookupLevels}}{where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump}
+\item{\code{siblingLookupLevels}}{where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
+Condition evidence}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getConditionEvidence"></a>}}
+\if{latex}{\out{\hypertarget{method-getConditionEvidence}{}}}
+\subsection{Method \code{getConditionEvidence()}}{
+Reutrns set of relationships that exist within CEM for a condition conceptset of interest
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getConditionEvidence(
+  conditionConceptSet,
+  siblingLookupLevels = 0
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{conditionConceptSet}}{data.frame conforming to conceptset format, must be standard SNOMED conditions}
+
+\item{\code{siblingLookupLevels}}{where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
+Ingredient evidence summary}
 }
 \if{html}{\out{</div>}}
 }
@@ -104,6 +140,25 @@ Reutrns set of ingredient concepts for a given conceptset of outcomes
 Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getIngredientEvidenceSummary(ingredientConceptSet)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{ingredientConceptSet}}{data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+Ingredient conceptset evidence}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getIngredientEvidence"></a>}}
+\if{latex}{\out{\hypertarget{method-getIngredientEvidence}{}}}
+\subsection{Method \code{getIngredientEvidence()}}{
+for a concept set of rxnorm ingredients (or their ancestors) list the evidence stored in the CEM
+Utilises matrix summary table for optimisation.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getIngredientEvidence(ingredientConceptSet)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
