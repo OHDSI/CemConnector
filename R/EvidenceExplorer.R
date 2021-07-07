@@ -14,7 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#'@export
+#' CE Explorer module
+#' @description
+#' Shiny Module for integration of evidence for conceptsets in to shiny applications
+#'
+#' @param id string - unique namespace for module
+#' @param backend CemConnector backend (database or Api URL)
+#' @param ingredientConceptInput shiny::reactive that returns data.frame with headers conceptId, includeDescendants, isExcluded
+#' @param conditionConceptInput shiny::reactive that returns data.frame with headers conceptId, includeDescendants, isExcluded
+#' @param siblingLookupLevelsInput shiny::reactive that returns positive integer for sibling levels to lookup for condition concept mappings to CEM
+#' @export
 ceExplorerModule <- function(id,
                              backend,
                              ingredientConceptInput = reactive({ data.frame() }),
@@ -24,7 +33,6 @@ ceExplorerModule <- function(id,
   checkmate::assert_class(ingredientConceptInput, "reactive")
   checkmate::assert_class(conditionConceptInput, "reactive")
   checkmate::assert_class(siblingLookupLevelsInput, "reactive")
-
 
   cemExplorerServer <- function(input, output, session) {
     output$evidenceTable <- shiny::renderDataTable({
@@ -51,33 +59,63 @@ ceExplorerModule <- function(id,
       relationships
     })
   }
+
   shiny::moduleServer(id, cemExplorerServer)
 }
 
-#'@export
+#' CE Explorer module
+#' @description
+#' Shiny Module for integration of evidence for conceptsets in to shiny applications
+#'
+#' @param id string - unique namespace for module. Must match call to ceExplorerModule
 ceExplorerModuleUi <- function(id) {
   ns <- shiny::NS(id)
-  shiny::fluidRow(shiny::div(shiny::textOutput(ns("errorMessage")),
-                             shiny::dataTableOutput(ns("evidenceTable"))))
+  shiny::div(shiny::textOutput(ns("errorMessage")),
+             shiny::dataTableOutput(ns("evidenceTable")))
 }
 
 ceExplorerUi <- function(request) {
 
-  inputArea <- shinydashboard::box(shiny::textAreaInput("ingredientConcept", label = "Ingredient concept set (csv)"),
+  inputArea <- shinydashboard::box(title = "Input concept sets (Raw CSV)",
+                                   width = 12,
+                                   shiny::p("Required headers: conceptId, includeDescendants, isExcluded"),
+                                   shiny::textAreaInput("ingredientConcept", label = "Ingredient concept set (csv)"),
                                    shiny::textAreaInput("conditionConcept", label = "Condition concept set (csv)"),
                                    shiny::selectInput("siblingLookupLevels", label = "Condition Sibling Lookup Levels", 0:5, selected = 0),
-                                   shiny::actionButton("conceptSetRelations", "Find Evidence"))
+                                   shiny::p("If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings"))
 
-  explorerTab <- shiny::fluidRow(inputArea, ceExplorerModuleUi("explorer"))
-  aboutTab <- shiny::fluidRow()
+  explorerTab <- shiny::fluidRow(inputArea,
+                                 shinydashboard::box(width = 12,
+                                                     ceExplorerModuleUi("explorer")))
+
+  aboutCemBox <- shinydashboard::box(title = "About The Common Evidence Model",
+                                     shiny::p("The Common Evidence Model (CEM) combines many data sources in to a standard format to provide a standard resource for PharmaCovigilance activities."),
+                                     shiny::p("Evidence uses OMOP Standard Vocabularies at the RXNorm and SNOMED levels"),
+                                     shiny::p("For more information visit:"),
+                                     shiny::a("https://github.com/OHDSI/CommonEvidenceModel/wiki"))
+
+
+  cemSourcesBox <- shinydashboard::box(title = "Evidence Sources", width = 12, shiny::dataTableOutput("sourceInfo"))
+
+  cemConnectorInfoBox <- shinydashboard::box(title = "CemConnector",
+                                             width = 6,
+                                             shiny::p("CE Explorer is part of the CemConnector package and is open source under the Apaceh License version 2.0. Latest package available at:"),
+                                             shiny::a("https://github.com/OHDSI/CemConnector"),
+                                             shiny::p(paste("Client package version:", packageVersion("CemConnector"))))
+
+  controlsTab <- shiny::fluidRow(shiny::p("Coming soon"))
+
+  aboutTab <- shiny::fluidRow(aboutCemBox, cemConnectorInfoBox, cemSourcesBox)
   body <- shinydashboard::dashboardBody(shinydashboard::tabItems(shinydashboard::tabItem(tabName = "About", aboutTab),
+                                                                 shinydashboard::tabItem(tabName = "Controls", controlsTab),
                                                                  shinydashboard::tabItem(tabName = "Explore", explorerTab)))
 
-  sidebar <- shinydashboard::dashboardSidebar(shinydashboard::sidebarMenu(shinydashboard::menuItem("About", tabName = "about", icon = icon("list-alt")),
-                                                                          shinydashboard::menuItem("Explore", tabName = "Explore", icon = icon("table")),
+  sidebar <- shinydashboard::dashboardSidebar(shinydashboard::sidebarMenu(shinydashboard::menuItem("About", tabName = "About", icon = icon("list-alt")),
+                                                                          shinydashboard::menuItem("Explore Evidence", tabName = "Explore", icon = icon("table")),
+                                                                          shinydashboard::menuItem("Negative controls", tabName = "Controls", icon = icon("search")),
                                                                           bookmarkButton()))
 
-  shinydashboard::dashboardPage(shinydashboard::dashboardHeader(title = "CEExplorer"),
+  shinydashboard::dashboardPage(shinydashboard::dashboardHeader(title = "CE Explorer"),
                                 sidebar,
                                 body)
 }
@@ -95,6 +133,9 @@ ceExplorerDashboardServer <- function(input, output, session) {
   ingredientConceptInput <- reactive({ .readCsvString(input$ingredientConcept) })
   conditionConceptInput <- reactive({ .readCsvString(input$conditionConcept) })
   siblingLookupLevelsInput <- reactive({ input$siblingLookupLevels })
+
+  output$sourceInfo <- shiny::renderDataTable({ backend$getCemSourceInfo() })
+
   ceModuleServer <- ceExplorerModule("explorer",
                                      backend,
                                      ingredientConceptInput = ingredientConceptInput,
@@ -102,10 +143,30 @@ ceExplorerDashboardServer <- function(input, output, session) {
                                      siblingLookupLevelsInput = siblingLookupLevelsInput)
 }
 
-#'@export
-launchEvidenceExplorer <- function(backend, environment = .GlobalEnv) {
-  checkmate::assert_class(backend, "AbstractCemBackend")
-  environment$backend <- backend
+#' CE Explorer shiny application
+#' @description
+#' Shiny App for exploring common evidence model
+#'
+#' @param apiUrl string - url for CemConnector API or NULL
+#' @param connectionDetails DatabaseConnector::connectionDetails instance for CEM
+#' @param usePooledConnection - use pooled connections (database model only)
+#' @param environment - environment to store backend variables in, defaults to globalenv
+#' @export
+launchCeExplorer <- function(apiUrl = NULL,
+                             connectionDetails = NULL,
+                             usePooledConnection = TRUE,
+                             environment = .GlobalEnv, ...) {
+  checkmate::assert_class(connectionDetails, "connectionDetails", null.ok = TRUE)
+  checkmate::assert_string(apiUrl, null.ok = TRUE)
+
+  if (is.null(apiUrl) & is.null(connectionDetails)) {
+    stop("Must set either api url or CEM connection sources")
+  } else if (!is.null(apiUrl)) {
+    environment$backend <- CemWebApiBackend$new(apiUrl = apiUrl)
+  } else {
+    environment$backend <- CemDatabaseBackend$new(connectionDetails = connectionDetails,
+                                                  usePooledConnection = usePooledConnection, ...)
+  }
 
   shiny::shinyApp(server = ceExplorerDashboardServer, ceExplorerUi, enableBookmarking = "url", onStart = function() {
     shiny::onStop(function() {
