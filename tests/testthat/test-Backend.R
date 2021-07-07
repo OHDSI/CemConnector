@@ -71,7 +71,49 @@ test_that("get exposure and outcome control concepts evidence", {
   relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
 
   expect_data_frame(relationships, min.rows = 100)
+})
 
+test_that("Test relationship sql logic combinations", {
+  # Ensures that broken sqlrender logic doesn't exist
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
+  relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
+  expect_data_frame(relationships)
+
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(0), isExcluded = c(0))
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(0), isExcluded = c(0))
+  relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
+  expect_data_frame(relationships)
+
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(0), isExcluded = c(0))
+  relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
+  expect_data_frame(relationships)
+
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(0), isExcluded = c(0))
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
+  relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
+  expect_data_frame(relationships)
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
+
+  relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 0)
+  expect_data_frame(relationships)
+
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(0), isExcluded = c(0))
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(0), isExcluded = c(0))
+  relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 0)
+  expect_data_frame(relationships)
+
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(0), isExcluded = c(0))
+  relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 0)
+  expect_data_frame(relationships)
+
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(0), isExcluded = c(0))
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
+  relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 0)
+  expect_data_frame(relationships)
 })
 
 test_that("web backend returns equivalent results", {
