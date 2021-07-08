@@ -21,6 +21,8 @@ An interface to the common evidence model that uses http requests
 \item \href{#method-getStatus}{\code{CemWebApiBackend$getStatus()}}
 \item \href{#method-getConditionEvidenceSummary}{\code{CemWebApiBackend$getConditionEvidenceSummary()}}
 \item \href{#method-getIngredientEvidenceSummary}{\code{CemWebApiBackend$getIngredientEvidenceSummary()}}
+\item \href{#method-getConditionEvidence}{\code{CemWebApiBackend$getConditionEvidence()}}
+\item \href{#method-getIngredientEvidence}{\code{CemWebApiBackend$getIngredientEvidence()}}
 \item \href{#method-getRelationships}{\code{CemWebApiBackend$getRelationships()}}
 \item \href{#method-getCemSourceInfo}{\code{CemWebApiBackend$getCemSourceInfo()}}
 \item \href{#method-getVersion}{\code{CemWebApiBackend$getVersion()}}
@@ -101,9 +103,48 @@ Reutrns set of ingredient concepts for a given conceptset of outcomes
 \if{html}{\out{<a id="method-getIngredientEvidenceSummary"></a>}}
 \if{latex}{\out{\hypertarget{method-getIngredientEvidenceSummary}{}}}
 \subsection{Method \code{getIngredientEvidenceSummary()}}{
-Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
+Reutrns set of outcome concepts for a given conceptset of ingredients
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getIngredientEvidenceSummary(ingredientConceptSet)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{ingredientConceptSet}}{data.frame conforming to conceptset format, must be standard RxNorm Ingredients}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getConditionEvidence"></a>}}
+\if{latex}{\out{\hypertarget{method-getConditionEvidence}{}}}
+\subsection{Method \code{getConditionEvidence()}}{
+Reutrns ingredient evidence for a given conceptset of conditions
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getConditionEvidence(
+  conditionConceptSet,
+  siblingLookupLevels = 0
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{conditionConceptSet}}{data.frame conforming to conceptset format, must be standard SNOMED conditions}
+
+\item{\code{siblingLookupLevels}}{where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getIngredientEvidence"></a>}}
+\if{latex}{\out{\hypertarget{method-getIngredientEvidence}{}}}
+\subsection{Method \code{getIngredientEvidence()}}{
+Reutrns condtion evidence for a given conceptset of ingredients
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getIngredientEvidence(ingredientConceptSet)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

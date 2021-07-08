@@ -1,0 +1,12 @@
+renv
+renv.lock
+.Rproj
+.Rproj.user
+.idea
+errorReportR.txt
+errorReportSql.txt
+.github/*
+.Rprofile
+.Rhistory
+.RData
+.git
