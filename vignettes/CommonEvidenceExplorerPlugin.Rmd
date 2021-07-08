@@ -1,0 +1,76 @@
+---
+title: "Common Evidence Explorer Plugin"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    number_sections: yes
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{Common Evidence Explorer Plugin}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{css echo=FALSE}
+h1  {
+  margin-top: 60px;
+}
+```
+The common evidence explorer is a shiny application and module that can be used within other shiny applications that
+use OMOP standard vocabularies.
+
+## Launching the explorer
+Using the explorer works with either a database cem connector backend or a hosted url solution.
+The simplest solution is to use an API as follows. This will launch the shiny app:
+```{r, eval = FALSE}
+baseUrl <- "https://cem.ohdsi.org/api/v1/"
+launchCeExplorer(apiUrl = baseUrl)
+```
+Alternatively, if database credentials are known the app can launch as follows:
+```{r, eval = FALSE}
+connectionDetails <- DatabaseConnector::createConnectionDetails("postgres", ...)
+launchCeExplorer(connectionDetails = connectionDetails, cemSchema = "cem", sourceSchema = "cem_v3_sources", )
+```
+Consult your organisations administrator for details on connecting in database mode.
+Unless you are serving a large number of requests, this mode is not required.
+
+## Using the explorer shiny module
+
+This approach allows you to import the Shiny module in to your shiny application of choice.
+
+For example:
+
+```{r, eval = FALSE}
+serverFunction <- function(input, output, session) {
+  backend <- CemConnector::CemWebApiBackend$new(apiUrl = "https://cem.ohdsi.org/api/v1/")
+  # Define a reactive that returns a dataframe with standard ingredient concepts
+  ingredientConceptInput <- reactive({ tibble(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0)) })
+  # Define a reactive that returns a dataframe with standard condtion concepts
+  conditionConceptInput <- reactive({ tibble(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0)) })
+  # Define a reactive that returns an integer that for looking up higher levels in the heirarchy
+  siblingLookupLevelsInput <- reactive({ 1 })
+
+  # Call the explorer module
+  ceModuleServer <- ceExplorerModule("explorer",
+                                     backend,
+                                     ingredientConceptInput = ingredientConceptInput,
+                                     conditionConceptInput = conditionConceptInput,
+                                     siblingLookupLevelsInput = siblingLookupLevelsInput)
+}
+
+uiFunction <- function () {
+  explorerTable <- ceExplorerModuleUi("exporer") # The id for the server module and ui should be the same
+  shiny::fluidPage(explorerTable)
+}
+
+shiny::shinyApp(uiFunction, serverFunction)
+```
