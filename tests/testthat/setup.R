@@ -7,14 +7,15 @@ useTestPlumber <- FALSE
 
 if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   # Load API in separate process
-  serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...) {
+  serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...)
+    devtools::load_all()
     connectionDetails <- DatabaseConnector::createConnectionDetails(...)
 
     tryCatch({
-      api <- CemConnector::loadApi(connectionDetails,
-                                   cemSchema = cemSchema,
-                                   vocabularySchema = vocabularySchema,
-                                   sourceSchema = sourceSchema)
+      api <- loadApi(connectionDetails,
+                     cemSchema = cemSchema,
+                     vocabularySchema = vocabularySchema,
+                     sourceSchema = sourceSchema)
       api$setDocs(FALSE)
       writeLines("API LOADED", con = pipe)
       api$run(port = apiPort)
