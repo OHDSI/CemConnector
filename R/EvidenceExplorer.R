@@ -151,11 +151,13 @@ ceExplorerDashboardServer <- function(input, output, session) {
 #' @param connectionDetails DatabaseConnector::connectionDetails instance for CEM
 #' @param usePooledConnection - use pooled connections (database model only)
 #' @param environment - environment to store backend variables in, defaults to globalenv
+#' @param ... param list paased to CemDatabaseBaackend$new
 #' @export
 launchCeExplorer <- function(apiUrl = NULL,
                              connectionDetails = NULL,
                              usePooledConnection = TRUE,
-                             environment = .GlobalEnv, ...) {
+                             environment = .GlobalEnv,
+                             ...) {
   checkmate::assert_class(connectionDetails, "connectionDetails", null.ok = TRUE)
   checkmate::assert_string(apiUrl, null.ok = TRUE)
 

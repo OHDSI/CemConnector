@@ -20,6 +20,8 @@ launchCeExplorer(
 \item{usePooledConnection}{- use pooled connections (database model only)}
 
 \item{environment}{- environment to store backend variables in, defaults to globalenv}
+
+\item{...}{param list paased to CemDatabaseBaackend$new}
 }
 \description{
 Shiny App for exploring common evidence model
