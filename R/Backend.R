@@ -14,7 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+#' CEM Abstract Backend Class
+#' @description
+#' Create subclass of this to use functionality.
+#' #' @export
 AbstractCemBackend <- R6::R6Class(
   "AbstractCemBackend",
   public = list(
