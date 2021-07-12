@@ -25,18 +25,16 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
     })
   }
 
-  jDriverPath <- normalizePath("jDriverPath")
+  jDriverPath <- tempfile()
   dir.create(jDriverPath)
   DatabaseConnector::downloadJdbcDrivers(Sys.getenv("CEM_DATABASE_DBMS"), pathToDriver = jDriverPath)
-  connectionParams <- list(server = Sys.getenv("CEM_DATABASE_SERVER"),
-                           user = Sys.getenv("CEM_DATABASE_USER"),
-                           password = Sys.getenv("CEM_DATABASE_PASSWORD"),
-                           port = Sys.getenv("CEM_DATABASE_PORT"),
-                           dbms = Sys.getenv("CEM_DATABASE_DBMS"),
-                           extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"),
-                           pathToDriver = jDriverPath)
-
-  connectionDetails <- do.call(DatabaseConnector::createConnectionDetails, connectionParams)
+  connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
+                                                                  user = Sys.getenv("CEM_DATABASE_USER"),
+                                                                  password = Sys.getenv("CEM_DATABASE_PASSWORD"),
+                                                                  port = Sys.getenv("CEM_DATABASE_PORT"),
+                                                                  dbms = Sys.getenv("CEM_DATABASE_DBMS"),
+                                                                  extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"),
+                                                                  pathToDriver = jDriverPath)
 
   cemTestSchema <- Sys.getenv("CEM_DATABASE_SCHEMA")
   vocabularySchema <- Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA")
@@ -45,12 +43,12 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   apiPort <- httpuv::randomPort(8000, 8080)
   apiUrl <- paste0("http://localhost:", apiPort)
 
-  sessionCommunication <- normalizePath(paste0("~/test_pipe_", apiPort))
+  sessionCommunication <- tempfile()
   writeLines("", con = sessionCommunication)
   print("Starting api session...")
 
-  stdOut <- normalizePath("~/plumberOut.log")
-  errorOut <- normalizePath("~/plumberError.log")
+  stdOut <- tempfile()
+  errorOut <- tempfile()
 
   apiSession <- callr::r_bg(serverStart,
                             stdout = stdOut,
