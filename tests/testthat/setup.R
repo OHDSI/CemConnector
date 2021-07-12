@@ -7,7 +7,7 @@ useTestPlumber <- FALSE
 
 if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   # Load API in separate process
-  serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...)
+  serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...) {
     devtools::load_all()
     connectionDetails <- DatabaseConnector::createConnectionDetails(...)
 
