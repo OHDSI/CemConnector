@@ -21,6 +21,10 @@
 AbstractCemBackend <- R6::R6Class(
   "AbstractCemBackend",
   public = list(
+    #' Initialize
+    #' @description
+    #' initialize backend object. Will fail in an error - this is an abstract class
+    #' @param ... params
     initialize = function (...) {
       stop("Error: this is an abstract class. initialize function should be implemented by child")
     }

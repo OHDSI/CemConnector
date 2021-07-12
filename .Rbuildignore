@@ -5,3 +5,5 @@
 ^.idea
 errorReportSql.txt
 .github/*
+.dockerignore
+Dockerfile

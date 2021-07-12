@@ -26,9 +26,9 @@
 #' @export
 ceExplorerModule <- function(id,
                              backend,
-                             ingredientConceptInput = reactive({ data.frame() }),
-                             conditionConceptInput = reactive({ data.frame() }),
-                             siblingLookupLevelsInput = reactive({ 0 })) {
+                             ingredientConceptInput = shiny::reactive({ data.frame() }),
+                             conditionConceptInput = shiny::reactive({ data.frame() }),
+                             siblingLookupLevelsInput = shiny::reactive({ 0 })) {
   checkmate::assert_class(backend, "AbstractCemBackend")
   checkmate::assert_class(ingredientConceptInput, "reactive")
   checkmate::assert_class(conditionConceptInput, "reactive")
@@ -130,9 +130,9 @@ ceExplorerUi <- function(request) {
 }
 
 ceExplorerDashboardServer <- function(input, output, session) {
-  ingredientConceptInput <- reactive({ .readCsvString(input$ingredientConcept) })
-  conditionConceptInput <- reactive({ .readCsvString(input$conditionConcept) })
-  siblingLookupLevelsInput <- reactive({ input$siblingLookupLevels })
+  ingredientConceptInput <- shiny::reactive({ .readCsvString(input$ingredientConcept) })
+  conditionConceptInput <- shiny::reactive({ .readCsvString(input$conditionConcept) })
+  siblingLookupLevelsInput <- shiny::reactive({ input$siblingLookupLevels })
 
   output$sourceInfo <- shiny::renderDataTable({ backend$getCemSourceInfo() })
 

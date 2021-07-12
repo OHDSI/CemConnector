@@ -7,9 +7,9 @@
 ceExplorerModule(
   id,
   backend,
-  ingredientConceptInput = reactive({     data.frame() }),
-  conditionConceptInput = reactive({     data.frame() }),
-  siblingLookupLevelsInput = reactive({     0 })
+  ingredientConceptInput = shiny::reactive({     data.frame() }),
+  conditionConceptInput = shiny::reactive({     data.frame() }),
+  siblingLookupLevelsInput = shiny::reactive({     0 })
 )
 }
 \arguments{
