@@ -25,9 +25,12 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
     })
   }
 
-  jDriverPath <- tempfile()
-  dir.create(jDriverPath)
-  DatabaseConnector::downloadJdbcDrivers(Sys.getenv("CEM_DATABASE_DBMS"), pathToDriver = jDriverPath)
+  jDriverPath <- Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
+  if (jDriverPath == "") {
+    jDriverPath <- tempfile("ohdsi_drivers")
+    dir.create(jDriverPath)
+    DatabaseConnector::downloadJdbcDrivers(Sys.getenv("CEM_DATABASE_DBMS"), pathToDriver = jDriverPath)
+  }
   connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
                                                                   user = Sys.getenv("CEM_DATABASE_USER"),
                                                                   password = Sys.getenv("CEM_DATABASE_PASSWORD"),

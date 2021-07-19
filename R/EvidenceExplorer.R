@@ -35,11 +35,12 @@ ceExplorerModule <- function(id,
   checkmate::assert_class(siblingLookupLevelsInput, "reactive")
 
   cemExplorerServer <- function(input, output, session) {
-    output$evidenceTable <- shiny::renderDataTable({
-      output$errorMessage <- shiny::renderText("")
-      ingredientConceptSet <- ingredientConceptInput()
-      conditionConceptSet <- conditionConceptInput()
-      siblingLookupLevels <- as.integer(siblingLookupLevelsInput())
+    output$errorMessage <- shiny::renderText("")
+    ingredientConceptSet <- ingredientConceptInput()
+    conditionConceptSet <- conditionConceptInput()
+    siblingLookupLevels <- as.integer(siblingLookupLevelsInput())
+
+    getRelationships <- shiny::reactive({
       relationships <- data.frame()
 
       if (!(checkmate::check_class(ingredientConceptSet, "data.frame") |
@@ -57,6 +58,10 @@ ceExplorerModule <- function(id,
         }
       }
       relationships
+    })
+
+    output$evidenceTable <- shiny::renderDataTable({
+      getRelationships()
     })
   }
 
@@ -93,7 +98,6 @@ ceExplorerUi <- function(request) {
                                      shiny::p("Evidence uses OMOP Standard Vocabularies at the RXNorm and SNOMED levels"),
                                      shiny::p("For more information visit:"),
                                      shiny::a("https://github.com/OHDSI/CommonEvidenceModel/wiki"))
-
 
   cemSourcesBox <- shinydashboard::box(title = "Evidence Sources", width = 12, shiny::dataTableOutput("sourceInfo"))
 
@@ -133,8 +137,8 @@ ceExplorerDashboardServer <- function(input, output, session) {
   ingredientConceptInput <- shiny::reactive({ .readCsvString(input$ingredientConcept) })
   conditionConceptInput <- shiny::reactive({ .readCsvString(input$conditionConcept) })
   siblingLookupLevelsInput <- shiny::reactive({ input$siblingLookupLevels })
-
-  output$sourceInfo <- shiny::renderDataTable({ backend$getCemSourceInfo() })
+  getSourceInfo <- shiny::reactive({ backend$getCemSourceInfo() })
+  output$sourceInfo <- shiny::renderDataTable({ getSourceInfo() })
 
   ceModuleServer <- ceExplorerModule("explorer",
                                      backend,
