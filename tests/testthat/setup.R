@@ -8,7 +8,6 @@ useTestPlumber <- FALSE
 if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   # Load API in separate process
   serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...) {
-    devtools::load_all()
     connectionDetails <- DatabaseConnector::createConnectionDetails(...)
 
     tryCatch({
@@ -56,6 +55,7 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   apiSession <- callr::r_bg(serverStart,
                             stdout = stdOut,
                             stderr = errorOut,
+                            package =  TRUE,
                             args = list(pipe = sessionCommunication,
                                         apiPort = apiPort,
                                         server = Sys.getenv("CEM_DATABASE_SERVER"),

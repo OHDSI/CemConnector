@@ -26,6 +26,7 @@ Depends:
 Suggests:
     testthat,
     devtools,
+    RSQLite,
     Eunomia,
     callr,
     withr,

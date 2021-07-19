@@ -36,13 +36,11 @@ ceExplorerModule <- function(id,
 
   cemExplorerServer <- function(input, output, session) {
     output$errorMessage <- shiny::renderText("")
-    ingredientConceptSet <- ingredientConceptInput()
-    conditionConceptSet <- conditionConceptInput()
-    siblingLookupLevels <- as.integer(siblingLookupLevelsInput())
-
     getRelationships <- shiny::reactive({
       relationships <- data.frame()
-
+      ingredientConceptSet <- ingredientConceptInput()
+      conditionConceptSet <- conditionConceptInput()
+      siblingLookupLevels <- as.integer(siblingLookupLevelsInput())
       if (!(checkmate::check_class(ingredientConceptSet, "data.frame") |
         checkmate::check_class(conditionConceptSet, "data.frame"))) {
         output$errorMessage <- shiny::renderText("Invalid concept sets defined")

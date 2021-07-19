@@ -1,25 +1,5 @@
-backend <- CemDatabaseBackend$new(connectionDetails,
-                                  cemSchema = cemTestSchema,
-                                  vocabularySchema = vocabularySchema,
-                                  sourceSchema = sourceInfoSchema)
+backend <- CemWebApiBackend$new(apiUrl)
 
-test_that("module loads", {
-  shiny::testServer(ceExplorerModule, args = list(backend = backend,
-                                                  ingredientConceptInput = shiny::reactive({ data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0) }),
-                                                  conditionConceptInput = shiny::reactive({ data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0) }),
-                                                  siblingLookupLevelsInput = shiny::reactive({ 1 })), {
-    ingConcept <- ingredientConceptInput()
-    expect_data_frame(ingConcept)
-    condConcept <- conditionConceptInput()
-    expect_data_frame(condConcept)
-    expect_equal(siblingLookupLevelsInput(), 1)
-    expect_true(output$errorMessage == "")
-
-    relationships <- getRelationships()
-    expect_true(output$errorMessage == "")
-    expect_data_frame(relationships)
-  })
-})
 test_that("explorer loads", {
 
   .GlobalEnv$backend <- backend
@@ -38,4 +18,51 @@ test_that("explorer loads", {
 
     session$setInputs(conditionConcept = "", ingredientConcept = "")
   })
+})
+
+test_that("module loads and functions", {
+  shiny::testServer(ceExplorerModule, args = list(backend = backend,
+                                                  ingredientConceptInput = shiny::reactive({ data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0) }),
+                                                  conditionConceptInput = shiny::reactive({ data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0) }),
+                                                  siblingLookupLevelsInput = shiny::reactive({ 1 })), {
+    ingConcept <- ingredientConceptInput()
+    expect_data_frame(ingConcept)
+    condConcept <- conditionConceptInput()
+    expect_data_frame(condConcept)
+    expect_equal(siblingLookupLevelsInput(), 1)
+    expect_true(output$errorMessage == "")
+
+    relationships <- getRelationships()
+    expect_true(output$errorMessage == "")
+    expect_data_frame(relationships)
+  })
+
+  shiny::testServer(ceExplorerModule, args = list(backend = backend), {
+    relationships <- getRelationships()
+    expect_true(output$errorMessage == "No concept sets defined")
+    expect_data_frame(relationships)
+  })
+
+  shiny::testServer(ceExplorerModule, args = list(backend = backend,
+                                                  conditionConceptInput = shiny::reactive({ data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0) }),
+                                                  siblingLookupLevelsInput = shiny::reactive({ 1 })), {
+    relationships <- getRelationships()
+    expect_true(output$errorMessage == "")
+    expect_data_frame(relationships)
+  })
+
+  shiny::testServer(ceExplorerModule, args = list(backend = backend,
+                                                  ingredientConceptInput = shiny::reactive({ data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0) })), {
+
+    relationships <- getRelationships()
+    expect_true(output$errorMessage == "")
+    expect_data_frame(relationships)
+  })
+
+})
+
+test_that("Ui functions execute", {
+  # Just a test that the code runs, no real logic or UI testing
+  expect_class(ceExplorerModuleUi("test"), "shiny.tag")
+  expect_class(ceExplorerUi(shiny::req(a = 1)), "shiny.tag")
 })

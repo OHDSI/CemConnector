@@ -1,5 +1,13 @@
 # Implementations of database connection should function in the same way
-genericTests <- function(connClass, classes) {
+genericTests <- function(connClass, classes, connectionClass) {
+  ParallelLogger::clearLoggers()
+  logfile <- tempfile("log")
+  ParallelLogger::addDefaultFileLogger(logfile)
+
+  on.exit({
+    unlink(logfile)
+  }, add =TRUE)
+
   conn <- connClass$new(Eunomia::getEunomiaConnectionDetails())
   expect_class(conn, classes)
 
@@ -11,10 +19,20 @@ genericTests <- function(connClass, classes) {
   expect_true(conn$isActive)
   expect_true(DBI::dbIsValid(dbObj = conn$con))
 
-  data <- conn$queryDb("SELECT count(*) AS cnt FROM main.person")
+  data <- conn$queryDb("SELECT count(*) AS cnt_test FROM main.person")
 
   expect_data_frame(data)
-  expect_equal(data$cnt, 2694)
+  expect_equal(data$cntTest, 2694)
+
+  data2 <- conn$queryDb("SELECT count(*) AS cnt_test FROM main.person", snakeCaseToCamelCase = FALSE)
+
+  expect_data_frame(data2)
+  expect_equal(data2$CNT_TEST, 2694)
+
+  expect_error(conn$queryDb("SELECT 1 * WHERE;"))
+
+  loglines <- readLines(logfile)
+  expect_match(loglines, "near \"WHERE\": syntax error")
 
   conn$closeConnection()
   expect_false(conn$isActive)
@@ -23,13 +41,14 @@ genericTests <- function(connClass, classes) {
   expect_true(conn$isActive)
 
   expect_warning(conn$initConnection(), "Closing existing connection")
+  expect_class(conn$getConnection(), connectionClass)
   conn$closeConnection()
 }
 
 test_that("Database Connector Class works", {
-  genericTests(ConnectionHandler, c("ConnectionHandler"))
+  genericTests(ConnectionHandler, c("ConnectionHandler"), "DatabaseConnectorDbiConnection")
 })
 
 test_that("Pooled connector Class works", {
-  genericTests(PooledConnectionHandler, c("PooledConnectionHandler", "ConnectionHandler"))
+  genericTests(PooledConnectionHandler, c("PooledConnectionHandler", "ConnectionHandler"), "Pool")
 })

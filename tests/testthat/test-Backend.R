@@ -10,6 +10,10 @@ withr::defer({
   backend$finalize()
 }, testthat::teardown_env())
 
+test_that("Abstract class can't be instantiated", {
+  expect_error(AbstractCemBackend$new(), "is an abstract class. initialize function should be implemented by child")
+})
+
 test_that("DB Backend loads", {
   expect_class(backend, "CemDatabaseBackend")
   expect_class(backend$connection, "ConnectionHandler")
@@ -42,25 +46,25 @@ test_that("get exposure and outcome control concepts evidence", {
   # Mild Depression, but use of sibling lookups
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
   ingredientConcepts <- backend$getConditionEvidenceSummary(srchOutcomeConceptSet, siblingLookupLevels = 1)
-  expect_data_frame(ingredientConcepts, min.rows = 100)
+  expect_data_frame(ingredientConcepts, min.rows = 10)
 
   ingredientConceptEvdience <- backend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
-  expect_data_frame(ingredientConceptEvdience, min.rows = 100)
+  expect_data_frame(ingredientConceptEvdience, min.rows = 10)
 
   # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
-  expect_data_frame(outcomeConcepts, min.rows = 100)
+  expect_data_frame(outcomeConcepts, min.rows = 10)
 
   # ATC class test (Other opioids) - should not be in ingredients but should return set
   srchIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
-  expect_data_frame(outcomeConcepts, min.rows = 100)
+  expect_data_frame(outcomeConcepts, min.rows = 10)
 
   # Search grouped sets should not return repeat ids
   srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1, 0), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
-  expect_data_frame(outcomeConcepts, min.rows = 100)
+  expect_data_frame(outcomeConcepts, min.rows = 10)
   expect_true(length(outcomeConcepts$conditionConceptId) == length(unique(outcomeConcepts$conditionConceptId)))
 
   outcomeConceptEvidence <- backend$getIngredientEvidence(srchIngredientSet)
@@ -70,7 +74,7 @@ test_that("get exposure and outcome control concepts evidence", {
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
   relationships <- backend$getRelationships(ingredientConceptSet = srchIngredientSet, conditionConceptSet = srchOutcomeConceptSet, conditionSiblingLookupLevels = 1)
 
-  expect_data_frame(relationships, min.rows = 100)
+  expect_data_frame(relationships, min.rows = 10)
 })
 
 test_that("Test relationship sql logic combinations", {
@@ -132,8 +136,8 @@ test_that("web backend returns equivalent results", {
 
   ingredientConceptEvdience <- backend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
   ingredientConceptEvdienceWeb <- webBackend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
-
-  expect_true(dplyr::all_equal(ingredientConceptEvdience, ingredientConceptEvdienceWeb))
+  expect_true(nrow(ingredientConceptEvdience) > 10)
+  expect_equal(nrow(ingredientConceptEvdience), nrow(ingredientConceptEvdienceWeb))
 
   # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
