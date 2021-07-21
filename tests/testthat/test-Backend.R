@@ -46,7 +46,7 @@ test_that("get exposure and outcome control concepts evidence", {
   # Mild Depression, but use of sibling lookups
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
   ingredientConcepts <- backend$getConditionEvidenceSummary(srchOutcomeConceptSet, siblingLookupLevels = 1)
-  expect_data_frame(ingredientConcepts, min.rows = 10)
+  expect_data_frame(ingredientConcepts, min.rows = 1)
 
   ingredientConceptEvdience <- backend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
   expect_data_frame(ingredientConceptEvdience, min.rows = 10)
@@ -136,7 +136,7 @@ test_that("web backend returns equivalent results", {
 
   ingredientConceptEvdience <- backend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
   ingredientConceptEvdienceWeb <- webBackend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
-  expect_true(nrow(ingredientConceptEvdience) > 10)
+  expect_true(nrow(ingredientConceptEvdience) > 0)
   expect_equal(nrow(ingredientConceptEvdience), nrow(ingredientConceptEvdienceWeb))
 
   # Codene - common ingredient

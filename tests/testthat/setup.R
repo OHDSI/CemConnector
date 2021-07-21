@@ -8,6 +8,7 @@ useTestPlumber <- FALSE
 if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   # Load API in separate process
   serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...) {
+    devtools::load_all()
     connectionDetails <- DatabaseConnector::createConnectionDetails(...)
 
     tryCatch({
@@ -28,19 +29,25 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   if (jDriverPath == "") {
     jDriverPath <- tempfile("ohdsi_drivers")
     dir.create(jDriverPath)
-    DatabaseConnector::downloadJdbcDrivers(Sys.getenv("CEM_DATABASE_DBMS"), pathToDriver = jDriverPath)
+    DatabaseConnector::downloadJdbcDrivers("sqlite", pathToDriver = jDriverPath)
+    withr::defer({
+      unlink(jDriverPath)
+    },
+    testthat::teardown_env())
   }
-  connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
-                                                                  user = Sys.getenv("CEM_DATABASE_USER"),
-                                                                  password = Sys.getenv("CEM_DATABASE_PASSWORD"),
-                                                                  port = Sys.getenv("CEM_DATABASE_PORT"),
-                                                                  dbms = Sys.getenv("CEM_DATABASE_DBMS"),
-                                                                  extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"),
-                                                                  pathToDriver = jDriverPath)
 
-  cemTestSchema <- Sys.getenv("CEM_DATABASE_SCHEMA")
-  vocabularySchema <- Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA")
-  sourceInfoSchema <- Sys.getenv("CEM_DATABASE_INFO_SCHEMA")
+
+  sqlidb <- tempfile(fileext = ".sqlite")
+  connectionDetails <- DatabaseConnector::createConnectionDetails(dbms="sqlite", server = sqlidb)
+  .loadCemTestFixtures(connectionDetails)
+
+  withr::defer({
+    unlink(sqlidb)
+  }, testthat::teardown_env())
+
+  cemTestSchema <- "main"
+  vocabularySchema <- "main"
+  sourceInfoSchema <- "main"
 
   apiPort <- httpuv::randomPort(8000, 8080)
   apiUrl <- paste0("http://localhost:", apiPort)
@@ -58,12 +65,8 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
                             package =  TRUE,
                             args = list(pipe = sessionCommunication,
                                         apiPort = apiPort,
-                                        server = Sys.getenv("CEM_DATABASE_SERVER"),
-                                        user = Sys.getenv("CEM_DATABASE_USER"),
-                                        password = Sys.getenv("CEM_DATABASE_PASSWORD"),
-                                        port = Sys.getenv("CEM_DATABASE_PORT"),
-                                        dbms = Sys.getenv("CEM_DATABASE_DBMS"),
-                                        extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"),
+                                        dbms = "sqlite",
+                                        server = sqlidb,
                                         pathToDriver = jDriverPath,
                                         cemSchema = cemTestSchema,
                                         vocabularySchema = vocabularySchema,
@@ -71,8 +74,9 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
 
   withr::defer({
     apiSession$kill()
-    unlink(jDriverPath)
     unlink(sessionCommunication)
+    unlink(stdOut)
+    unlink(errorOut)
   }, testthat::teardown_env())
 
 

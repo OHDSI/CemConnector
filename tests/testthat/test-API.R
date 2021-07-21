@@ -43,7 +43,7 @@ test_that("Test get condition evidence", {
   # Turn response in to data frame
   data <- do.call(rbind.data.frame, content$result)
 
-  expect_data_frame(data, min.rows = 10)
+  expect_data_frame(data, min.rows = 1)
 })
 
 test_that("Test get ingredient evidence", {
@@ -57,7 +57,7 @@ test_that("Test get ingredient evidence", {
   # Turn response in to data frame
   data <- do.call(rbind.data.frame, content$result)
 
-  expect_data_frame(data, min.rows = 10)
+  expect_data_frame(data, min.rows = 100)
 })
 
 test_that("Test get relationships", {
