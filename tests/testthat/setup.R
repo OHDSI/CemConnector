@@ -1,3 +1,4 @@
+# Run extra/test/realInstanceTest.R For testing against a real CEM instance
 apiUrl <- getOption("CemConnector.useHostedUrl")
 connectionDetails <- getOption("CemConnectionDetails")
 cemTestSchema <- getOption("cemTestSchema")
@@ -24,18 +25,6 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
       writeLines(err, con = pipe)
     })
   }
-
-  jDriverPath <- Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
-  if (jDriverPath == "") {
-    jDriverPath <- tempfile("ohdsi_drivers")
-    dir.create(jDriverPath)
-    DatabaseConnector::downloadJdbcDrivers("sqlite", pathToDriver = jDriverPath)
-    withr::defer({
-      unlink(jDriverPath)
-    },
-    testthat::teardown_env())
-  }
-
 
   sqlidb <- tempfile(fileext = ".sqlite")
   connectionDetails <- DatabaseConnector::createConnectionDetails(dbms="sqlite", server = sqlidb)
@@ -67,7 +56,6 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
                                         apiPort = apiPort,
                                         dbms = "sqlite",
                                         server = sqlidb,
-                                        pathToDriver = jDriverPath,
                                         cemSchema = cemTestSchema,
                                         vocabularySchema = vocabularySchema,
                                         sourceSchema = sourceInfoSchema))
