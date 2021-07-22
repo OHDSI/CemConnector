@@ -77,6 +77,7 @@ ceExplorerModuleUi <- function(id) {
              shiny::dataTableOutput(ns("evidenceTable")))
 }
 
+#' @importFrom utils packageVersion read.csv
 ceExplorerUi <- function(request) {
 
   inputArea <- shinydashboard::box(title = "Input concept sets (Raw CSV)",
@@ -103,7 +104,7 @@ ceExplorerUi <- function(request) {
                                              width = 6,
                                              shiny::p("CE Explorer is part of the CemConnector package and is open source under the Apaceh License version 2.0. Latest package available at:"),
                                              shiny::a("https://github.com/OHDSI/CemConnector"),
-                                             shiny::p(paste("Client package version:", packageVersion("CemConnector"))))
+                                             shiny::p(paste("Client package version:", utils::packageVersion("CemConnector"))))
 
   controlsTab <- shiny::fluidRow(shiny::p("Coming soon"))
 
@@ -112,10 +113,10 @@ ceExplorerUi <- function(request) {
                                                                  shinydashboard::tabItem(tabName = "Controls", controlsTab),
                                                                  shinydashboard::tabItem(tabName = "Explore", explorerTab)))
 
-  sidebar <- shinydashboard::dashboardSidebar(shinydashboard::sidebarMenu(shinydashboard::menuItem("About", tabName = "About", icon = icon("list-alt")),
-                                                                          shinydashboard::menuItem("Explore Evidence", tabName = "Explore", icon = icon("table")),
-                                                                          shinydashboard::menuItem("Negative controls", tabName = "Controls", icon = icon("search")),
-                                                                          bookmarkButton()))
+  sidebar <- shinydashboard::dashboardSidebar(shinydashboard::sidebarMenu(shinydashboard::menuItem("About", tabName = "About", icon = shiny::icon("list-alt")),
+                                                                          shinydashboard::menuItem("Explore Evidence", tabName = "Explore", icon = shiny::icon("table")),
+                                                                          shinydashboard::menuItem("Negative controls", tabName = "Controls", icon = shiny::icon("search")),
+                                                                          shiny::bookmarkButton()))
 
   shinydashboard::dashboardPage(shinydashboard::dashboardHeader(title = "CE Explorer"),
                                 sidebar,
@@ -125,7 +126,7 @@ ceExplorerUi <- function(request) {
 .readCsvString <- function(text) {
   data <- data.frame()
   tryCatch({
-    data <- read.csv(text = text)
+    data <- utils::read.csv(text = text)
   }, error = function(error) { })
 
   data
