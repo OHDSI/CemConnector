@@ -205,11 +205,32 @@ CemDatabaseBackend <- R6::R6Class(
                               condition_concepts_no_desc = conditionConceptNoDesc) %>% dplyr::select(-id)
     },
 
-    #'@description
+    #' @description
     #' Get CEM source info as a dataframe
     #' @returns data.frame of sources
     getCemSourceInfo = function() {
       return(self$connection$queryDb("SELECT * FROM @schema.source", schema = self$sourceSchema))
+    },
+
+    #' @description
+    #' Get negative control snomed condition concepts for a given conceptset
+    #' These are ranked by co-occurence accross ohdsi studies
+    #' A negative control for a submitted concept_set is valid if there is no evidence for the outcome
+    #' @returns data.frame of condition concept_id and concept_name
+    getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 50) {
+      private$checkConceptSet(ingredientConceptSet)
+      ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
+      ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
+
+      sql <- private$loadSqlFile("getRankedNcOutcomes.sql")
+      self$connection$queryDb(sql,
+                              n_controls = nControls,
+                              vocabulary = self$vocabularySchema,
+                              cem_schema = self$cemSchema,
+                              concept_desc = ingredientConceptDesc,
+                              concept_no_desc = ingredientConceptNoDesc)
+
+
     }
   ),
 

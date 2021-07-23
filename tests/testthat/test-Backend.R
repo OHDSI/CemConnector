@@ -67,6 +67,9 @@ test_that("get exposure and outcome control concepts evidence", {
   expect_data_frame(outcomeConcepts, min.rows = 10)
   expect_true(length(outcomeConcepts$conditionConceptId) == length(unique(outcomeConcepts$conditionConceptId)))
 
+  sugestedControls <- backend$getSuggestedControlCondtions(srchIngredientSet)
+  expect_data_frame(outcomeConcepts, min.rows = 50)
+
   outcomeConceptEvidence <- backend$getIngredientEvidence(srchIngredientSet)
   expect_data_frame(outcomeConceptEvidence)
 
