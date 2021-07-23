@@ -12,28 +12,24 @@ test_that("load function works", {
 })
 
 test_that("Test api alive", {
-  skip_if_not(useTestPlumber, "Test plumber not loaded")
   resp <- httr::GET(apiUrl)
   info <- httr::content(resp, as = "parsed")
   expect_equal(info$status, "alive")
 })
 
 test_that("Test api version", {
-  skip_if_not(useTestPlumber, "Test plumber not loaded")
   resp <- httr::GET(paste0(apiUrl, "/version"))
   info <- httr::content(resp, as = "parsed")
   expect_equal(info$version, paste(packageVersion("CemConnector")))
 })
 
 test_that("Test get source info", {
-  skip_if_not(useTestPlumber, "Test plumber not loaded")
   resp <- httr::GET(paste0(apiUrl, "/cemSourceInfo"))
   content <- httr::content(resp, as = "parsed")
   expect_true(length(content$result) > 5)
 })
 
 test_that("Test get condition evidence", {
-  skip_if_not(useTestPlumber, "Test plumber not loaded")
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
 
   resp <- httr::POST(paste0(apiUrl, "/conditionEvidenceSummary"),
@@ -47,7 +43,6 @@ test_that("Test get condition evidence", {
 })
 
 test_that("Test get ingredient evidence", {
-  skip_if_not(useTestPlumber, "Test plumber not loaded")
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
 
   resp <- httr::POST(paste0(apiUrl, "/ingredientEvidenceSummary"),
@@ -60,8 +55,33 @@ test_that("Test get ingredient evidence", {
   expect_data_frame(data, min.rows = 100)
 })
 
+test_that("Test get outcome controls", {
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+
+  resp <- httr::POST(paste0(apiUrl, "/suggestedControlConditions"),
+                     body = list(ingredientConceptSet = srchIngredientSet),
+                     encode = "json")
+  content <- httr::content(resp, as = "parsed")
+  # Turn response in to data frame
+  data <- do.call(rbind.data.frame, content$result)
+
+  expect_data_frame(data, min.rows = 50, max.rows = 50)
+})
+
+test_that("Test get exposure controls", {
+  srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
+
+  resp <- httr::POST(paste0(apiUrl, "/suggestedControlIngredients"),
+                     body = list(conditionConceptSet = srchOutcomeConceptSet, siblingLookupLevels = 1),
+                     encode = "json")
+  content <- httr::content(resp, as = "parsed")
+  # Turn response in to data frame
+  data <- do.call(rbind.data.frame, content$result)
+
+  expect_data_frame(data)
+})
+
 test_that("Test get relationships", {
-  skip_if_not(useTestPlumber, "Test plumber not loaded")
   srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1, 0), isExcluded = c(0))
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
 

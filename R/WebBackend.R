@@ -126,6 +126,38 @@ CemWebApiBackend <- R6::R6Class(
     getVersion = function() {
       endpoint <- "version"
       self$request("GET", endpoint)
+    },
+
+    #' @description
+    #' Get negative control snomed condition concepts for a given conceptset
+    #' These are ranked by co-occurence accross ohdsi studies
+    #' A negative control for a submitted concept_set is valid if there is no evidence for the outcome
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
+    #' @returns data.frame of condition concept_id and concept_name
+    getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 50) {
+      endpoint <- "suggestedControlConditions"
+      content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet,
+                                                            nControls = nControls))
+
+      dplyr::bind_rows(content$result)
+    },
+
+    #' @description
+    #' Get negative control rxnorm ingredient concepts for a given conceptset
+    #' These are ranked by co-occurence accross ohdsi studies
+    #' A negative control for a submitted concept_set is valid if there is no evidence for the ingredient/condition combination
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
+    #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
+    #' @returns data.frame of condition concept_id and concept_name
+    getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 50) {
+      endpoint <- "suggestedControlIngredient"
+      content <- self$request("POST", endpoint, body = list(conditionConceptSet = conditionConceptSet,
+                                                            siblingLookupLevels = siblingLookupLevels,
+                                                            nControls = nControls))
+
+      dplyr::bind_rows(content$result)
     }
   )
 )

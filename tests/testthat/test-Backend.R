@@ -51,6 +51,10 @@ test_that("get exposure and outcome control concepts evidence", {
   ingredientConceptEvdience <- backend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
   expect_data_frame(ingredientConceptEvdience, min.rows = 10)
 
+  # This test is incomplete in the sqlite tests because of limited data
+  sugestedControlsIngredients <- backend$getSuggestedControlIngredients(srchOutcomeConceptSet, siblingLookupLevels = 1)
+  expect_data_frame(sugestedControlsIngredients)
+
   # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
@@ -68,7 +72,7 @@ test_that("get exposure and outcome control concepts evidence", {
   expect_true(length(outcomeConcepts$conditionConceptId) == length(unique(outcomeConcepts$conditionConceptId)))
 
   sugestedControls <- backend$getSuggestedControlCondtions(srchIngredientSet)
-  expect_data_frame(outcomeConcepts, min.rows = 50)
+  expect_data_frame(sugestedControls, min.rows = 50)
 
   outcomeConceptEvidence <- backend$getIngredientEvidence(srchIngredientSet)
   expect_data_frame(outcomeConceptEvidence)
@@ -124,7 +128,6 @@ test_that("Test relationship sql logic combinations", {
 })
 
 test_that("web backend returns equivalent results", {
-  skip_if_not(useTestPlumber, "Test plumber not loaded")
   webBackend <- CemWebApiBackend$new(apiUrl)
 
   expect_class(webBackend, "CemWebApiBackend")
@@ -171,5 +174,14 @@ test_that("web backend returns equivalent results", {
   # For some reason all_equal fails here. Solution: some manaul checks of data
   expect_equal(nrow(relationships), nrow(relationshipsWeb))
   expect_set_equal(colnames(relationships), colnames(relationshipsWeb))
+
+  # NOTE: This test is incomplete in the sqlite tests because of limited data - tested in live setting only.
+  # Just tests function call, not data accuracy
+  suggestedControlsIngredients <- backend$getSuggestedControlIngredients(srchOutcomeConceptSet, siblingLookupLevels = 1)
+  suggestedControlsIngredientsWeb <- webBackend$getSuggestedControlIngredients(srchOutcomeConceptSet, siblingLookupLevels = 1)
+
+  suggestedControlsOutcome <- backend$getSuggestedControlCondtions(srchIngredientSet)
+  suggestedControlsOutcomeWeb <- webBackend$getSuggestedControlCondtions(srchIngredientSet)
+  expect_true(dplyr::all_equal(suggestedControlsOutcome, suggestedControlsOutcomeWeb))
 
 })
