@@ -47,4 +47,4 @@ INNER JOIN (
 ) ies ON (iq.condition_concept_id = ies.condition_concept_id AND ies.evidence_exists = 0)
 INNER JOIN @vocabulary.concept c ON c.concept_id = iq.condition_concept_id
 GROUP BY iq.condition_concept_id, c.concept_name
-ORDER BY min(iq.sort_order) DESC;
+ORDER BY min(iq.sort_order) ASC;
