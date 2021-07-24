@@ -3,6 +3,11 @@
 \name{CemWebApiBackend}
 \alias{CemWebApiBackend}
 \title{CEM Web Backend Class}
+\value{
+data.frame of condition concept_id and concept_name
+
+data.frame of condition concept_id and concept_name
+}
 \description{
 An interface to the common evidence model that uses http requests
 }
@@ -29,6 +34,8 @@ An interface to the common evidence model that uses http requests
 \item \href{#method-getRelationships}{\code{CemWebApiBackend$getRelationships()}}
 \item \href{#method-getCemSourceInfo}{\code{CemWebApiBackend$getCemSourceInfo()}}
 \item \href{#method-getVersion}{\code{CemWebApiBackend$getVersion()}}
+\item \href{#method-getSuggestedControlCondtions}{\code{CemWebApiBackend$getSuggestedControlCondtions()}}
+\item \href{#method-getSuggestedControlIngredients}{\code{CemWebApiBackend$getSuggestedControlIngredients()}}
 \item \href{#method-clone}{\code{CemWebApiBackend$clone()}}
 }
 }
@@ -208,6 +215,57 @@ getVersion information from api
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getVersion()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getSuggestedControlCondtions"></a>}}
+\if{latex}{\out{\hypertarget{method-getSuggestedControlCondtions}{}}}
+\subsection{Method \code{getSuggestedControlCondtions()}}{
+Get negative control snomed condition concepts for a given conceptset
+These are ranked by co-occurence accross ohdsi studies
+A negative control for a submitted concept_set is valid if there is no evidence for the outcome
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getSuggestedControlCondtions(
+  ingredientConceptSet,
+  nControls = 50
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{ingredientConceptSet}}{data.frame conforming to conceptset format, must be standard RxNorm Ingredients}
+
+\item{\code{nControls}}{topN controls to select - the maximum number will be limited by available concepts without related evidence}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getSuggestedControlIngredients"></a>}}
+\if{latex}{\out{\hypertarget{method-getSuggestedControlIngredients}{}}}
+\subsection{Method \code{getSuggestedControlIngredients()}}{
+Get negative control rxnorm ingredient concepts for a given conceptset
+These are ranked by co-occurence accross ohdsi studies
+A negative control for a submitted concept_set is valid if there is no evidence for the ingredient/condition combination
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getSuggestedControlIngredients(
+  conditionConceptSet,
+  siblingLookupLevels = 0,
+  nControls = 50
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{conditionConceptSet}}{data.frame conforming to conceptset format, must be standard SNOMED conditions}
+
+\item{\code{siblingLookupLevels}}{where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump}
+
+\item{\code{nControls}}{topN controls to select - the maximum number will be limited by available concepts without related evidence}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
