@@ -64,5 +64,43 @@ test_that("module loads and functions", {
 test_that("Ui functions execute", {
   # Just a test that the code runs, no real logic or UI testing
   expect_class(ceExplorerModuleUi("test"), "shiny.tag")
+  expect_class(negativeControlSelectorUi("test2"), "shiny.tag")
   expect_class(ceExplorerUi(shiny::req(a = 1)), "shiny.tag")
+})
+
+
+test_that("Negative control module", {
+  .GlobalEnv$backend <- backend
+  shiny::testServer(negativeControlSelectorModule, args = list(backend = backend,
+                                                               conceptInput = shiny::reactive({ data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0) }),
+                                                               siblingLookupLevelsInput = shiny::reactive({ 1 })), {
+    ingConcept <- conceptInput()
+    expect_equal(siblingLookupLevelsInput(), 1)
+    expect_true(output$errorMessage == "")
+
+    ctrls <- getControls()
+    expect_true(output$errorMessage == "")
+    expect_data_frame(ctrls)
+  })
+
+  shiny::testServer(negativeControlSelectorModule, args = list(backend = backend,
+                                                               conceptInput = shiny::reactive({ data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0) }),
+                                                               isOutcomeSearch = shiny::reactive({ FALSE }),
+                                                               siblingLookupLevelsInput = shiny::reactive({ 1 })), {
+    ingConcept <- conceptInput()
+    expect_equal(siblingLookupLevelsInput(), 1)
+    expect_true(output$errorMessage == "")
+
+    ctrls <- getControls()
+    expect_true(output$errorMessage == "")
+    expect_data_frame(ctrls)
+  })
+
+  shiny::testServer(negativeControlSelectorModule, args = list(backend = backend,
+                                                               conceptInput = shiny::reactive({ NULL })), {
+    ctrls <- getControls()
+    expect_true(output$errorMessage == "Invalid concept set")
+    expect_data_frame(ctrls)
+  })
+
 })

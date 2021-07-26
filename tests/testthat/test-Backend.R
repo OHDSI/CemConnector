@@ -33,6 +33,9 @@ test_that("summary works web", {
   webBackend <- CemWebApiBackend$new(apiUrl)
   sinfo <- webBackend$getCemSourceInfo()
   expect_data_frame(sinfo)
+
+  # 404 handled
+  expect_error({ webBackend$request("GET", "nonexistentendpoint") }, "Request error 404")
 })
 
 test_that("get exposure and outcome control concepts evidence", {

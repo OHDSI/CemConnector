@@ -47,6 +47,10 @@ CemWebApiBackend <- R6::R6Class(
                          "GET" = httr::GET)
 
       response <- callFunc(url, encode = "json", ...)
+      if (response$status_code != 200) {
+        content <- httr::content(response, as = "parsed")
+        stop("Request error ", response$status_code, content$error)
+      }
       httr::content(response, as = "parsed")
     },
 
@@ -152,7 +156,7 @@ CemWebApiBackend <- R6::R6Class(
     #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
     #' @returns data.frame of condition concept_id and concept_name
     getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 50) {
-      endpoint <- "suggestedControlIngredient"
+      endpoint <- "suggestedControlIngredients"
       content <- self$request("POST", endpoint, body = list(conditionConceptSet = conditionConceptSet,
                                                             siblingLookupLevels = siblingLookupLevels,
                                                             nControls = nControls))

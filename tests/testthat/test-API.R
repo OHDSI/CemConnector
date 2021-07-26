@@ -8,7 +8,7 @@ test_that("load function works", {
   expect_s3_class(api, "Plumber")
   # Test load endpoints
   expect_class(tenv$cemBackendApi, "CemDatabaseBackend")
-  tenv$cemBackendApi$finalize()
+  rm(api)
 })
 
 test_that("Test api alive", {

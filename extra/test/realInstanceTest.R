@@ -51,6 +51,10 @@ apiProcess <- callr::r_bg(serverStart,
                                       dbms = Sys.getenv("LIVE_CEM_DATABASE_DBMS"),
                                       extraSettings = Sys.getenv("LIVE_CEM_DATABASE_EXTRA_SETTINGS")))
 
+message("running background process at: ", apiUrl)
+message("Swagger at: ", apiUrl, "/__docs__/")
+
+
 options(
   "CemConnector.useHostedUrl" = apiUrl,
   "CemConnectionDetails" = connectionDetails,
