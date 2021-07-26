@@ -42,6 +42,7 @@ An interface to the common evidence model that uses http requests
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
+\item \out{<span class="pkg-link" data-pkg="CemConnector" data-topic="AbstractCemBackend" data-id="finalize">}\href{../../CemConnector/html/AbstractCemBackend.html#method-finalize}{\code{CemConnector::AbstractCemBackend$finalize()}}\out{</span>}
 }
 \out{</details>}
 }
