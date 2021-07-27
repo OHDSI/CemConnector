@@ -30,10 +30,10 @@ CemWebApiBackend <- R6::R6Class(
      #' initialzie object
      #' @param apiUrl String URL parameter for hosted
     initialize = function(apiUrl) {
-      self$apiUrl <- apiUrl
+      # Remove trailing slash
+      self$apiUrl <- gsub("/$", "", apiUrl)
       checkmate::assert(self$getStatus()$status == "alive")
     },
-
 
     #' @description
     #' Do a web request
@@ -49,7 +49,7 @@ CemWebApiBackend <- R6::R6Class(
       response <- callFunc(url, encode = "json", ...)
       if (response$status_code != 200) {
         content <- httr::content(response, as = "parsed")
-        stop("Request error ", response$status_code, content$error)
+        stop("Request error ", content$error)
       }
       httr::content(response, as = "parsed")
     },
