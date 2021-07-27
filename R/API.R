@@ -25,6 +25,7 @@
 #' @param pathToPlumberApi path to plumber script (default is package's)
 #' @param envir R environment
 #' @returns Plumber router object
+#' @importFrom plumber pr pr_hook
 #' @export
 loadApi <- function(connectionDetails,
                     cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),

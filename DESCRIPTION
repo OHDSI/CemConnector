@@ -8,20 +8,20 @@ Description: RESTFul API and Database Backend connections for the OHDSI Common E
     Built around an R Plumber api.
 VignetteBuilder: knitr
 Depends:
-	DatabaseConnector (>= 4.0.0),
-	pool,
-	R (>= 4.0.0),
-	checkmate,
-    ParallelLogger,
+    R (>= 4.0.0),
+    DatabaseConnector (>= 4.0.0),
+    checkmate,
+    R6
+Imports:
+    shiny,
+    shinydashboard,
     plumber,
-    R6,
-    magrittr,
+    pool,
+    DBI,
     SqlRender,
     httr,
+    magrittr,
     dplyr,
-    DBI,
-    shinydashboard,
-    shiny,
     shinycssloaders
 Suggests:
     testthat,

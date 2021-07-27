@@ -8,7 +8,6 @@ launchCeExplorer(
   apiUrl = NULL,
   connectionDetails = NULL,
   usePooledConnection = TRUE,
-  environment = .GlobalEnv,
   ...
 )
 }
@@ -18,8 +17,6 @@ launchCeExplorer(
 \item{connectionDetails}{DatabaseConnector::connectionDetails instance for CEM}
 
 \item{usePooledConnection}{- use pooled connections (database model only)}
-
-\item{environment}{- environment to store backend variables in, defaults to globalenv}
 
 \item{...}{param list paased to CemDatabaseBaackend$new}
 }

@@ -23,6 +23,7 @@
 #' @param ingredientConceptInput shiny::reactive that returns data.frame with headers conceptId, includeDescendants, isExcluded
 #' @param conditionConceptInput shiny::reactive that returns data.frame with headers conceptId, includeDescendants, isExcluded
 #' @param siblingLookupLevelsInput shiny::reactive that returns positive integer for sibling levels to lookup for condition concept mappings to CEM
+#' @importFrom utils write.csv
 #' @export
 ceExplorerModule <- function(id,
                              backend,
@@ -80,6 +81,7 @@ ceExplorerModule <- function(id,
 #' Shiny Module for integration of evidence for conceptsets in to shiny applications
 #'
 #' @param id string - unique namespace for module. Must match call to ceExplorerModule
+#' @importFrom shinycssloaders withSpinner
 ceExplorerModuleUi <- function(id) {
   ns <- shiny::NS(id)
   shiny::div(shiny::textOutput(ns("errorMessage")),
@@ -98,6 +100,7 @@ ceExplorerModuleUi <- function(id) {
 #' @param siblingLookupLevelsInput shiny::reactive that returns positive integer for sibling levels to lookup for condition concept mappings to CEM
 #' @param nControls shiny::reactive that returns positive integer for number of controls to get
 #' @param isOutcomeSearch shiny::reactive that returns boolean - is this an indication, in which case search for disease concepts. Otherwise, searches for ingredients
+#' @importFrom utils write.csv
 #' @export
 negativeControlSelectorModule <- function(id,
                                           backend,
@@ -153,6 +156,7 @@ negativeControlSelectorModule <- function(id,
 #' Shiny Module for integration of evidence for conceptsets in to shiny applications
 #'
 #' @param id string - unique namespace for module. Must match call to ceExplorerModule
+#' @importFrom shinycssloaders withSpinner
 negativeControlSelectorUi <- function(id) {
   ns <- shiny::NS(id)
   shiny::div(shiny::textOutput(ns("errorMessage")),
@@ -228,6 +232,10 @@ ceExplorerUi <- function(request) {
 }
 
 ceExplorerDashboardServer <- function(input, output, session) {
+  env <- globalenv()
+  backend <- env$backend
+  checkmate::assertClass(backend, "AbstractCemBackend")
+
   ingredientConceptInput <- shiny::reactive({ .readCsvString(input$ingredientConcept) })
   conditionConceptInput <- shiny::reactive({ .readCsvString(input$conditionConcept) })
   siblingLookupLevelsInput <- shiny::reactive({ input$siblingLookupLevels })
@@ -259,14 +267,14 @@ ceExplorerDashboardServer <- function(input, output, session) {
 #' @param apiUrl string - url for CemConnector API or NULL
 #' @param connectionDetails DatabaseConnector::connectionDetails instance for CEM
 #' @param usePooledConnection - use pooled connections (database model only)
-#' @param environment - environment to store backend variables in, defaults to globalenv
 #' @param ... param list paased to CemDatabaseBaackend$new
 #' @export
 launchCeExplorer <- function(apiUrl = NULL,
                              connectionDetails = NULL,
                              usePooledConnection = TRUE,
-                             environment = .GlobalEnv,
                              ...) {
+
+  environment <- globalenv()
   checkmate::assert_class(connectionDetails, "connectionDetails", null.ok = TRUE)
   checkmate::assert_string(apiUrl, null.ok = TRUE)
 
