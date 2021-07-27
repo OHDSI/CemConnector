@@ -1,9 +1,5 @@
 # Implementations of database connection should function in the same way
 genericTests <- function(connClass, classes, connectionClass) {
-  ParallelLogger::clearLoggers()
-  logfile <- tempfile("log")
-  ParallelLogger::addDefaultFileLogger(logfile)
-
   on.exit({
     unlink(logfile)
   }, add =TRUE)
@@ -30,9 +26,6 @@ genericTests <- function(connClass, classes, connectionClass) {
   expect_equal(data2$CNT_TEST, 2694)
 
   expect_error(conn$queryDb("SELECT 1 * WHERE;"))
-
-  loglines <- readLines(logfile)
-  expect_match(loglines, "near \"WHERE\": syntax error")
 
   conn$closeConnection()
   expect_false(conn$isActive)
