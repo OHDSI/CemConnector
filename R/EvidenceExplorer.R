@@ -61,6 +61,15 @@ ceExplorerModule <- function(id,
     output$evidenceTable <- shiny::renderDataTable({
       getRelationships()
     })
+
+    output$downloadData <- shiny::downloadHandler(
+      filename = function() {
+        paste0('ceExplorer_evidence.csv')
+      },
+      content = function(file) {
+        write.csv(getRelationships(), file, row.names = FALSE)
+      }
+    )
   }
 
   shiny::moduleServer(id, cemExplorerServer)
@@ -74,7 +83,8 @@ ceExplorerModule <- function(id,
 ceExplorerModuleUi <- function(id) {
   ns <- shiny::NS(id)
   shiny::div(shiny::textOutput(ns("errorMessage")),
-             shiny::dataTableOutput(ns("evidenceTable")))
+             shinycssloaders::withSpinner(shiny::dataTableOutput(ns("evidenceTable"))),
+             shiny::downloadButton(ns("downloadData")))
 }
 
 
@@ -94,7 +104,7 @@ negativeControlSelectorModule <- function(id,
                                           conceptInput = NULL,
                                           siblingLookupLevelsInput = shiny::reactive({ 0 }),
                                           isOutcomeSearch = shiny::reactive({ TRUE }),
-                                          nControls = shiny::reactive({50})) {
+                                          nControls = shiny::reactive({ 50 })) {
   checkmate::assert_class(backend, "AbstractCemBackend")
   checkmate::assert_class(conceptInput, "reactive")
   checkmate::assert_class(siblingLookupLevelsInput, "reactive")
@@ -122,6 +132,17 @@ negativeControlSelectorModule <- function(id,
     output$controlsTable <- shiny::renderDataTable({
       getControls()
     })
+
+
+    output$downloadData <- shiny::downloadHandler(
+      filename = function() {
+        paste0('ceExplorer_negative_controls.csv')
+      },
+      content = function(file) {
+        write.csv(getControls(), file, row.names = FALSE)
+      }
+    )
+
   }
 
   shiny::moduleServer(id, serverFunc)
@@ -135,7 +156,8 @@ negativeControlSelectorModule <- function(id,
 negativeControlSelectorUi <- function(id) {
   ns <- shiny::NS(id)
   shiny::div(shiny::textOutput(ns("errorMessage")),
-             shiny::dataTableOutput(ns("controlsTable")))
+             shinycssloaders::withSpinner(shiny::dataTableOutput(ns("controlsTable"))),
+             shiny::downloadButton(ns("downloadData")))
 }
 
 #' @importFrom utils packageVersion read.csv
