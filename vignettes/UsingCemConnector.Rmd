@@ -2,22 +2,30 @@
 title: "Using CemConnector"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    toc: yes
-  html_document:
-    number_sections: yes
-    toc: yes
+pdf_document:
+toc: yes
+html_document:
+number_sections: yes
+toc: yes
 vignette: >
-  %\VignetteIndexEntry{Using CemConnector}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{Using CemConnector}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+devtools::load_all()
+sqlidb <- tempfile(fileext = ".sqlite")
+connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sqlite", server = sqlidb)
+.loadCemTestFixtures(connectionDetails)
+cemConnection <- CemConnector::CemDatabaseBackend$new(connectionDetails = connectionDetails,
+                                                      vocabularySchema = "main",
+                                                      cemSchema = "main",
+                                                      sourceSchema = "main")
 ```
 
 ```{css echo=FALSE}
@@ -25,22 +33,39 @@ h1  {
   margin-top: 60px;
 }
 ```
-
 If you're reading this guide it is expected that you have some familiarity with the common
 evidence model (CEM) and have an installation set up and configured.
-In the following example we will observe all of the relevant evidence for the drug `codine` with the outcome of `depression`.
+In the following example we will observe all of the relevant evidence for the drug ingredient `codine` with the outcome of `depression`.
 
-# Using CEMConnector with a web backend
-The simplest way to connect with the CEM is to connect to a host web instance, for example the public API available at https://cem.ohdsi.org/api/v1/ .
+## Using CEMConnector with a web backend
+The simplest way to connect with the CEM is to connect to a host web instance, for example the public API available at https://cem.ohdsi.org/ (TBD).
 To do this we will use a web backend.
 First we need to create a connection to the web api:
+
 ```{r, eval = FALSE}
-baseUrl <- "https://cem.ohdsi.org/api/v1/"
-cemConnection <- CemConnector::CemWebApiBackend$new(baseUrl)
+
+cemConnection <- CemConnector::CemWebApiBackend(apiUrl = "https://cem.ohdsi.org/")
+```
+
+## Using CEMConnector with a database backend
+
+Alternatively, a connection can be made with a DatabaseConnector::connectionDetails object.
+Contact your CEM administrator for details connecting this way.
+```{r, eval = FALSE}
+
+connectionDetails <- DatabaseConnector::createConnectionDetails(user = "mydbusername",
+                                                                server = "myserver/foo",
+                                                                dbms = "redshift",
+                                                                password = "mysecret")
+
+cemConnection <- CemConnector::CemDatabaseBackend$new(connectionDetails = connectionDetails,
+                                                      vocabularySchema = "vocabulary",
+                                                      cemSchema = "cem_v2",
+                                                      sourceSchema = "cem_v2_source")
 ```
 
 This should connect to the server without error.
-If you get an error please check that the URL is valid, you may need to contact your adminstrator.
+If you get an error please check that the URL is valid, you may need to contact your administrator.
 
 ## Constructing conceptset defintions
 To generate concept sets we recommend using [PHEOBE](https://data.ohdsi.org/PHOEBE/).
@@ -70,8 +95,8 @@ parentIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = 
 We would like to search for any related disease concepts to this query.
 Cem connector provides a simple evidence summary for all resulting concepts that are in the database.
 
-```{r, eval = FALSE}
-outcomeConcepts <- backend$getIngredientEvidenceSummary(ingreditentConceptSet)
+```{r}
+outcomeConcepts <- cemConnection$getIngredientEvidenceSummary(ingreditentConceptSet)
 outcomeConcepts
 ```
 
@@ -82,11 +107,29 @@ To do this we would look at an exposure outcome pair from the concept set.
 
 
 To get all the evidence found in the CEM for the ingredient concept set, what source its from and what the counts or statistics are, we can look at the entire search universe.
-```
-outcomeConcepts <- backend$getIngredientEvidenceSummary(ingreditentConceptSet)
+```{r}
+outcomeConcepts <- cemConnection$getIngredientEvidenceSummary(ingreditentConceptSet)
 ```
 
-### Searching for exposures
+### Negative control suggestions
+
+Cem Connector is capable of suggesting negative controls for use in population level effect estimate studies.
+Negative controls are intended to be exposures or outcomes selected because they are believed to have no direct causal relationship with the outcome of interest.
+For example, in-grown toe-nails are not caused by exposure to ACE inhibitors.
+However, in-grown toenails are extremely common, and many patients will experience this outcome while exposed to the drug.
+Consequently, any observed effect is a product of residual bias (e.g. from the study design choices) and this can be used to produce calibrated effect estimates.
+
+The design of a PLE study is outside the scope of this viggnette, however, the selection of outcomes/exposures can be achieved at the concept level.
+Here, the CemConnector takes a concept set as a parameter and finds outcomes our exposures that have no mapped relationships within the CEM.
+We note that these mappings are not perfect and human curation by experienced clinicians is advised.
+
+To find negative control outcomes for the above ingredient set use the following code.
+
+```{r}
+outcomeConcepts <- cemConnection$getSuggestedControlCondtions(ingreditentConceptSet)
+outcomeConcepts
+```
+
 
 ### Searching for evidence pairs
 It is often desirable to find out what information relates exposures and outcomes.
