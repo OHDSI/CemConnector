@@ -22,9 +22,9 @@ negativeControlSelectorModule(
 
 \item{siblingLookupLevelsInput}{shiny::reactive that returns positive integer for sibling levels to lookup for condition concept mappings to CEM}
 
-\item{nControls}{shiny::reactive that returns positive integer for number of controls to get}
+\item{isOutcomeSearch}{shiny::reactive that returns boolean - is this an indication, in which case search for disease concepts. Otherwise, searches for ingredients}
 
-\item{defaultToOutcomeControls}{boolean}
+\item{nControls}{shiny::reactive that returns positive integer for number of controls to get}
 }
 \description{
 Shiny Module for integration of evidence for selecting negative controls conceptsets in to shiny applications

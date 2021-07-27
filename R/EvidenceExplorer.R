@@ -97,7 +97,7 @@ ceExplorerModuleUi <- function(id) {
 #' @param conceptInput shiny::reactive that returns data.frame with headers conceptId, includeDescendants, isExcluded
 #' @param siblingLookupLevelsInput shiny::reactive that returns positive integer for sibling levels to lookup for condition concept mappings to CEM
 #' @param nControls shiny::reactive that returns positive integer for number of controls to get
-#' @param defaultToOutcomeControls boolean
+#' @param isOutcomeSearch shiny::reactive that returns boolean - is this an indication, in which case search for disease concepts. Otherwise, searches for ingredients
 #' @export
 negativeControlSelectorModule <- function(id,
                                           backend,
