@@ -1,9 +1,5 @@
 # Implementations of database connection should function in the same way
 genericTests <- function(connClass, classes, connectionClass) {
-  on.exit({
-    unlink(logfile)
-  }, add =TRUE)
-
   conn <- connClass$new(Eunomia::getEunomiaConnectionDetails())
   expect_class(conn, classes)
 
