@@ -23,6 +23,7 @@
 #' @param ingredientConceptInput shiny::reactive that returns data.frame with headers conceptId, includeDescendants, isExcluded
 #' @param conditionConceptInput shiny::reactive that returns data.frame with headers conceptId, includeDescendants, isExcluded
 #' @param siblingLookupLevelsInput shiny::reactive that returns positive integer for sibling levels to lookup for condition concept mappings to CEM
+#' @importFrom utils write.csv
 #' @export
 ceExplorerModule <- function(id,
                              backend,
@@ -61,6 +62,15 @@ ceExplorerModule <- function(id,
     output$evidenceTable <- shiny::renderDataTable({
       getRelationships()
     })
+
+    output$downloadData <- shiny::downloadHandler(
+      filename = function() {
+        paste0('ceExplorer_evidence.csv')
+      },
+      content = function(file) {
+        write.csv(getRelationships(), file, row.names = FALSE)
+      }
+    )
   }
 
   shiny::moduleServer(id, cemExplorerServer)
@@ -71,10 +81,87 @@ ceExplorerModule <- function(id,
 #' Shiny Module for integration of evidence for conceptsets in to shiny applications
 #'
 #' @param id string - unique namespace for module. Must match call to ceExplorerModule
+#' @importFrom shinycssloaders withSpinner
 ceExplorerModuleUi <- function(id) {
   ns <- shiny::NS(id)
   shiny::div(shiny::textOutput(ns("errorMessage")),
-             shiny::dataTableOutput(ns("evidenceTable")))
+             shinycssloaders::withSpinner(shiny::dataTableOutput(ns("evidenceTable"))),
+             shiny::downloadButton(ns("downloadData")))
+}
+
+
+#' Negative control selection  utility
+#' @description
+#' Shiny Module for integration of evidence for selecting negative controls conceptsets in to shiny applications
+#'
+#' @param id string - unique namespace for module
+#' @param backend CemConnector backend (database or Api URL)
+#' @param conceptInput shiny::reactive that returns data.frame with headers conceptId, includeDescendants, isExcluded
+#' @param siblingLookupLevelsInput shiny::reactive that returns positive integer for sibling levels to lookup for condition concept mappings to CEM
+#' @param nControls shiny::reactive that returns positive integer for number of controls to get
+#' @param isOutcomeSearch shiny::reactive that returns boolean - is this an indication, in which case search for disease concepts. Otherwise, searches for ingredients
+#' @importFrom utils write.csv
+#' @export
+negativeControlSelectorModule <- function(id,
+                                          backend,
+                                          conceptInput = NULL,
+                                          siblingLookupLevelsInput = shiny::reactive({ 0 }),
+                                          isOutcomeSearch = shiny::reactive({ TRUE }),
+                                          nControls = shiny::reactive({ 50 })) {
+  checkmate::assert_class(backend, "AbstractCemBackend")
+  checkmate::assert_class(conceptInput, "reactive")
+  checkmate::assert_class(siblingLookupLevelsInput, "reactive")
+  checkmate::assert_class(nControls, "reactive")
+
+  serverFunc <- function(input, output, session) {
+
+    output$errorMessage <- shiny::renderText("")
+    getControls <- shiny::reactive({
+      inputConceptSet <- conceptInput()
+
+      if (!(checkmate::test_data_frame(inputConceptSet, min.rows = 1))) {
+        output$errorMessage <- shiny::renderText("Invalid concept set")
+        return(data.frame())
+      }
+
+      if (isOutcomeSearch()) {
+        return(backend$getSuggestedControlCondtions(inputConceptSet, nControls = nControls()))
+      }
+      return(backend$getSuggestedControlIngredients(inputConceptSet,
+                                                    nControls = nControls(),
+                                                    siblingLookupLevels = siblingLookupLevelsInput()))
+    })
+
+    output$controlsTable <- shiny::renderDataTable({
+      getControls()
+    })
+
+
+    output$downloadData <- shiny::downloadHandler(
+      filename = function() {
+        paste0('ceExplorer_negative_controls.csv')
+      },
+      content = function(file) {
+        write.csv(getControls(), file, row.names = FALSE)
+      }
+    )
+
+  }
+
+  shiny::moduleServer(id, serverFunc)
+}
+
+#' CE Explorer module
+#' @description
+#' Shiny Module for integration of evidence for conceptsets in to shiny applications
+#'
+#' @param id string - unique namespace for module. Must match call to ceExplorerModule
+#' @importFrom shinycssloaders withSpinner
+negativeControlSelectorUi <- function(id) {
+  ns <- shiny::NS(id)
+  shiny::div(shiny::textOutput(ns("errorMessage")),
+             shinycssloaders::withSpinner(shiny::dataTableOutput(ns("controlsTable"))),
+             shiny::downloadButton(ns("downloadData")))
 }
 
 #' @importFrom utils packageVersion read.csv
@@ -92,6 +179,19 @@ ceExplorerUi <- function(request) {
                                  shinydashboard::box(width = 12,
                                                      ceExplorerModuleUi("explorer")))
 
+  controlsInputArea <- shinydashboard::box(title = "Input concept sets (Raw CSV)",
+                                           width = 12,
+                                           shiny::p("Required headers: conceptId, includeDescendants, isExcluded"),
+                                           shiny::textAreaInput("conceptSetNc", label = "Concept set (csv)", value = "conceptId,includeDescendants,isExcluded\n1201620,1,0"),
+                                           shiny::selectInput("siblingLookupLevelsNc", label = "Condition Sibling Lookup Levels", 0:5, selected = 0),
+                                           shiny::p("When searching for ingredient exposure controls, If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings"),
+                                           shiny::checkboxInput("searchOutcomeControls", "Search for outcome (condition) controls", value = TRUE),
+                                           shiny::selectInput("nControls", label = "Number of suggestsions", c(10, 20, 50, 100, 500, 5000), selected = 50))
+
+  controlsTab <- shiny::fluidRow(controlsInputArea,
+                                 shinydashboard::box(width = 12,
+                                                     negativeControlSelectorUi("controls")))
+
   aboutCemBox <- shinydashboard::box(title = "About The Common Evidence Model",
                                      shiny::p("The Common Evidence Model (CEM) combines many data sources in to a standard format to provide a standard resource for PharmaCovigilance activities."),
                                      shiny::p("Evidence uses OMOP Standard Vocabularies at the RXNorm and SNOMED levels"),
@@ -106,7 +206,6 @@ ceExplorerUi <- function(request) {
                                              shiny::a("https://github.com/OHDSI/CemConnector"),
                                              shiny::p(paste("Client package version:", utils::packageVersion("CemConnector"))))
 
-  controlsTab <- shiny::fluidRow(shiny::p("Coming soon"))
 
   aboutTab <- shiny::fluidRow(aboutCemBox, cemConnectorInfoBox, cemSourcesBox)
   body <- shinydashboard::dashboardBody(shinydashboard::tabItems(shinydashboard::tabItem(tabName = "About", aboutTab),
@@ -133,6 +232,10 @@ ceExplorerUi <- function(request) {
 }
 
 ceExplorerDashboardServer <- function(input, output, session) {
+  env <- globalenv()
+  backend <- env$backend
+  checkmate::assertClass(backend, "AbstractCemBackend")
+
   ingredientConceptInput <- shiny::reactive({ .readCsvString(input$ingredientConcept) })
   conditionConceptInput <- shiny::reactive({ .readCsvString(input$conditionConcept) })
   siblingLookupLevelsInput <- shiny::reactive({ input$siblingLookupLevels })
@@ -144,6 +247,17 @@ ceExplorerDashboardServer <- function(input, output, session) {
                                      ingredientConceptInput = ingredientConceptInput,
                                      conditionConceptInput = conditionConceptInput,
                                      siblingLookupLevelsInput = siblingLookupLevelsInput)
+
+  conceptInputNc <- shiny::reactive({ .readCsvString(input$conceptSetNc) })
+  siblingLookupLevelsInputNc <- shiny::reactive({ input$siblingLookupLevelsNc })
+  searchOutcomeControls <- shiny::reactive({ input$searchOutcomeControls })
+  nControls <- shiny::reactive({ input$nControls })
+  ncModuleServer <- negativeControlSelectorModule("controls",
+                                                  backend,
+                                                  conceptInput = conceptInputNc,
+                                                  isOutcomeSearch = searchOutcomeControls,
+                                                  nControls = nControls,
+                                                  siblingLookupLevelsInput = siblingLookupLevelsInputNc)
 }
 
 #' CE Explorer shiny application
@@ -153,14 +267,14 @@ ceExplorerDashboardServer <- function(input, output, session) {
 #' @param apiUrl string - url for CemConnector API or NULL
 #' @param connectionDetails DatabaseConnector::connectionDetails instance for CEM
 #' @param usePooledConnection - use pooled connections (database model only)
-#' @param environment - environment to store backend variables in, defaults to globalenv
 #' @param ... param list paased to CemDatabaseBaackend$new
 #' @export
 launchCeExplorer <- function(apiUrl = NULL,
                              connectionDetails = NULL,
                              usePooledConnection = TRUE,
-                             environment = .GlobalEnv,
                              ...) {
+
+  environment <- globalenv()
   checkmate::assert_class(connectionDetails, "connectionDetails", null.ok = TRUE)
   checkmate::assert_string(apiUrl, null.ok = TRUE)
 

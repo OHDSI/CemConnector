@@ -17,4 +17,4 @@ RUN R -e "devtools::install()"
 
 EXPOSE $PLUMBER_PORT
 # when the container starts, start the main.R script
-ENTRYPOINT ["Rscript", "extra/RunPlumber.R"]
+ENTRYPOINT ["Rscript", "extras/RunPlumber.R"]

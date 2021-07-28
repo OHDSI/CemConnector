@@ -125,3 +125,49 @@ function(req) {
 
   list(result = result)
 }
+
+#* Get suggested negative controls conditions for a given ingredient concept set
+#* These are based on condition concepts with a lack of evidence available and ranked by occurence across the ohdsi network
+#* @param ingredientConceptSet conceptset of drug ingredients. Must be in conceptSet format and use only OMOP standard concepts
+#* @param nControls number of control concepts to suggest - default is 50
+#* @post /suggestedControlConditions
+#* @serializer unboxedJSON
+function(req) {
+  ingredientConceptSet <- req$body$ingredientConceptSet
+  ingredientConceptSetDf <- rbind.data.frame(ingredientConceptSet)
+
+  nControls <- req$body$nControls
+  if (is.null(nControls)) {
+    nControls <- 50
+  }
+
+  result <- cemBackendApi$getSuggestedControlCondtions(ingredientConceptSetDf, nControls = nControls)
+
+  list(result = result)
+}
+
+#* Get suggested negative controls ingredients for a given condition concept set
+#* These are based on condition concepts with a lack of evidence available and ranked by occurence across the ohdsi network
+#* @param ingredientConceptSet conceptset of drug ingredients. Must be in conceptSet format and use only OMOP standard concepts
+#* @param nControls number of control concepts to suggest - default is 50
+#* @post /suggestedControlIngredients
+#* @serializer unboxedJSON
+function(req) {
+  conditionConceptSet <- req$body$conditionConceptSet
+  conditionConceptSetDf <- rbind.data.frame(conditionConceptSet)
+
+  siblingLookupLevels <- req$body$siblingLookupLevels
+  if (is.null(siblingLookupLevels)) {
+    siblingLookupLevels <- 0
+  }
+
+  nControls <- req$body$nControls
+  if (is.null(nControls)) {
+    nControls <- 50
+  }
+  result <- cemBackendApi$getSuggestedControlIngredients(conditionConceptSetDf,
+                                                         nControls = nControls,
+                                                         siblingLookupLevels = siblingLookupLevels)
+
+  list(result = result)
+}
