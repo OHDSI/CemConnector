@@ -6,13 +6,21 @@ test_that("explorer loads", {
   shiny::testServer(ceExplorerDashboardServer, {
     ingredientCsvStr <- "conceptId,includeDescendants,isExcluded\n21604296,1,0"
     conditionCsvStr <- "conceptId,includeDescendants,isExcluded\n4149320,1,0"
-    session$setInputs(siblingLookupLevels = 1, conditionConcept = conditionCsvStr, ingredientConcept = ingredientCsvStr)
+    session$setInputs(siblingLookupLevels = 1,
+                      conditionConcept = conditionCsvStr,
+                      ingredientConcept = ingredientCsvStr,
+                      nControls = 50,
+                      searchOutcomeControls = TRUE,
+                      siblingLookupLevelsNc = 1)
     # test reactives
     ingConcept <- ingredientConceptInput()
     expect_data_frame(ingConcept)
     condConcept <- conditionConceptInput()
     expect_data_frame(condConcept)
     expect_equal(siblingLookupLevelsInput(), 1)
+    expect_equal(siblingLookupLevelsInputNc(), 1)
+    expect_true(searchOutcomeControls())
+    expect_equal(nControls(), 50)
     expect_data_frame(getSourceInfo())
     expect_list(output$sourceInfo)
 
