@@ -12,6 +12,7 @@ Initialize
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{AbstractCemBackend$new()}}
+\item \href{#method-finalize}{\code{AbstractCemBackend$finalize()}}
 \item \href{#method-clone}{\code{AbstractCemBackend$clone()}}
 }
 }
@@ -31,6 +32,16 @@ initialize backend object. Will fail in an error - this is an abstract class
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-finalize"></a>}}
+\if{latex}{\out{\hypertarget{method-finalize}{}}}
+\subsection{Method \code{finalize()}}{
+Connection cleanup etc
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AbstractCemBackend$finalize()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

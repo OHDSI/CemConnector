@@ -6,6 +6,7 @@
              system.file("test", "CEM_UNIFIED.csv", package = "CemConnector"),
              system.file("test", "CONCEPT_ANCESTOR.csv", package = "CemConnector"),
              system.file("test", "CONCEPT.csv", package = "CemConnector"),
+             system.file("test", "NC_LU_CONCEPT_UNIVERSE.csv", package = "CemConnector"),
              system.file("test", "SOURCE.csv", package = "CemConnector"))
 
   for (tbl in files) {

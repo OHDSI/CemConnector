@@ -30,10 +30,10 @@ CemWebApiBackend <- R6::R6Class(
      #' initialzie object
      #' @param apiUrl String URL parameter for hosted
     initialize = function(apiUrl) {
-      self$apiUrl <- apiUrl
+      # Remove trailing slash
+      self$apiUrl <- gsub("/$", "", apiUrl)
       checkmate::assert(self$getStatus()$status == "alive")
     },
-
 
     #' @description
     #' Do a web request
@@ -47,6 +47,10 @@ CemWebApiBackend <- R6::R6Class(
                          "GET" = httr::GET)
 
       response <- callFunc(url, encode = "json", ...)
+      if (response$status_code != 200) {
+        content <- httr::content(response, as = "parsed")
+        stop("Request error ", content$error)
+      }
       httr::content(response, as = "parsed")
     },
 
@@ -126,6 +130,38 @@ CemWebApiBackend <- R6::R6Class(
     getVersion = function() {
       endpoint <- "version"
       self$request("GET", endpoint)
+    },
+
+    #' @description
+    #' Get negative control snomed condition concepts for a given conceptset
+    #' These are ranked by co-occurence accross ohdsi studies
+    #' A negative control for a submitted concept_set is valid if there is no evidence for the outcome
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
+    #' @returns data.frame of condition concept_id and concept_name
+    getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 50) {
+      endpoint <- "suggestedControlConditions"
+      content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet,
+                                                            nControls = nControls))
+
+      dplyr::bind_rows(content$result)
+    },
+
+    #' @description
+    #' Get negative control rxnorm ingredient concepts for a given conceptset
+    #' These are ranked by co-occurence accross ohdsi studies
+    #' A negative control for a submitted concept_set is valid if there is no evidence for the ingredient/condition combination
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
+    #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
+    #' @returns data.frame of condition concept_id and concept_name
+    getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 50) {
+      endpoint <- "suggestedControlIngredients"
+      content <- self$request("POST", endpoint, body = list(conditionConceptSet = conditionConceptSet,
+                                                            siblingLookupLevels = siblingLookupLevels,
+                                                            nControls = nControls))
+
+      dplyr::bind_rows(content$result)
     }
   )
 )

@@ -53,14 +53,14 @@ For example:
 serverFunction <- function(input, output, session) {
   backend <- CemConnector::CemWebApiBackend$new(apiUrl = "https://cem.ohdsi.org/api/v1/")
   # Define a reactive that returns a dataframe with standard ingredient concepts
-  ingredientConceptInput <- reactive({ tibble(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0)) })
+  ingredientConceptInput <- shiny::reactive({ tibble::tibble(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0)) })
   # Define a reactive that returns a dataframe with standard condtion concepts
-  conditionConceptInput <- reactive({ tibble(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0)) })
+  conditionConceptInput <- shiny::reactive({ tibble::tibble(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0)) })
   # Define a reactive that returns an integer that for looking up higher levels in the heirarchy
-  siblingLookupLevelsInput <- reactive({ 1 })
+  siblingLookupLevelsInput <- shiny::reactive({ 1 })
 
   # Call the explorer module
-  ceModuleServer <- ceExplorerModule("explorer",
+  ceModuleServer <- ceExplorerModule("explorer", # This ID should be unqiue and match the call to ceExplorerModuleUi
                                      backend,
                                      ingredientConceptInput = ingredientConceptInput,
                                      conditionConceptInput = conditionConceptInput,
@@ -74,3 +74,4 @@ uiFunction <- function () {
 
 shiny::shinyApp(uiFunction, serverFunction)
 ```
+The reactive objects for ingredientConceptInput and conditionConceptInput must return data.frames that are either empty or contain the column names `conceptId, includeDescendants` and `isExcluded`.

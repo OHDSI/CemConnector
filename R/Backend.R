@@ -27,7 +27,11 @@ AbstractCemBackend <- R6::R6Class(
     #' @param ... params
     initialize = function (...) {
       stop("Error: this is an abstract class. initialize function should be implemented by child")
-    }
+    },
+
+    #' @description
+    #' Connection cleanup etc
+    finalize = function() {}
   ),
   private = list(
     checkConceptSet = function(conceptSet) {
@@ -205,11 +209,58 @@ CemDatabaseBackend <- R6::R6Class(
                               condition_concepts_no_desc = conditionConceptNoDesc) %>% dplyr::select(-id)
     },
 
-    #'@description
+    #' @description
     #' Get CEM source info as a dataframe
     #' @returns data.frame of sources
     getCemSourceInfo = function() {
       return(self$connection$queryDb("SELECT * FROM @schema.source", schema = self$sourceSchema))
+    },
+
+    #' @description
+    #' Get negative control snomed condition concepts for a given conceptset
+    #' These are ranked by co-occurence accross ohdsi studies
+    #' A negative control for a submitted concept_set is valid if there is no evidence for the outcome
+    #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
+    #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
+    #' @returns data.frame of condition concept_id and concept_name
+    getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 50) {
+      private$checkConceptSet(ingredientConceptSet)
+      ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
+      ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
+
+      sql <- private$loadSqlFile("getRankedNcOutcomes.sql")
+      self$connection$queryDb(sql,
+                              n_controls = nControls,
+                              vocabulary = self$vocabularySchema,
+                              cem_schema = self$cemSchema,
+                              concept_desc = ingredientConceptDesc,
+                              concept_no_desc = ingredientConceptNoDesc)
+
+
+    },
+
+    #' @description
+    #' Get negative control rxnorm ingredient concepts for a given conceptset
+    #' These are ranked by co-occurence accross ohdsi studies
+    #' A negative control for a submitted concept_set is valid if there is no evidence for the ingredient/condition combination
+    #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
+    #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
+    #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
+    #' @returns data.frame of condition concept_id and concept_name
+    getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 50) {
+      private$checkConceptSet(conditionConceptSet)
+      conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
+      conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
+
+      sql <- private$loadSqlFile("getRankedNcExposures.sql")
+      self$connection$queryDb(sql,
+                              n_controls = nControls,
+                              vocabulary = self$vocabularySchema,
+                              cem_schema = self$cemSchema,
+                              use_siblings = siblingLookupLevels > 0,
+                              sibling_lookup_levels = siblingLookupLevels,
+                              condition_concept_desc = conditionConceptDesc,
+                              condition_concept_no_desc = conditionConceptNoDesc)
     }
   ),
 

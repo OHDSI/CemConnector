@@ -5,6 +5,10 @@
 \title{CEM Database Backend Class}
 \value{
 data.frame of sources
+
+data.frame of condition concept_id and concept_name
+
+data.frame of condition concept_id and concept_name
 }
 \description{
 An interface to the common evidence model that uses works directly with a database schema
@@ -36,6 +40,8 @@ An interface to the common evidence model that uses works directly with a databa
 \item \href{#method-getIngredientEvidence}{\code{CemDatabaseBackend$getIngredientEvidence()}}
 \item \href{#method-getRelationships}{\code{CemDatabaseBackend$getRelationships()}}
 \item \href{#method-getCemSourceInfo}{\code{CemDatabaseBackend$getCemSourceInfo()}}
+\item \href{#method-getSuggestedControlCondtions}{\code{CemDatabaseBackend$getSuggestedControlCondtions()}}
+\item \href{#method-getSuggestedControlIngredients}{\code{CemDatabaseBackend$getSuggestedControlIngredients()}}
 \item \href{#method-clone}{\code{CemDatabaseBackend$clone()}}
 }
 }
@@ -203,6 +209,57 @@ Get CEM source info as a dataframe
 \if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getCemSourceInfo()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getSuggestedControlCondtions"></a>}}
+\if{latex}{\out{\hypertarget{method-getSuggestedControlCondtions}{}}}
+\subsection{Method \code{getSuggestedControlCondtions()}}{
+Get negative control snomed condition concepts for a given conceptset
+These are ranked by co-occurence accross ohdsi studies
+A negative control for a submitted concept_set is valid if there is no evidence for the outcome
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getSuggestedControlCondtions(
+  ingredientConceptSet,
+  nControls = 50
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{ingredientConceptSet}}{data.frame conforming to conceptset format, must be standard RxNorm Ingredients}
+
+\item{\code{nControls}}{topN controls to select - the maximum number will be limited by available concepts without related evidence}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-getSuggestedControlIngredients"></a>}}
+\if{latex}{\out{\hypertarget{method-getSuggestedControlIngredients}{}}}
+\subsection{Method \code{getSuggestedControlIngredients()}}{
+Get negative control rxnorm ingredient concepts for a given conceptset
+These are ranked by co-occurence accross ohdsi studies
+A negative control for a submitted concept_set is valid if there is no evidence for the ingredient/condition combination
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getSuggestedControlIngredients(
+  conditionConceptSet,
+  siblingLookupLevels = 0,
+  nControls = 50
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{conditionConceptSet}}{data.frame conforming to conceptset format, must be standard SNOMED conditions}
+
+\item{\code{siblingLookupLevels}}{where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump}
+
+\item{\code{nControls}}{topN controls to select - the maximum number will be limited by available concepts without related evidence}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

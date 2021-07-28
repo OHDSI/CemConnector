@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#' @importFrom DBI dbIsValid
+#' @importFrom SqlRender render translate
 ConnectionHandler <- R6::R6Class(
   "ConnectionHandler",
   public = list(
@@ -62,7 +64,6 @@ ConnectionHandler <- R6::R6Class(
       tryCatch({
         data <- self$queryFunction(sql, snakeCaseToCamelCase = snakeCaseToCamelCase)
       }, error = function(error) {
-        ParallelLogger::logError(error)
         if (self$connectionDetails$dbms %in% c("postgresql", "redshift")) {
           DatabaseConnector::dbExecute(self$con, "ABORT;")
         }
@@ -77,6 +78,8 @@ ConnectionHandler <- R6::R6Class(
   )
 )
 
+#' @importFrom pool dbPool poolClose
+#' @importFrom DBI dbIsValid
 PooledConnectionHandler <- R6::R6Class(
   "PooledConnectionHandler",
   inherit = ConnectionHandler,
