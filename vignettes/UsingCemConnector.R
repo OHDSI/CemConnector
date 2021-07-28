@@ -29,19 +29,41 @@ cemConnection <- CemConnector::CemDatabaseBackend$new(connectionDetails = connec
 #                                                        sourceSchema = "cem_v2_source")
 
 ## -----------------------------------------------------------------------------
-ingreditentConceptSet <- data.frame(conceptId = c(1201620), includeDescendants = c(0), isExcluded = c(0))
+cemConnection$getCemSourceInfo()
+
+## -----------------------------------------------------------------------------
+ingredientConceptSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+outcomeConcepts <- cemConnection$getSuggestedControlCondtions(ingredientConceptSet)
+outcomeConcepts
+
+## -----------------------------------------------------------------------------
+conditionConceptSet <- data.frame(conceptId = c(440383), includeDescendants = c(1), isExcluded = c(0))
+outcomeConcepts <- cemConnection$getSuggestedControlIngredients(conditionConceptSet)
+outcomeConcepts
+
+## -----------------------------------------------------------------------------
+ingredientConceptSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+outcomeConcepts <- cemConnection$getIngredientEvidenceSummary(ingredientConceptSet)
 
 ## -----------------------------------------------------------------------------
 parentIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0))
 
 ## -----------------------------------------------------------------------------
-outcomeConcepts <- cemConnection$getIngredientEvidenceSummary(ingreditentConceptSet)
+outcomeConcepts <- cemConnection$getIngredientEvidenceSummary(parentIngredientSet)
 outcomeConcepts
 
 ## -----------------------------------------------------------------------------
-outcomeConcepts <- cemConnection$getIngredientEvidenceSummary(ingreditentConceptSet)
+conditionEvidence <- cemConnection$getIngredientEvidence(parentIngredientSet)
+conditionEvidence
 
 ## -----------------------------------------------------------------------------
-outcomeConcepts <- cemConnection$getSuggestedControlCondtions(ingreditentConceptSet)
-outcomeConcepts
+conditionConceptSet <- data.frame(conceptId = c(433440), includeDescendants = c(1), isExcluded = c(0))
+cemConnection$getConditionEvidenceSummary(ingredientConceptSet)
+
+## -----------------------------------------------------------------------------
+cemConnection$getConditionEvidence(ingredientConceptSet)
+
+## -----------------------------------------------------------------------------
+minorDepressionConceptSet <- data.frame(conceptId = c(440383), includeDescendants = c(0), isExcluded = c(0))
+cemConnection$getConditionEvidence(minorDepressionConceptSet, siblingLookupLevels = 1)
 
