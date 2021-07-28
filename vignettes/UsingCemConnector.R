@@ -67,3 +67,8 @@ cemConnection$getConditionEvidence(ingredientConceptSet)
 minorDepressionConceptSet <- data.frame(conceptId = c(440383), includeDescendants = c(0), isExcluded = c(0))
 cemConnection$getConditionEvidence(minorDepressionConceptSet, siblingLookupLevels = 1)
 
+## -----------------------------------------------------------------------------
+conditionConceptSet <- data.frame(conceptId = c(433440), includeDescendants = c(1), isExcluded = c(0))
+ingredientConceptSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+cemConnection$getRelationships(conditionConceptSet = conditionConceptSet, ingredientConceptSet = ingredientConceptSet)
+
