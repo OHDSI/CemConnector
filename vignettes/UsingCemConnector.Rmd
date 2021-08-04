@@ -200,4 +200,13 @@ It is strongly advised to consider a revised concept set, especially when search
 
 The relationships between specific ingredient and condition based concept sets are often highly informative.
 A goal of Cem connector is allowed exploration of this evidence.
-For example, we may be interested in what evidence (if any) relates `codene` with
+For example, we may be interested in what evidence (if any) relates `codene` with `Dysthymia`, this can be achieved with the use of the relationships method:
+
+```{r}
+conditionConceptSet <- data.frame(conceptId = c(433440), includeDescendants = c(1), isExcluded = c(0))
+ingredientConceptSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
+cemConnection$getRelationships(conditionConceptSet = conditionConceptSet, ingredientConceptSet = ingredientConceptSet)
+```
+Here we see a number of relationship definitions that relate the two concept sets, including PubMed literatrue (via mesh terms)
+as well as spontaneous reports for adverse eventsand product labels.
+Refer to ```cemConnection$getCemSourceInfo()``` as this will strongly relate to the data sources as well as the date of generation.

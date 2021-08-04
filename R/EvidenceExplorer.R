@@ -82,6 +82,7 @@ ceExplorerModule <- function(id,
 #'
 #' @param id string - unique namespace for module. Must match call to ceExplorerModule
 #' @importFrom shinycssloaders withSpinner
+#' @export
 ceExplorerModuleUi <- function(id) {
   ns <- shiny::NS(id)
   shiny::div(shiny::textOutput(ns("errorMessage")),
@@ -151,12 +152,13 @@ negativeControlSelectorModule <- function(id,
   shiny::moduleServer(id, serverFunc)
 }
 
-#' CE Explorer module
+#' negative control module ui
 #' @description
-#' Shiny Module for integration of evidence for conceptsets in to shiny applications
+#' Shiny Module for integration of negative control search for conceptsets in to shiny applications
 #'
 #' @param id string - unique namespace for module. Must match call to ceExplorerModule
 #' @importFrom shinycssloaders withSpinner
+#' @export
 negativeControlSelectorUi <- function(id) {
   ns <- shiny::NS(id)
   shiny::div(shiny::textOutput(ns("errorMessage")),
