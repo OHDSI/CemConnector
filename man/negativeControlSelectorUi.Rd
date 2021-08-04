@@ -2,7 +2,7 @@
 % Please edit documentation in R/EvidenceExplorer.R
 \name{negativeControlSelectorUi}
 \alias{negativeControlSelectorUi}
-\title{CE Explorer module}
+\title{negative control module ui}
 \usage{
 negativeControlSelectorUi(id)
 }
@@ -10,5 +10,5 @@ negativeControlSelectorUi(id)
 \item{id}{string - unique namespace for module. Must match call to ceExplorerModule}
 }
 \description{
-Shiny Module for integration of evidence for conceptsets in to shiny applications
+Shiny Module for integration of negative control search for conceptsets in to shiny applications
 }
