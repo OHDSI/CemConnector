@@ -36,14 +36,30 @@ AbstractCemBackend <- R6::R6Class(
   private = list(
     checkConceptSet = function(conceptSet) {
       checkmate::assert_data_frame(conceptSet, min.rows = 1)
-      checkmate::checkNames(names(conceptSet), must.include = c("includeDescendants", "conceptId", "isExcluded"))
+      checkmate::checkNames(names(conceptSet), must.include = c("conceptId"))
     },
 
     getConceptIdsWithoutDescendants = function(conceptSet) {
+      if (!("includeDescendants" %in% colnames(conceptSet))) {
+        conceptSet$includeDescendants <- 1
+      }
+
+      if (!("isExcluded" %in% colnames(conceptSet))) {
+        conceptSet$isExcluded <- 0
+      }
+
       conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 0,]$conceptId
     },
 
     getConceptIdsWithDescendants = function(conceptSet) {
+      if (!("includeDescendants" %in% colnames(conceptSet))) {
+        conceptSet$includeDescendants <- 1
+      }
+
+      if (!("isExcluded" %in% colnames(conceptSet))) {
+        conceptSet$isExcluded <- 0
+      }
+
       conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 1,]$conceptId
     }
   )
