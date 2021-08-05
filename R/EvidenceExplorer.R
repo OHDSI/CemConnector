@@ -45,18 +45,24 @@ ceExplorerModule <- function(id,
       if (!(checkmate::check_class(ingredientConceptSet, "data.frame") |
         checkmate::check_class(conditionConceptSet, "data.frame"))) {
         output$errorMessage <- shiny::renderText("Invalid concept sets defined")
-      } else {
-        if (nrow(conditionConceptSet) > 0 & nrow(ingredientConceptSet) > 0) {
-          relationships <- backend$getRelationships(ingredientConceptSet, conditionConceptSet, siblingLookupLevels)
-        } else if (nrow(ingredientConceptSet) > 0) {
-          relationships <- backend$getIngredientEvidence(ingredientConceptSet)
-        } else if (nrow(conditionConceptSet) > 0) {
-          relationships <- backend$getConditionEvidence(conditionConceptSet, siblingLookupLevels)
-        } else {
-          output$errorMessage <- shiny::renderText("No concept sets defined")
-        }
+        return(relationships)
       }
-      relationships
+
+      if (nrow(conditionConceptSet) > 0 & nrow(ingredientConceptSet) > 0) {
+        relationships <- backend$getRelationships(ingredientConceptSet, conditionConceptSet, siblingLookupLevels)
+      } else if (nrow(ingredientConceptSet) > 0) {
+        relationships <- backend$getIngredientEvidence(ingredientConceptSet)
+      } else if (nrow(conditionConceptSet) > 0) {
+        relationships <- backend$getConditionEvidence(conditionConceptSet, siblingLookupLevels)
+      } else {
+        output$errorMessage <- shiny::renderText("No concept sets defined")
+        return(relationships)
+      }
+
+      if (nrow(relationships) == 0) {
+        output$errorMessage <- shiny::renderText("No evidence found for concept set mapping")
+      }
+      return(relationships)
     })
 
     output$evidenceTable <- shiny::renderDataTable({
