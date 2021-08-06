@@ -42,7 +42,7 @@ with ingredient_concept_evidence as (
 -- We need the set of allowed concepts for the entire concept set
 
 SELECT TOP @n_controls
-    iq.drug_concept_id as ingredient_concept_id,
+    iq.drug_concept_id as concept_id,
     c.concept_name
 FROM (
     -- get concept, and rankings
