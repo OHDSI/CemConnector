@@ -24,20 +24,18 @@
 #' @param comparatorId comparator cohort Id controls are for (optional in self controlled studies)
 #' @param fileName path of existing negative control file or where file will be written
 #' @param type "outcome" or "exposure" - only outcomes are currently supported by the study package
-#' @importFrom checkmate assertDataFrame, assertInteger, assertString
 #' @importFrom utils read.csv write.csv
-#' @importFrom base rbind
 #' @export
 addControlsToStudyPackage <- function(controlConcepts,
                                       targetId,
                                       comparatorId = NULL,
                                       fileName = "inst/settings/NegativeControls.csv",
                                       type = "outcome") {
-  checkmate::assertDataFrame(controlConcepts, min.rows = 1)
-  checkmate::assertNames(names(controlConcepts), must.include = c("conceptId", "conceptName"))
-  checkmate::assertNumber(targetId)
-  checkmate::assertNumber(comparatorId, null.ok = TRUE)
-  checkmate::assertString(fileName)
+  checkmate::assert_data_frame(controlConcepts, min.rows = 1)
+  checkmate::assert_names(names(controlConcepts), must.include = c("conceptId", "conceptName"))
+  checkmate::assert_numeric(targetId)
+  checkmate::assert_numeric(comparatorId, null.ok = TRUE)
+  checkmate::assert_string(fileName)
 
   if (nrow(controlConcepts) < 10) {
     warning("Small number of negative control concepts selected")
