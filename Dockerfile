@@ -1,4 +1,6 @@
 FROM rstudio/plumber
+
+ARG PLUMBER_PORT=8080
 # create the application folder
 RUN mkdir -p ~/application
 # Install java and rJava

@@ -35,4 +35,4 @@ vocabularySchema <- Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA")
 sourceSchema <- Sys.getenv("CEM_DATABASE_INFO_SCHEMA")
 
 api <- CemConnector::loadApi(connectionDetails, cemSchema = cemSchema, vocabularySchema = vocabularySchema, sourceSchema = sourceSchema)
-api$run(port = as.integer(Sys.getenv("PLUMBER_PORT")))
+api$run(port = as.integer(Sys.getenv("PLUMBER_PORT")), host="0.0.0.0")

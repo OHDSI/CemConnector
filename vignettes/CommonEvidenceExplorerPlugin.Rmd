@@ -2,15 +2,13 @@
 title: "Common Evidence Explorer Plugin"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    toc: yes
-  html_document:
-    number_sections: yes
-    toc: yes
+    html_document:
+        number_sections: yes
+        toc: yes
 vignette: >
-  %\VignetteIndexEntry{Common Evidence Explorer Plugin}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+ %\VignetteIndexEntry{Common Evidence Explorer Plugin}
+ %\VignetteEngine{knitr::rmarkdown}
+ %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
