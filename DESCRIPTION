@@ -32,7 +32,8 @@ Suggests:
     withr,
     httpuv,
     knitr,
-    rmarkdown
+    rmarkdown,
+    markdown
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true
