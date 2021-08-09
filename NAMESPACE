@@ -2,8 +2,10 @@
 
 export(CemDatabaseBackend)
 export(CemWebApiBackend)
+export(addControlsToStudyPackage)
 export(ceExplorerModule)
 export(ceExplorerModuleUi)
+export(createCemConnection)
 export(launchCeExplorer)
 export(loadApi)
 export(negativeControlSelectorModule)
