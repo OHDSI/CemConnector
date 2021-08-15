@@ -1,0 +1,350 @@
+servers:
+  - url: '/'
+openapi: 3.0.3
+info:
+  description: This is the OHDSI CemConnector API for the OHDSI Common Evidence Database (CEM). This API is still under development.
+  title: OHDSI CemConnector API
+  license:
+    name: "Apache 2.0"
+    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+  version: 1.0.0
+components:
+  schemas:
+    Status:
+      type: object
+      properties:
+        status:
+          type: string
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+    Source:
+      type: object
+      properties:
+        sourceId:
+          type: string
+        description:
+          type: string
+        provenance:
+          type: string
+        contributorOrganization:
+          type: string
+        contactName:
+          type: string
+        creationDate:
+          type: string
+        coverageStartDate:
+          type: string
+        coverageEndDate:
+          type: string
+        versionIdentifier:
+          type: string
+    SourceArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/Source"
+    ConceptId:
+      type: object
+      properties:
+        conceptId:
+          type:
+            number
+    ConceptIdArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/ConceptId"
+    Concept:
+      type: object
+      properties:
+        conceptId:
+          type: number
+        conceptName:
+          type: string
+    ConceptArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/Concept"
+    IngredientEvidenceSummary:
+      type: object
+      properties:
+        ingredientConceptId:
+          type: number
+        conceptName:
+          type: string
+        evidenceExists:
+          type: number
+    IngredientEvidenceSummaryArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/IngredientEvidenceSummary"
+    ConditionEvidenceSummary:
+      type: object
+      properties:
+        conditionConceptId:
+          type: number
+        conceptName:
+          type: string
+        evidenceExists:
+          type: number
+    ConditionEvidenceSummaryArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/ConditionEvidenceSummary"
+    Evidence:
+      type: object
+      properties:
+        conceptName1:
+          type: string
+        conceptName2:
+          type: string
+        conceptId1:
+          type: number
+        sourceCode1:
+          type: string
+        sourceCodeType1:
+          type: string
+        conceptId2:
+          type: number
+        sourceCode2:
+          type: string
+        sourceCodeType2:
+          type: string
+        sourceId:
+          type: string
+        evidenceType:
+          type: string
+        relationshipId:
+          type: string
+        statisticValue:
+          type: number
+        statisticValueType:
+          type: string
+        uniqueIdentifier:
+          type: string
+        uniqueIdentifierType:
+          type: string
+        countHow:
+          type: string
+    EvidenceArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/Evidence"
+paths:
+  /:
+    get:
+      summary: ' Get API status'
+      responses:
+        default:
+          description: Service status string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+      parameters: []
+  /version:
+    get:
+      summary: ' Get CemConnector API version'
+      responses:
+        default:
+          description: Service version string.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+      parameters: []
+  /cemSourceInfo:
+    get:
+      summary: ' Get Evidence sources'
+      parameters: []
+      responses:
+        default:
+          description: Evidence sources array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceArray'
+  /conditionEvidenceSummary:
+    post:
+      summary: ' For a set of OMOP vocabulary standard condition concepts get the evidence summary of associated ingredients'
+      parameters: []
+      requestBody:
+        content:
+            application/json:
+              schema:
+                properties:
+                  conditionConceptSet:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ConceptIdArray"
+                    description: >-
+                      conceptset of conditions. Must be an array of concept ids and
+                      use only OMOP standard concepts
+                  siblingLookupLevels:
+                    type: number
+                    description: number of sibling levels to look up to find matches
+      responses:
+        default:
+          description: Ingredients evidence summary array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngredientEvidenceSummaryArray'
+  /conditionEvidence:
+    post:
+      summary: ' For a set of OMOP standard vocabulary condition concepts get the evidence for associated ingredients'
+      parameters: []
+      requestBody:
+        content:
+            application/json:
+              schema:
+                properties:
+                  conditionConceptSet:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ConceptIdArray"
+                    description: >-
+                      conceptset of conditions. Must be an array of concept ids and
+                      use only OMOP standard concepts
+                  siblingLookupLevels:
+                    type: number
+                    description: number of sibling levels to look up to find matches - default is zero
+      responses:
+        default:
+          description: Evidence array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceArray'
+  /ingredientEvidenceSummary:
+    post:
+      summary: ' For a set of OMOP vocabulary standard ingredient concepts get the evidence summary for associated conditions'
+      parameters: []
+      requestBody:
+        content:
+            application/json:
+              schema:
+                properties:
+                  ingredientConceptSet:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ConceptIdArray"
+                    description: >-
+                      conceptset of drug ingredients. Must be an array of concept ids and
+                      use only OMOP standard concepts
+      responses:
+        default:
+          description: Conditions evidence summary array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConditionEvidenceSummaryArray'
+  /ingredientEvidence:
+    post:
+      summary: ' For a set of OMOP standard vocabulary ingredients concepts get the evidence for associated conditions'
+      parameters: []
+      requestBody:
+        content:
+            application/json:
+              schema:
+                properties:
+                  ingredientConceptSet:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ConceptIdArray"
+                    description: >-
+                      conceptset of drug ingredients. Must be an array of concept ids and
+                      use only OMOP standard concepts
+      responses:
+        default:
+          description: Evidence array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceArray'
+  /relationships:
+    post:
+      summary: ' For a set of OMOP standard vocabulary ingredient and drug concepts get the evidence of relationships'
+      parameters: []
+      requestBody:
+        content:
+            application/json:
+              schema:
+                properties:
+                  ingredientConceptSet:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ConceptIdArray"
+                    description: >-
+                      conceptset of drug ingredients. Must be an array of concept ids and
+                      use only OMOP standard concepts
+                  conditionConceptSet:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ConceptIdArray"
+                    description: >-
+                      conceptset of conditions. Must be an array of concept ids and
+                      use only OMOP standard concepts
+                  conditionSiblingLookupLevels:
+                    type: number
+                    description: number of levels to lookup condition siblings in the concept ancestry - default is 0
+      responses:
+        default:
+          description: Evidence array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceArray'
+  /suggestedControlConditions:
+    post:
+      summary: ' For a given ingredient concept set get suggested negative controls conditions. These are based on condition concepts with a lack of evidence available and ranked by occurence across the ohdsi network.'
+      parameters: []
+      requestBody:
+        content:
+            application/json:
+              schema:
+                properties:
+                  ingredientConceptSet:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ConceptIdArray"
+                    description: >-
+                      conceptset of drug ingredients. Must be an array of concept ids and
+                      use only OMOP standard concepts 
+                  nControls:
+                    type: number
+                    description: number of control concepts to suggest
+      responses:
+        default:
+          description: Negative controls condition concepts array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConceptArray'
+  /suggestedControlIngredients:
+    post:
+      summary: ' For a given condition concept set get suggested negative controls ingredients. These are based on condition concepts with a lack of evidence available and ranked by occurence across the ohdsi network.'
+      parameters: []
+      requestBody:
+        content:
+            application/json:
+              schema:
+                properties:
+                  conditionConceptSet:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ConceptIdArray"
+                    description: >-
+                      conceptset of conditions. Must be an array of concept ids and
+                      use only OMOP standard concepts
+                  nControls:
+                    type: number
+                    description: number of control concepts to suggest
+      responses:
+        default:
+          description: Negative controls ingredient concepts array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConceptArray'

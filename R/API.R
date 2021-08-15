@@ -42,8 +42,10 @@ loadApi <- function(connectionDetails,
                                                 sourceSchema = sourceSchema,
                                                 usePooledConnection = getOption("CemConnector.UsePooledConnection", TRUE))
 
-
   plumb <- plumber::pr(pathToPlumberApi, envir = envir)
+  customOasSpecification <- yaml::read_yaml(system.file(file.path("api", "cemconnector_openapi.yaml"), package = "CemConnector"))
+  plumb <- plumber::pr_set_api_spec(plumb, customOasSpecification)
+  
   plumb <- plumber::pr_hook(plumb, "exit", function() {
     # Close down database connections
     envir$cemBackendApi$finalize()
