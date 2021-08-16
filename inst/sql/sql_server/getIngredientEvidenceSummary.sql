@@ -1,5 +1,7 @@
-SELECT ims.condition_concept_id, c.concept_name, max(ims.evidence_exists) as evidence_exists
-
+SELECT {@limit_row_count != ''} ? {TOP @limit_row_count} *
+FROM (
+SELECT
+ims.condition_concept_id, c.concept_name, max(ims.evidence_exists) as evidence_exists
 FROM (
     -- Where children of the ingredient concept are explicitly included
     {@condition_concept_desc != ''} ? {
@@ -22,3 +24,4 @@ FROM (
 ) ims
 INNER JOIN @vocabulary.concept c ON (c.concept_id = ims.condition_concept_id)
 GROUP BY ims.condition_concept_id, c.concept_name
+) results;

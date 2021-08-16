@@ -29,7 +29,7 @@ ConnectionHandler <- R6::R6Class(
     },
 
     renderTranslateSql = function(query, ...) {
-      sql <- SqlRender::render(sql = query, ...)
+      sql <- SqlRender::render(sql = query, limit_row_count = Sys.getenv("LIMIT_ROW_COUNT"), ...)
       SqlRender::translate(sql, targetDialect = self$connectionDetails$dbms)
     },
 
@@ -67,6 +67,7 @@ ConnectionHandler <- R6::R6Class(
         if (self$connectionDetails$dbms %in% c("postgresql", "redshift")) {
           DatabaseConnector::dbExecute(self$con, "ABORT;")
         }
+        print(sql)
         stop(error)
       })
 

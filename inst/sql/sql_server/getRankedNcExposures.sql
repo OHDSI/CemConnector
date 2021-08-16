@@ -16,7 +16,7 @@ with ingredient_concept_evidence as (
     UNION
 
     SELECT
-        ms.ingredient_concept_id
+        ms.ingredient_concept_id,
         max(ms.evidence_exists) as evidence_exists
     FROM @cem_schema.matrix_summary ms
     WHERE ms.condition_concept_id IN (@condition_concept_no_desc)
@@ -41,6 +41,8 @@ with ingredient_concept_evidence as (
 
 -- We need the set of allowed concepts for the entire concept set
 
+SELECT {@limit_row_count != ''} ? {TOP @limit_row_count} *
+FROM (
 SELECT TOP @n_controls
     iq.drug_concept_id as concept_id,
     c.concept_name
@@ -70,4 +72,5 @@ FROM (
 INNER JOIN ingredient_concept_evidence ies ON (iq.drug_concept_id = ies.ingredient_concept_id AND ies.evidence_exists = 0)
 INNER JOIN @vocabulary.concept c ON c.concept_id = iq.drug_concept_id
 GROUP BY iq.drug_concept_id, c.concept_name
-ORDER BY min(iq.sort_order) ASC;
+ORDER BY min(iq.sort_order) ASC
+) results;

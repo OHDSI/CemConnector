@@ -1,3 +1,6 @@
+select 
+{@limit_row_count != ''} ? {TOP @limit_row_count} * 
+FROM (
 
 {@ingredient_concepts_desc != '' & @condition_concepts_desc != ''} ? {
 -- BOTH USE DESCENDANTS
@@ -79,3 +82,5 @@ INNER JOIN @vocabulary.concept_ancestor ca2 ON c2.concept_id = ca2.descendant_co
 WHERE ca2.ancestor_concept_id IN (@ingredient_concepts_desc)
 AND cu.concept_id_2  IN (@condition_concepts_no_desc)
 }
+
+) results;
