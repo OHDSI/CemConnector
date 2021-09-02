@@ -11,17 +11,27 @@ genericTests <- function(connClass, classes, connectionClass) {
   expect_true(conn$isActive)
   expect_true(DBI::dbIsValid(dbObj = conn$con))
 
-  data <- conn$queryDb("SELECT {@limit_row_count != ''} ? {TOP @limit_row_count} * FROM (SELECT count(*) AS cnt_test FROM main.person) results;")
+  withr::with_envvar(new = c("LIMIT_ROW_COUNT" = 1), {
+    data <- conn$queryDb("SELECT * FROM main.person;")
+    expect_equal(nrow(data), 1)
+  })
+
+  withr::with_envvar(new = c("LIMIT_ROW_COUNT" = 5), {
+    data <- conn$queryDb("SELECT * FROM main.person")
+    expect_equal(nrow(data), 5)
+  })
+
+  data <- conn$queryDb("SELECT count(*) AS cnt_test FROM main.person;")
 
   expect_data_frame(data)
   expect_equal(data$cntTest, 2694)
 
-  data2 <- conn$queryDb("SELECT {@limit_row_count != ''} ? {TOP @limit_row_count} * FROM (SELECT count(*) AS cnt_test FROM main.person) results;", snakeCaseToCamelCase = FALSE)
+  data2 <- conn$queryDb("SELECT count(*) AS cnt_test FROM main.person;", snakeCaseToCamelCase = FALSE)
 
   expect_data_frame(data2)
   expect_equal(data2$CNT_TEST, 2694)
 
-  expect_error(conn$queryDb("SELECT {@limit_row_count != ''} ? {TOP @limit_row_count} * FROM (SELECT 1 * WHERE);"))
+  expect_error(conn$queryDb("SELECT 1 * WHERE;"))
 
   conn$closeConnection()
   expect_false(conn$isActive)
@@ -41,4 +51,3 @@ test_that("Database Connector Class works", {
 test_that("Pooled connector Class works", {
   genericTests(PooledConnectionHandler, c("PooledConnectionHandler", "ConnectionHandler"), "Pool")
 })
-

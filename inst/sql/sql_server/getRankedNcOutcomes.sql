@@ -1,9 +1,6 @@
 {DEFAULT @n_controls = 50}
 
 -- We need the set of allowed concepts for the entire concept set
-
-SELECT {@limit_row_count != ''} ? {TOP @limit_row_count} *
-FROM (
 SELECT TOP @n_controls
     iq.condition_concept_id as concept_id,
     c.concept_name
@@ -49,5 +46,4 @@ INNER JOIN (
 ) ies ON (iq.condition_concept_id = ies.condition_concept_id AND ies.evidence_exists = 0)
 INNER JOIN @vocabulary.concept c ON c.concept_id = iq.condition_concept_id
 GROUP BY iq.condition_concept_id, c.concept_name
-ORDER BY min(iq.sort_order) ASC
-) results;
+ORDER BY min(iq.sort_order) ASC;

@@ -229,9 +229,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' Get CEM source info as a dataframe
     #' @returns data.frame of sources
     getCemSourceInfo = function() {
-      return(self$connection$queryDb("SELECT {@limit_row_count != ''} ? {TOP @limit_row_count} * FROM (SELECT * FROM @schema.source) results;", 
-				     limit_row_count = Sys.getenv("LIMIT_ROW_COUNT"),
-				     schema = self$sourceSchema))
+      return(self$connection$queryDb("SELECT * FROM @schema.source;", schema = self$sourceSchema))
     },
 
     #' @description
