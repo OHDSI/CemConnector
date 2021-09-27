@@ -229,7 +229,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' Get CEM source info as a dataframe
     #' @returns data.frame of sources
     getCemSourceInfo = function() {
-      return(self$connection$queryDb("SELECT * FROM @schema.source", schema = self$sourceSchema))
+      return(self$connection$queryDb("SELECT * FROM @schema.source;", schema = self$sourceSchema))
     },
 
     #' @description
@@ -290,3 +290,4 @@ CemDatabaseBackend <- R6::R6Class(
     }
   )
 )
+

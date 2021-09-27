@@ -1,4 +1,5 @@
-SELECT ims.ingredient_concept_id, c.concept_name, max(ims.evidence_exists) as evidence_exists
+SELECT
+ims.ingredient_concept_id, c.concept_name, max(ims.evidence_exists) as evidence_exists
 FROM (
     -- Where children of the ingredient concept are explicitly included
     SELECT
@@ -13,7 +14,7 @@ FROM (
     UNION
 
     SELECT
-        ms.ingredient_concept_id
+        ms.ingredient_concept_id,
         max(ms.evidence_exists) as evidence_exists
     FROM @cem_schema.matrix_summary ms
     WHERE ms.condition_concept_id IN (@condition_concept_no_desc)
@@ -34,4 +35,4 @@ FROM (
     }
 ) ims
 INNER JOIN @vocabulary.concept c ON (c.concept_id = ims.ingredient_concept_id)
-GROUP BY ims.ingredient_concept_id, c.concept_name
+GROUP BY ims.ingredient_concept_id, c.concept_name;

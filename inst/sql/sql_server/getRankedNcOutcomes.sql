@@ -1,7 +1,6 @@
 {DEFAULT @n_controls = 50}
 
 -- We need the set of allowed concepts for the entire concept set
-
 SELECT TOP @n_controls
     iq.condition_concept_id as concept_id,
     c.concept_name

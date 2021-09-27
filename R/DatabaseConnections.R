@@ -59,14 +59,22 @@ ConnectionHandler <- R6::R6Class(
       }
     },
 
-    queryDb = function(query, snakeCaseToCamelCase = TRUE, ...) {
+    queryDb = function(query, snakeCaseToCamelCase = TRUE, overrideRowLimit = FALSE, ...) {
+      limitRowCount <- as.integer(Sys.getenv("LIMIT_ROW_COUNT"))
+      if (!is.na(limitRowCount) & limitRowCount > 0 & !overrideRowLimit) {
+        query <- SqlRender::render("SELECT TOP @limit_row_count * FROM (@query) result;",
+                                   query = gsub(";$", "", query), # Remove last semi-colon
+                                   limit_row_count = limitRowCount)
+      }
       sql <- self$renderTranslateSql(query, ...)
+
       tryCatch({
         data <- self$queryFunction(sql, snakeCaseToCamelCase = snakeCaseToCamelCase)
       }, error = function(error) {
         if (self$connectionDetails$dbms %in% c("postgresql", "redshift")) {
           DatabaseConnector::dbExecute(self$con, "ABORT;")
         }
+        print(sql)
         stop(error)
       })
 
