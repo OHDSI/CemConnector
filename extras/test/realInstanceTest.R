@@ -15,11 +15,9 @@ keyringService <- Sys.getenv("LIVE_CEM_KEYRING_SERVICE")
 dbUser <- Sys.getenv("LIVE_CEM_DATABASE_USER")
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("LIVE_CEM_DATABASE_SERVER"),
-                                                                user = dbUser,
-                                                                password = keyring::key_get(keyringService, username = dbUser),
-                                                                port = Sys.getenv("LIVE_CEM_DATABASE_PORT"),
-                                                                dbms = Sys.getenv("LIVE_CEM_DATABASE_DBMS"),
-                                                                extraSettings = Sys.getenv("LIVE_CEM_DATABASE_EXTRA_SETTINGS"))
+  user = dbUser, password = keyring::key_get(keyringService,
+                                             username = dbUser), port = Sys.getenv("LIVE_CEM_DATABASE_PORT"),
+  dbms = Sys.getenv("LIVE_CEM_DATABASE_DBMS"), extraSettings = Sys.getenv("LIVE_CEM_DATABASE_EXTRA_SETTINGS"))
 
 cemTestSchema <- Sys.getenv("LIVE_CEM_DATABASE_SCHEMA")
 vocabularySchema <- Sys.getenv("LIVE_CEM_DATABASE_VOCAB_SCHEMA")
@@ -32,8 +30,8 @@ serverStart <- function(apiPort, ...) {
   connectionDetails <- DatabaseConnector::createConnectionDetails(...)
   api <- CemConnector::loadApi(connectionDetails,
                                cemSchema = Sys.getenv("LIVE_CEM_DATABASE_SCHEMA"),
-                               vocabularySchema = Sys.getenv("LIVE_CEM_DATABASE_VOCAB_SCHEMA"),
-                               sourceSchema = Sys.getenv("LIVE_CEM_DATABASE_INFO_SCHEMA"))
+
+    vocabularySchema = Sys.getenv("LIVE_CEM_DATABASE_VOCAB_SCHEMA"), sourceSchema = Sys.getenv("LIVE_CEM_DATABASE_INFO_SCHEMA"))
   api$setDocs(FALSE)
   writeLines("API LOADED", con = stdout())
   api$run(port = apiPort)
@@ -44,21 +42,16 @@ apiProcess <- callr::r_bg(serverStart,
                           stdout = "api.txt",
                           stderr = "err.txt",
                           args = list(apiPort = apiPort,
-                                      server = Sys.getenv("LIVE_CEM_DATABASE_SERVER"),
-                                      user = dbUser,
-                                      password = keyring::key_get(keyringService, username = dbUser),
-                                      port = Sys.getenv("LIVE_CEM_DATABASE_PORT"),
-                                      dbms = Sys.getenv("LIVE_CEM_DATABASE_DBMS"),
-                                      extraSettings = Sys.getenv("LIVE_CEM_DATABASE_EXTRA_SETTINGS")))
+  server = Sys.getenv("LIVE_CEM_DATABASE_SERVER"), user = dbUser, password = keyring::key_get(keyringService,
+    username = dbUser), port = Sys.getenv("LIVE_CEM_DATABASE_PORT"), dbms = Sys.getenv("LIVE_CEM_DATABASE_DBMS"),
+  extraSettings = Sys.getenv("LIVE_CEM_DATABASE_EXTRA_SETTINGS")))
 
 message("running background process at: ", apiUrl)
 message("Swagger at: ", apiUrl, "/__docs__/")
 
 
-options(
-  "CemConnector.useHostedUrl" = apiUrl,
-  "CemConnectionDetails" = connectionDetails,
-  "cemTestSchema" = cemTestSchema,
-  "cemVocabularySchema" = vocabularySchema,
-  "cemSourceInfoSchema" = sourceInfoSchema
-)
+options(CemConnector.useHostedUrl = apiUrl,
+        CemConnectionDetails = connectionDetails,
+        cemTestSchema = cemTestSchema,
+
+  cemVocabularySchema = vocabularySchema, cemSourceInfoSchema = sourceInfoSchema)

@@ -298,7 +298,7 @@ paths:
                 $ref: '#/components/schemas/EvidenceArray'
   /suggestedControlConditions:
     post:
-      summary: ' For a given ingredient concept set get suggested negative controls conditions. These are based on condition concepts with a lack of evidence available and ranked by occurence across the ohdsi network.'
+      summary: ' For a given ingredient concept set get suggested negative controls conditions. These are based on condition concepts with a lack of evidence available and ranked by occurrence across the ohdsi network.'
       parameters: []
       requestBody:
         content:
@@ -324,7 +324,7 @@ paths:
                 $ref: '#/components/schemas/ConceptArray'
   /suggestedControlIngredients:
     post:
-      summary: ' For a given condition concept set get suggested negative controls ingredients. These are based on condition concepts with a lack of evidence available and ranked by occurence across the ohdsi network.'
+      summary: ' For a given condition concept set get suggested negative controls ingredients. These are based on condition concepts with a lack of evidence available and ranked by occurrence across the ohdsi network.'
       parameters: []
       requestBody:
         content:

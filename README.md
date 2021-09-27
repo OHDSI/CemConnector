@@ -24,10 +24,20 @@ Example
 ========
 ```r
 library(CemConnector)
+cemConnectorUrl <- "https://cem.ohdsi.org"
+cemConnection <- CemWebApiBackend$new(apiUrl = cemConnectorUrl)
 
+myExposureConceptSet <- data.frame(conceptId = 1201620, includeDescendants = 1, isExcluded = 0)
 
+# Get 50 negative control concepts for this exposure
+cemConnection$getSuggestedControlCondtion(myExposureConceptSet)
+
+# Get any related evidence for this exposure and an outcome of interest
+myOutcomeConceptSet <- data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0)
+cemConnection$getRelationships(myExposureConceptSet, myOutcomeConceptSet, conditionSiblingLookupLevels = 1)
 
 ```
+For instructions on building good concept sets see [PHEOBE](https://data.ohdsi.org/PHOEBE/).
 
 Technology
 ============
@@ -73,4 +83,4 @@ CemConnector is being developed in R Studio and PyCharm (with R plugins).
 
 ### Development status
 
-Early development - not intented for use
+Early development - not intended for use

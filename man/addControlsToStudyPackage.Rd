@@ -13,7 +13,7 @@ addControlsToStudyPackage(
 )
 }
 \arguments{
-\item{controlConcepts}{data.frame with at least 1 row (reccomended > 10) containing conceptId and conceptName}
+\item{controlConcepts}{data.frame with at least 1 row (recommended > 10) containing conceptId and conceptName}
 
 \item{targetId}{target cohort Id controls are for}
 

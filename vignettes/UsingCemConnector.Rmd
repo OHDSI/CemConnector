@@ -124,7 +124,7 @@ outcomeConcepts <- cemConnection$getSuggestedControlIngredients(conditionConcept
 outcomeConcepts
 ```
 In both cases the row order indicates the rank of the negative control suggestions.
-This is simply how commonly a co-occurence has been observed in the OHDSI network.
+This is simply how commonly a co-occurrence has been observed in the OHDSI network.
 For example, `in-grown toe nails` and `acetominophen` are very commonly observed, yet will likely have no medical relationship between drugs and patient outcomes, respectively.
 
 # Exploring evidence
@@ -181,7 +181,7 @@ cemConnection$getConditionEvidence(ingredientConceptSet)
 
 
 The mapping between conditions and ingredients is often complicated, for example moderate depressive disorder may not match exactly.
-Consequently, it may be desirable to explore `siblings` of the related concept, using the concept ancestory.
+Consequently, it may be desirable to explore `siblings` of the related concept, using the concept ancestry.
 This can be achieved with the `siblingLookupLevels` parameter, which is an integer tha can be used to search higher levels in the concept ancestry:
 
 ```{r}
@@ -205,6 +205,6 @@ conditionConceptSet <- data.frame(conceptId = c(433440), includeDescendants = c(
 ingredientConceptSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
 cemConnection$getRelationships(conditionConceptSet = conditionConceptSet, ingredientConceptSet = ingredientConceptSet)
 ```
-Here we see a number of relationship definitions that relate the two concept sets, including PubMed literatrue (via mesh terms)
+Here we see a number of relationship definitions that relate the two concept sets, including PubMed literature (via mesh terms)
 as well as spontaneous reports for adverse eventsand product labels.
 Refer to ```cemConnection$getCemSourceInfo()``` as this will strongly relate to the data sources as well as the date of generation.
