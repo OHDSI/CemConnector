@@ -19,7 +19,7 @@ c( \
 'DatabaseConnector', \
 'checkmate', \
 'R6', \
-'base64enc', \ 
+'base64enc', \
 'jquerylib', \
 'sass', \
 'bslib', \

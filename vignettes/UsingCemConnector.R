@@ -13,16 +13,16 @@ cemConnection <- CemConnector::CemDatabaseBackend$new(connectionDetails = connec
                                                       sourceSchema = "main")
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  
+#
 #  cemConnection <- CemConnector::CemWebApiBackend(apiUrl = "https://cem.ohdsi.org/")
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  
+#
 #  connectionDetails <- DatabaseConnector::createConnectionDetails(user = "mydbusername",
 #                                                                  server = "myserver/foo",
 #                                                                  dbms = "redshift",
 #                                                                  password = "mysecret")
-#  
+#
 #  cemConnection <- CemConnector::CemDatabaseBackend$new(connectionDetails = connectionDetails,
 #                                                        vocabularySchema = "vocabulary",
 #                                                        cemSchema = "cem_v2",
