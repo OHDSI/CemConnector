@@ -1,4 +1,3 @@
-
 {@ingredient_concepts_desc != '' & @condition_concepts_desc != ''} ? {
 -- BOTH USE DESCENDANTS
 SELECT
@@ -78,4 +77,4 @@ INNER JOIN @vocabulary.concept c2 ON (c2.concept_id = cu.concept_id_2)
 INNER JOIN @vocabulary.concept_ancestor ca2 ON c2.concept_id = ca2.descendant_concept_id
 WHERE ca2.ancestor_concept_id IN (@ingredient_concepts_desc)
 AND cu.concept_id_2  IN (@condition_concepts_no_desc)
-}
+};

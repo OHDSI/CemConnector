@@ -50,7 +50,7 @@ An interface to the common evidence model that uses http requests
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
-initialzie object
+initialize object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$new(apiUrl)}\if{html}{\out{</div>}}
 }
@@ -98,7 +98,7 @@ GET server status
 \if{html}{\out{<a id="method-getConditionEvidenceSummary"></a>}}
 \if{latex}{\out{\hypertarget{method-getConditionEvidenceSummary}{}}}
 \subsection{Method \code{getConditionEvidenceSummary()}}{
-Reutrns set of ingredient concepts for a given conceptset of outcomes
+Returns set of ingredient concepts for a given conceptset of outcomes
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getConditionEvidenceSummary(
   conditionConceptSet,
@@ -120,7 +120,7 @@ Reutrns set of ingredient concepts for a given conceptset of outcomes
 \if{html}{\out{<a id="method-getIngredientEvidenceSummary"></a>}}
 \if{latex}{\out{\hypertarget{method-getIngredientEvidenceSummary}{}}}
 \subsection{Method \code{getIngredientEvidenceSummary()}}{
-Reutrns set of outcome concepts for a given conceptset of ingredients
+Returns set of outcome concepts for a given conceptset of ingredients
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getIngredientEvidenceSummary(ingredientConceptSet)}\if{html}{\out{</div>}}
 }
@@ -137,7 +137,7 @@ Reutrns set of outcome concepts for a given conceptset of ingredients
 \if{html}{\out{<a id="method-getConditionEvidence"></a>}}
 \if{latex}{\out{\hypertarget{method-getConditionEvidence}{}}}
 \subsection{Method \code{getConditionEvidence()}}{
-Reutrns ingredient evidence for a given conceptset of conditions
+Returns ingredient evidence for a given conceptset of conditions
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getConditionEvidence(
   conditionConceptSet,
@@ -159,7 +159,7 @@ Reutrns ingredient evidence for a given conceptset of conditions
 \if{html}{\out{<a id="method-getIngredientEvidence"></a>}}
 \if{latex}{\out{\hypertarget{method-getIngredientEvidence}{}}}
 \subsection{Method \code{getIngredientEvidence()}}{
-Reutrns condtion evidence for a given conceptset of ingredients
+Returns condtion evidence for a given conceptset of ingredients
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getIngredientEvidence(ingredientConceptSet)}\if{html}{\out{</div>}}
 }
@@ -201,7 +201,7 @@ From a unified CEM relationships table, for a conceptSet of drug ingredients and
 \if{html}{\out{<a id="method-getCemSourceInfo"></a>}}
 \if{latex}{\out{\hypertarget{method-getCemSourceInfo}{}}}
 \subsection{Method \code{getCemSourceInfo()}}{
-Returns datframe of sources that made the CEM
+Returns data.frame of sources that made the CEM
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getCemSourceInfo()}\if{html}{\out{</div>}}
 }
@@ -222,7 +222,7 @@ getVersion information from api
 \if{latex}{\out{\hypertarget{method-getSuggestedControlCondtions}{}}}
 \subsection{Method \code{getSuggestedControlCondtions()}}{
 Get negative control snomed condition concepts for a given conceptset
-These are ranked by co-occurence accross ohdsi studies
+These are ranked by co-occurrence accross ohdsi studies
 A negative control for a submitted concept_set is valid if there is no evidence for the outcome
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getSuggestedControlCondtions(
@@ -246,7 +246,7 @@ A negative control for a submitted concept_set is valid if there is no evidence 
 \if{latex}{\out{\hypertarget{method-getSuggestedControlIngredients}{}}}
 \subsection{Method \code{getSuggestedControlIngredients()}}{
 Get negative control rxnorm ingredient concepts for a given conceptset
-These are ranked by co-occurence accross ohdsi studies
+These are ranked by co-occurrence accross ohdsi studies
 A negative control for a submitted concept_set is valid if there is no evidence for the ingredient/condition combination
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getSuggestedControlIngredients(

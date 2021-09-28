@@ -97,7 +97,7 @@ Condition evidence summary
 \if{html}{\out{<a id="method-getConditionEvidenceSummary"></a>}}
 \if{latex}{\out{\hypertarget{method-getConditionEvidenceSummary}{}}}
 \subsection{Method \code{getConditionEvidenceSummary()}}{
-Reutrns set of ingredient concepts for a given conceptset of outcomes
+Returns set of ingredient concepts for a given conceptset of outcomes
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getConditionEvidenceSummary(
   conditionConceptSet,
@@ -120,7 +120,7 @@ Condition evidence}
 \if{html}{\out{<a id="method-getConditionEvidence"></a>}}
 \if{latex}{\out{\hypertarget{method-getConditionEvidence}{}}}
 \subsection{Method \code{getConditionEvidence()}}{
-Reutrns set of relationships that exist within CEM for a condition conceptset of interest
+Returns set of relationships that exist within CEM for a condition conceptset of interest
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getConditionEvidence(
   conditionConceptSet,
@@ -143,7 +143,7 @@ Ingredient evidence summary}
 \if{html}{\out{<a id="method-getIngredientEvidenceSummary"></a>}}
 \if{latex}{\out{\hypertarget{method-getIngredientEvidenceSummary}{}}}
 \subsection{Method \code{getIngredientEvidenceSummary()}}{
-Reutrns set of outcome concepts for a given conceptset of ingredients/exposures
+Returns set of outcome concepts for a given conceptset of ingredients/exposures
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getIngredientEvidenceSummary(ingredientConceptSet)}\if{html}{\out{</div>}}
 }
@@ -215,7 +215,7 @@ Get CEM source info as a dataframe
 \if{latex}{\out{\hypertarget{method-getSuggestedControlCondtions}{}}}
 \subsection{Method \code{getSuggestedControlCondtions()}}{
 Get negative control snomed condition concepts for a given conceptset
-These are ranked by co-occurence accross ohdsi studies
+These are ranked by co-occurrence accross ohdsi studies
 A negative control for a submitted concept_set is valid if there is no evidence for the outcome
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getSuggestedControlCondtions(
@@ -239,7 +239,7 @@ A negative control for a submitted concept_set is valid if there is no evidence 
 \if{latex}{\out{\hypertarget{method-getSuggestedControlIngredients}{}}}
 \subsection{Method \code{getSuggestedControlIngredients()}}{
 Get negative control rxnorm ingredient concepts for a given conceptset
-These are ranked by co-occurence accross ohdsi studies
+These are ranked by co-occurrence accross ohdsi studies
 A negative control for a submitted concept_set is valid if there is no evidence for the ingredient/condition combination
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$getSuggestedControlIngredients(

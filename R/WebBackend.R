@@ -27,7 +27,7 @@ CemWebApiBackend <- R6::R6Class(
     apiUrl = NULL,
 
      #' @description
-     #' initialzie object
+     #' initialize object
      #' @param apiUrl String URL parameter for hosted
     initialize = function(apiUrl) {
       # Remove trailing slash
@@ -61,7 +61,7 @@ CemWebApiBackend <- R6::R6Class(
     },
 
     #' @description
-    #' Reutrns set of ingredient concepts for a given conceptset of outcomes
+    #' Returns set of ingredient concepts for a given conceptset of outcomes
     #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
     #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getConditionEvidenceSummary = function(conditionConceptSet,
@@ -74,7 +74,7 @@ CemWebApiBackend <- R6::R6Class(
     },
 
     #' @description
-    #' Reutrns set of outcome concepts for a given conceptset of ingredients
+    #' Returns set of outcome concepts for a given conceptset of ingredients
     #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     getIngredientEvidenceSummary = function(ingredientConceptSet) {
       endpoint <- "ingredientEvidenceSummary"
@@ -83,7 +83,7 @@ CemWebApiBackend <- R6::R6Class(
     },
 
     #' @description
-    #' Reutrns ingredient evidence for a given conceptset of conditions
+    #' Returns ingredient evidence for a given conceptset of conditions
     #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
     #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getConditionEvidence = function(conditionConceptSet,
@@ -96,7 +96,7 @@ CemWebApiBackend <- R6::R6Class(
     },
 
     #' @description
-    #' Reutrns condtion evidence for a given conceptset of ingredients
+    #' Returns condtion evidence for a given conceptset of ingredients
     #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     getIngredientEvidence = function(ingredientConceptSet) {
       endpoint <- "ingredientEvidence"
@@ -118,7 +118,7 @@ CemWebApiBackend <- R6::R6Class(
     },
 
     #' @description
-    #' Returns datframe of sources that made the CEM
+    #' Returns data.frame of sources that made the CEM
     getCemSourceInfo = function() {
       endpoint <- "cemSourceInfo"
       content <- self$request("GET", endpoint)
@@ -134,7 +134,7 @@ CemWebApiBackend <- R6::R6Class(
 
     #' @description
     #' Get negative control snomed condition concepts for a given conceptset
-    #' These are ranked by co-occurence accross ohdsi studies
+    #' These are ranked by co-occurrence accross ohdsi studies
     #' A negative control for a submitted concept_set is valid if there is no evidence for the outcome
     #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
@@ -149,7 +149,7 @@ CemWebApiBackend <- R6::R6Class(
 
     #' @description
     #' Get negative control rxnorm ingredient concepts for a given conceptset
-    #' These are ranked by co-occurence accross ohdsi studies
+    #' These are ranked by co-occurrence accross ohdsi studies
     #' A negative control for a submitted concept_set is valid if there is no evidence for the ingredient/condition combination
     #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
     #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump

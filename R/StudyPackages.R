@@ -19,7 +19,7 @@
 #' See https:://github.com/ohdsi/SkeletonComparativeEffectStudy for details on creating a study
 #' This function adds a set of negative controls to the study package to be automatically instantiated as cohorts.
 #' Id's are determined by the study package, normally this is the same as the concept id
-#' @param controlConcepts data.frame with at least 1 row (reccomended > 10) containing conceptId and conceptName
+#' @param controlConcepts data.frame with at least 1 row (recommended > 10) containing conceptId and conceptName
 #' @param targetId target cohort Id controls are for
 #' @param comparatorId comparator cohort Id controls are for (optional in self controlled studies)
 #' @param fileName path of existing negative control file or where file will be written

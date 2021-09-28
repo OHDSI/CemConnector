@@ -21,5 +21,7 @@ devtools::spell_check()
 
 OhdsiRTools::formatRFolder()
 OhdsiRTools::checkUsagePackage("CemConnector")
+OhdsiRTools::findNonAsciiStringsInFolder()
 
-OhdsiRTools::updateCopyrightYearFolder()
+pkgdown::build_site()
+OhdsiRTools::fixHadesLogo()

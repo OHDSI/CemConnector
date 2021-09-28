@@ -16,7 +16,7 @@ with ingredient_concept_evidence as (
     UNION
 
     SELECT
-        ms.ingredient_concept_id
+        ms.ingredient_concept_id,
         max(ms.evidence_exists) as evidence_exists
     FROM @cem_schema.matrix_summary ms
     WHERE ms.condition_concept_id IN (@condition_concept_no_desc)
@@ -40,7 +40,6 @@ with ingredient_concept_evidence as (
 )
 
 -- We need the set of allowed concepts for the entire concept set
-
 SELECT TOP @n_controls
     iq.drug_concept_id as concept_id,
     c.concept_name

@@ -31,4 +31,4 @@ FROM @cem_schema.cem_unified cu
 INNER JOIN @vocabulary.concept c1 ON (c1.concept_id = cu.concept_id_1)
 INNER JOIN @vocabulary.concept c2 ON (c2.concept_id = cu.concept_id_2)
 INNER JOIN @vocabulary.concept_ancestor ca2 ON c2.concept_id = ca2.descendant_concept_id
-INNER JOIN evidence_summary es ON (cu.concept_id_2 = es.condition_concept_id AND cu.concept_id_1 = es.ingredient_concept_id)
+INNER JOIN evidence_summary es ON (cu.concept_id_2 = es.condition_concept_id AND cu.concept_id_1 = es.ingredient_concept_id);
