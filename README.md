@@ -25,7 +25,7 @@ Example
 ```r
 library(CemConnector)
 cemConnectorUrl <- "https://cem.ohdsi.org"
-cemConnection <- CemWebApiBackend$new(apiUrl = cemConnectorUrl)
+cemConnection <- createCemConnection(apiUrl = cemConnectorUrl)
 
 myExposureConceptSet <- data.frame(conceptId = 1201620, includeDescendants = 1, isExcluded = 0)
 
