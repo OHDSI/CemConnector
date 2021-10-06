@@ -24,6 +24,7 @@
 #' @param conditionConceptInput shiny::reactive that returns data.frame with headers conceptId, includeDescendants, isExcluded
 #' @param siblingLookupLevelsInput shiny::reactive that returns positive integer for sibling levels to lookup for condition concept mappings to CEM
 #' @importFrom utils write.csv
+#' @importFrom dplyr select mutate %>%
 #' @export
 ceExplorerModule <- function(id,
                              backend,
@@ -66,7 +67,23 @@ ceExplorerModule <- function(id,
     })
 
     output$evidenceTable <- shiny::renderDataTable({
-      getRelationships()
+      rel <- getRelationships()
+      if (nrow(rel) == 0)
+        return(rel)
+
+      rel %>%
+        dplyr::mutate(ingredientConceptName = conceptName1,
+                      ingredientConceptId = conceptId1,
+                      conditionConceptName = conceptName2,
+                      conditionConceptId = conceptId2) %>%
+        dplyr::select(ingredientConceptName,
+                      ingredientConceptId,
+                      conditionConceptName,
+                      conditionConceptId,
+                      sourceId,
+                      relationshipId,
+                      evidenceType,
+                      statisticValue)
     })
 
     output$downloadData <- shiny::downloadHandler(
@@ -177,11 +194,15 @@ ceExplorerUi <- function(request) {
 
   inputArea <- shinydashboard::box(title = "Input concept sets (Raw CSV)",
                                    width = 12,
-                                   shiny::p("Required headers: conceptId, includeDescendants, isExcluded"),
+                                   shiny::p("Required headers: conceptId"),
+                                   shiny::p("Optional headers: includeDescendants, isExcluded"),
                                    shiny::textAreaInput("ingredientConcept", label = "Ingredient concept set (csv)"),
                                    shiny::textAreaInput("conditionConcept", label = "Condition concept set (csv)"),
                                    shiny::selectInput("siblingLookupLevels", label = "Condition Sibling Lookup Levels", 0:5, selected = 0),
-                                   shiny::p("If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings"))
+                                   shiny::p("If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings.
+                                   Siblings are related terms that are shared by a common parent of any specified search terms.
+                                   This will lead to increased matches, but will likely result in many more false positives.
+                                   "))
 
   explorerTab <- shiny::fluidRow(inputArea,
                                  shinydashboard::box(width = 12,
