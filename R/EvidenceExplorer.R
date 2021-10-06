@@ -63,6 +63,7 @@ ceExplorerModule <- function(id,
       if (nrow(relationships) == 0) {
         output$errorMessage <- shiny::renderText("No evidence found for concept set mapping")
       }
+      output$errorMessage <- shiny::renderText("")
       return(relationships)
     })
 
@@ -298,7 +299,7 @@ ceExplorerDashboardServer <- function(input, output, session) {
 #' @param usePooledConnection - use pooled connections (database model only)
 #' @param ... param list paased to CemDatabaseBaackend$new
 #' @export
-launchCeExplorer <- function(apiUrl = NULL,
+launchCeExplorer <- function(apiUrl = "https://cem.ohdsi.org",
                              connectionDetails = NULL,
                              usePooledConnection = TRUE,
                              ...) {
@@ -309,11 +310,11 @@ launchCeExplorer <- function(apiUrl = NULL,
 
   if (is.null(apiUrl) & is.null(connectionDetails)) {
     stop("Must set either api url or CEM connection sources")
-  } else if (!is.null(apiUrl)) {
-    environment$backend <- CemWebApiBackend$new(apiUrl = apiUrl)
-  } else {
+  } else if (!is.null(connectionDetails)) {
     environment$backend <- CemDatabaseBackend$new(connectionDetails = connectionDetails,
                                                   usePooledConnection = usePooledConnection, ...)
+  } else {
+    environment$backend <- CemWebApiBackend$new(apiUrl = apiUrl)
   }
 
   shiny::shinyApp(server = ceExplorerDashboardServer, ceExplorerUi, enableBookmarking = "url", onStart = function() {
