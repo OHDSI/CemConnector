@@ -38,6 +38,12 @@ test_that("summary works web", {
   expect_error({ webBackend$request("GET", "nonexistentendpoint") }, "Request error 404")
 })
 
+test_that("All excluded fails", {
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(1))
+  expect_error({outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)},
+               regexp = "Invalid concept set. All concepts are excluded from search")
+})
+
 test_that("get exposure and outcome control concepts evidence", {
 
   # Mild Depression - doesn't map well in CEM

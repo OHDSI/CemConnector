@@ -37,9 +37,6 @@ AbstractCemBackend <- R6::R6Class(
     checkConceptSet = function(conceptSet) {
       checkmate::assert_data_frame(conceptSet, min.rows = 1)
       checkmate::checkNames(names(conceptSet), must.include = c("conceptId"))
-    },
-
-    getConceptIdsWithoutDescendants = function(conceptSet) {
       if (!("includeDescendants" %in% colnames(conceptSet))) {
         conceptSet$includeDescendants <- 1
       }
@@ -47,19 +44,18 @@ AbstractCemBackend <- R6::R6Class(
       if (!("isExcluded" %in% colnames(conceptSet))) {
         conceptSet$isExcluded <- 0
       }
+      # Cannot allow concept sets of all 0
+      if (all(as.logical(conceptSet$isExcluded))) {
+        stop("Invalid concept set. All concepts are excluded from search")
+      }
+      return(conceptSet)
+    },
 
+    getConceptIdsWithoutDescendants = function(conceptSet) {
       conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 0,]$conceptId
     },
 
     getConceptIdsWithDescendants = function(conceptSet) {
-      if (!("includeDescendants" %in% colnames(conceptSet))) {
-        conceptSet$includeDescendants <- 1
-      }
-
-      if (!("isExcluded" %in% colnames(conceptSet))) {
-        conceptSet$isExcluded <- 0
-      }
-
       conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 1,]$conceptId
     }
   )
@@ -125,7 +121,7 @@ CemDatabaseBackend <- R6::R6Class(
     getConditionEvidenceSummary = function(conditionConceptSet,
                                            siblingLookupLevels = 0) {
 
-      private$checkConceptSet(conditionConceptSet)
+      conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
       conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
       conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
 
@@ -146,7 +142,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getConditionEvidence = function(conditionConceptSet, siblingLookupLevels = 0) {
 
-      private$checkConceptSet(conditionConceptSet)
+      conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
       conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
       conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
 
@@ -165,7 +161,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' Returns set of outcome concepts for a given conceptset of ingredients/exposures
     #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     getIngredientEvidenceSummary = function(ingredientConceptSet) {
-      private$checkConceptSet(ingredientConceptSet)
+      ingredientConceptSet <- private$checkConceptSet(ingredientConceptSet)
       ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
       ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
 
@@ -184,7 +180,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' Utilises matrix summary table for optimisation.
     #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     getIngredientEvidence = function(ingredientConceptSet) {
-      private$checkConceptSet(ingredientConceptSet)
+      ingredientConceptSet <- private$checkConceptSet(ingredientConceptSet)
       ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
       ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
 
@@ -203,8 +199,9 @@ CemDatabaseBackend <- R6::R6Class(
     #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
     #' @param conditionSiblingLookupLevels integer - where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getRelationships = function(ingredientConceptSet, conditionConceptSet, conditionSiblingLookupLevels = 0) {
-      private$checkConceptSet(ingredientConceptSet)
-      private$checkConceptSet(conditionConceptSet)
+      ingredientConceptSet <- private$checkConceptSet(ingredientConceptSet)
+      conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
+      conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
 
       ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
       ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
@@ -240,7 +237,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
     #' @returns data.frame of condition concept_id and concept_name
     getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 50) {
-      private$checkConceptSet(ingredientConceptSet)
+      ingredientConceptSet <- private$checkConceptSet(ingredientConceptSet)
       ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
       ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
 
@@ -264,7 +261,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
     #' @returns data.frame of condition concept_id and concept_name
     getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 50) {
-      private$checkConceptSet(conditionConceptSet)
+      conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
       conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
       conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
 
