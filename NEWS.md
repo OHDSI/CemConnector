@@ -8,6 +8,7 @@ Bug Fixes:
 1. Fixed display of error messages in evidence explorer
 2. Fixed searches with backend throwing bad SQL error.
    Concept sets are now checked to see if all concepts are excluded, with an informative error message.
+3. Fixed sql error when searching for negative controls with no descendants of concepts only
 
 CemConnector 0.1.0
 ==================

@@ -64,6 +64,17 @@ test_that("get exposure and outcome control concepts evidence", {
   sugestedControlsIngredients <- backend$getSuggestedControlIngredients(srchOutcomeConceptSet, siblingLookupLevels = 1)
   expect_data_frame(sugestedControlsIngredients)
 
+  # Test no descedants only
+  srchOutcomeConceptSetNoDesc <- data.frame(conceptId = c(4149320), includeDescendants = c(0), isExcluded = c(0))
+  sugestedControlsIngredients <- backend$getSuggestedControlIngredients(srchOutcomeConceptSetNoDesc)
+  expect_data_frame(sugestedControlsIngredients)
+
+  # Test no descedants and lookups
+  srchOutcomeConceptSetNoDesc <- data.frame(conceptId = c(4149320, 4149320), includeDescendants = c(0, 1), isExcluded = c(0, 0))
+  sugestedControlsIngredients <- backend$getSuggestedControlIngredients(srchOutcomeConceptSetNoDesc, siblingLookupLevels = 1)
+  expect_data_frame(sugestedControlsIngredients)
+
+
   # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
