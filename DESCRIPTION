@@ -28,7 +28,6 @@ Suggests:
     testthat,
     devtools,
     RSQLite,
-    Eunomia,
     callr,
     withr,
     httpuv,

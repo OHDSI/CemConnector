@@ -1,3 +1,8 @@
+if (is.na(devtools::package_info("eunomia")$ondiskversion)) {
+  # Everyone loved CRAN
+  devtools::install_github("OHDSI/Eunomia")
+}
+
 # Run extra/test/realInstanceTest.R For testing against a real CEM instance
 apiUrl <- getOption("CemConnector.useHostedUrl")
 connectionDetails <- getOption("CemConnectionDetails")
