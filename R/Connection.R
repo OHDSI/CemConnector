@@ -31,7 +31,7 @@ createCemConnection <- function(apiUrl = "https://cem.ohdsi.org",
                                 cemSchema = NULL,
                                 sourceSchema = NULL,
                                 vocabularySchema = NULL) {
-  if (!is.null(apiUrl)) {
+  if (is.null(connectionDetails) & !is.null(apiUrl)) {
     return(CemWebApiBackend$new(apiUrl = apiUrl))
   }
 
