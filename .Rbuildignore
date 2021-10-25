@@ -8,3 +8,5 @@ errorReportSql.txt
 .dockerignore
 Dockerfile
 extras/
+^doc$
+^Meta$

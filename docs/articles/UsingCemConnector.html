@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CemConnector</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using CemConnector</h1>
             
-            <h4 class="date">2021-09-27</h4>
+            <h4 class="date">2021-10-25</h4>
       
       
       <div class="hidden name"><code>UsingCemConnector.Rmd</code></div>
@@ -305,6 +305,31 @@ h1  {
 <span class="co">#&gt; #   uniqueIdentifierType &lt;chr&gt;, countHow &lt;chr&gt;</span></code></pre></div>
 <p>Here we see a number of relationship definitions that relate the two concept sets, including PubMed literature (via mesh terms) as well as spontaneous reports for adverse eventsand product labels. Refer to <code>cemConnection$getCemSourceInfo()</code> as this will strongly relate to the data sources as well as the date of generation.</p>
 </div>
+</div>
+<div id="study-packages" class="section level1">
+<h1 class="hasAnchor">
+<a href="#study-packages" class="anchor"></a>Study packages</h1>
+<p>We can use the CemConnector package to pull down a selection of negative control suggestions to use within a population level effect estimate study. For an example of a PLE study, see the skeleton package:</p>
+<p><a href="https://github.com/OHDSI/SkeletonComparativeEffectStudy" class="uri">https://github.com/OHDSI/SkeletonComparativeEffectStudy</a></p>
+<p>These are outcome pairs for target exposures that have no mapping to literature searches, drug product labels, clinical trials or statistically significant spontaneous adverse event reports.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"ohdsi/CemConnector"</span><span class="op">)</span>
+<span class="co"># URL tbc</span>
+<span class="va">cemUrl</span> <span class="op">&lt;-</span> <span class="st">"https://cem.ohdsi.org"</span>
+<span class="va">cemConnection</span> <span class="op">&lt;-</span> <span class="fu">CemConnector</span><span class="fu">::</span><span class="fu"><a href="../reference/createCemConnection.html">createCemConnection</a></span><span class="op">(</span>apiUrl <span class="op">=</span> <span class="va">cemUrl</span><span class="op">)</span>
+<span class="co"># Celecoxib/Diclofenac cohort concept set</span>
+<span class="va">conceptSet</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>conceptId <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1118084</span>, <span class="fl">1124300</span><span class="op">)</span>, includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>, isExcluded <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<p>Here we selected a concept set that defines the ingredients in our target and comparator exposures. The concept set search will automatically exclude any outcomes for which evidence exists. Therefore, it is vital to select this concept set with care.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">suggestedControls</span> <span class="op">&lt;-</span> <span class="va">cemConnection</span><span class="op">$</span><span class="fu">getSuggestedControlCondtions</span><span class="op">(</span><span class="va">conceptSet</span>, nControls <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></code></pre></div>
+<p>As evidence mapping is imperfect, it is highly advisable to view the suggested negative controls and refine them before adding them to the study package. The <code>nControls</code> parameter allows the selection of many controls that can be filtered, by default this is set to 50, the order returned is ranked according to how often the condition/drug pairing appears in OHDSI network studies. The selected controls can be appended to the study package, making sure to specify the target and comparator correctly:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">CemConnector</span><span class="fu">::</span><span class="fu"><a href="../reference/addControlsToStudyPackage.html">addControlsToStudyPackage</a></span><span class="op">(</span>controlConcepts <span class="op">=</span> <span class="va">filteredControls</span>,
+                                        targetId <span class="op">=</span> <span class="va">targetId</span>,
+                                        comparatorId <span class="op">=</span> <span class="va">comparatorId</span>,
+                                        fileName <span class="op">=</span> <span class="st">"inst/settings/NegativeControls.csv"</span>,
+                                        type <span class="op">=</span> <span class="st">"outcome"</span><span class="op">)</span></code></pre></div>
+<p>We also need logic to convert the concept IDs into cohorts. This logic is defined in the file <code>inst/sql/NegativeControlOutcomes.sql</code>. The default logic simply creates a cohort for every occurrence of the concept ID or any of its descendants in the condition era table. If other logic is required the SQL file can be modified. Be sure to use template SQL as expected by the <code>SqlRender</code> package.</p>
 </div>
   </div>
 

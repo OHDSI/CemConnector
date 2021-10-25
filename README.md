@@ -25,7 +25,7 @@ Example
 ```r
 library(CemConnector)
 cemConnectorUrl <- "https://cem.ohdsi.org"
-cemConnection <- CemWebApiBackend$new(apiUrl = cemConnectorUrl)
+cemConnection <- createCemConnection(apiUrl = cemConnectorUrl)
 
 myExposureConceptSet <- data.frame(conceptId = 1201620, includeDescendants = 1, isExcluded = 0)
 
@@ -80,7 +80,3 @@ CemConnector is licensed under Apache License 2.0
 Development
 ===========
 CemConnector is being developed in R Studio and PyCharm (with R plugins).
-
-### Development status
-
-Early development - not intended for use

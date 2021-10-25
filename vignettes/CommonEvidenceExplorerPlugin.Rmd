@@ -30,7 +30,7 @@ use OMOP standard vocabularies.
 Using the explorer works with either a database cem connector backend or a hosted url solution.
 The simplest solution is to use an API as follows. This will launch the shiny app:
 ```{r, eval = FALSE}
-baseUrl <- "https://cem.ohdsi.org/api/v1/"
+baseUrl <- "https://cem.ohdsi.org/"
 launchCeExplorer(apiUrl = baseUrl)
 ```
 Alternatively, if database credentials are known the app can launch as follows:
@@ -49,7 +49,7 @@ For example:
 
 ```{r, eval = FALSE}
 serverFunction <- function(input, output, session) {
-  backend <- CemConnector::CemWebApiBackend$new(apiUrl = "https://cem.ohdsi.org/api/v1/")
+  backend <- CemConnector::CemWebApiBackend$new(apiUrl = "https://cem.ohdsi.org/")
   # Define a reactive that returns a dataframe with standard ingredient concepts
   ingredientConceptInput <- shiny::reactive({ tibble::tibble(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0)) })
   # Define a reactive that returns a dataframe with standard condtion concepts
