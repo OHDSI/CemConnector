@@ -29,7 +29,7 @@ function() {
 #* @get /version
 #* @serializer unboxedJSON
 function() {
-  list(version = paste0(packageVersion("CemConnector")))
+  list(version = paste0(utils::packageVersion("CemConnector")))
 }
 
 #* Get CemConnector API version info

@@ -25,7 +25,7 @@ AbstractCemBackend <- R6::R6Class(
     #' @description
     #' initialize backend object. Will fail in an error - this is an abstract class
     #' @param ... params
-    initialize = function (...) {
+    initialize = function(...) {
       stop("Error: this is an abstract class. initialize function should be implemented by child")
     },
 
@@ -50,13 +50,14 @@ AbstractCemBackend <- R6::R6Class(
       }
       return(conceptSet)
     },
-
     getConceptIdsWithoutDescendants = function(conceptSet) {
-      conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 0,]$conceptId
+      conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 0, ]$conceptId
     },
-
     getConceptIdsWithDescendants = function(conceptSet) {
-      conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 1,]$conceptId
+      conceptSet[conceptSet$isExcluded == 0 & conceptSet$includeDescendants == 1, ]$conceptId
+    },
+    getVersion = function() {
+      paste(utils::packageVersion("CemConnector"))
     }
   )
 )
@@ -120,19 +121,19 @@ CemDatabaseBackend <- R6::R6Class(
     #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getConditionEvidenceSummary = function(conditionConceptSet,
                                            siblingLookupLevels = 0) {
-
       conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
       conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
       conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
 
       sql <- private$loadSqlFile("getConditionEvidenceSummary.sql")
       self$connection$queryDb(sql,
-                              vocabulary = self$vocabularySchema,
-                              cem_schema = self$cemSchema,
-                              use_siblings = siblingLookupLevels > 0,
-                              sibling_lookup_levels = siblingLookupLevels,
-                              condition_concept_desc = conditionConceptDesc,
-                              condition_concept_no_desc = conditionConceptNoDesc)
+        vocabulary = self$vocabularySchema,
+        cem_schema = self$cemSchema,
+        use_siblings = siblingLookupLevels > 0,
+        sibling_lookup_levels = siblingLookupLevels,
+        condition_concept_desc = conditionConceptDesc,
+        condition_concept_no_desc = conditionConceptNoDesc
+      )
     },
 
     #' Condition evidence
@@ -141,19 +142,19 @@ CemDatabaseBackend <- R6::R6Class(
     #' @param conditionConceptSet data.frame conforming to conceptset format, must be standard SNOMED conditions
     #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getConditionEvidence = function(conditionConceptSet, siblingLookupLevels = 0) {
-
       conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
       conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
       conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)
 
       sql <- private$loadSqlFile("getConditionRelationships.sql")
       self$connection$queryDb(sql,
-                              vocabulary = self$vocabularySchema,
-                              cem_schema = self$cemSchema,
-                              use_siblings = siblingLookupLevels > 0,
-                              sibling_lookup_levels = siblingLookupLevels,
-                              condition_concept_desc = conditionConceptDesc,
-                              condition_concept_no_desc = conditionConceptNoDesc) %>% dplyr::select(-id)
+        vocabulary = self$vocabularySchema,
+        cem_schema = self$cemSchema,
+        use_siblings = siblingLookupLevels > 0,
+        sibling_lookup_levels = siblingLookupLevels,
+        condition_concept_desc = conditionConceptDesc,
+        condition_concept_no_desc = conditionConceptNoDesc
+      ) %>% dplyr::select(-id)
     },
 
     #' Ingredient evidence summary
@@ -167,11 +168,11 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getIngredientEvidenceSummary.sql")
       self$connection$queryDb(sql,
-                              vocabulary = self$vocabularySchema,
-                              cem_schema = self$cemSchema,
-                              concept_desc = ingredientConceptDesc,
-                              concept_no_desc = ingredientConceptNoDesc)
-
+        vocabulary = self$vocabularySchema,
+        cem_schema = self$cemSchema,
+        concept_desc = ingredientConceptDesc,
+        concept_no_desc = ingredientConceptNoDesc
+      )
     },
 
     #' Ingredient conceptset evidence
@@ -186,11 +187,11 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getIngredientRelationships.sql")
       self$connection$queryDb(sql,
-                              vocabulary = self$vocabularySchema,
-                              cem_schema = self$cemSchema,
-                              concept_desc = ingredientConceptDesc,
-                              concept_no_desc = ingredientConceptNoDesc) %>% dplyr::select(-id)
-
+        vocabulary = self$vocabularySchema,
+        cem_schema = self$cemSchema,
+        concept_desc = ingredientConceptDesc,
+        concept_no_desc = ingredientConceptNoDesc
+      ) %>% dplyr::select(-id)
     },
 
     #' @description
@@ -212,14 +213,15 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getRelationships.sql")
       self$connection$queryDb(sql,
-                              vocabulary = self$vocabularySchema,
-                              cem_schema = self$cemSchema,
-                              use_siblings = conditionSiblingLookupLevels > 0,
-                              sibling_lookup_levels = conditionSiblingLookupLevels,
-                              ingredient_concepts_desc = ingredientConceptDesc,
-                              ingredient_concepts_no_desc = ingredientConceptNoDesc,
-                              condition_concepts_desc = conditionConceptDesc,
-                              condition_concepts_no_desc = conditionConceptNoDesc) %>% dplyr::select(-id)
+        vocabulary = self$vocabularySchema,
+        cem_schema = self$cemSchema,
+        use_siblings = conditionSiblingLookupLevels > 0,
+        sibling_lookup_levels = conditionSiblingLookupLevels,
+        ingredient_concepts_desc = ingredientConceptDesc,
+        ingredient_concepts_no_desc = ingredientConceptNoDesc,
+        condition_concepts_desc = conditionConceptDesc,
+        condition_concepts_no_desc = conditionConceptNoDesc
+      ) %>% dplyr::select(-id)
     },
 
     #' @description
@@ -243,13 +245,12 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getRankedNcOutcomes.sql")
       self$connection$queryDb(sql,
-                              n_controls = nControls,
-                              vocabulary = self$vocabularySchema,
-                              cem_schema = self$cemSchema,
-                              concept_desc = ingredientConceptDesc,
-                              concept_no_desc = ingredientConceptNoDesc)
-
-
+        n_controls = nControls,
+        vocabulary = self$vocabularySchema,
+        cem_schema = self$cemSchema,
+        concept_desc = ingredientConceptDesc,
+        concept_no_desc = ingredientConceptNoDesc
+      )
     },
 
     #' @description
@@ -267,24 +268,24 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getRankedNcExposures.sql")
       self$connection$queryDb(sql,
-                              n_controls = nControls,
-                              vocabulary = self$vocabularySchema,
-                              cem_schema = self$cemSchema,
-                              use_siblings = siblingLookupLevels > 0,
-                              sibling_lookup_levels = siblingLookupLevels,
-                              condition_concept_desc = conditionConceptDesc,
-                              condition_concept_no_desc = conditionConceptNoDesc)
+        n_controls = nControls,
+        vocabulary = self$vocabularySchema,
+        cem_schema = self$cemSchema,
+        use_siblings = siblingLookupLevels > 0,
+        sibling_lookup_levels = siblingLookupLevels,
+        condition_concept_desc = conditionConceptDesc,
+        condition_concept_no_desc = conditionConceptNoDesc
+      )
     }
   ),
-
   private = list(
     loadSqlFile = function(sqlFilename) {
       pathToSql <- system.file(paste("sql/sql_server"),
-                               sqlFilename,
-                               package = "CemConnector",
-                               mustWork = TRUE)
+        sqlFilename,
+        package = "CemConnector",
+        mustWork = TRUE
+      )
       sql <- SqlRender::readSql(pathToSql)
     }
   )
 )
-

@@ -1,17 +1,18 @@
 backend <- CemWebApiBackend$new(apiUrl)
 
 test_that("explorer loads", {
-
   .GlobalEnv$backend <- backend
   shiny::testServer(ceExplorerDashboardServer, {
     ingredientCsvStr <- "conceptId,includeDescendants,isExcluded\n21604296,1,0"
     conditionCsvStr <- "conceptId,includeDescendants,isExcluded\n4149320,1,0"
-    session$setInputs(siblingLookupLevels = 1,
-                      conditionConcept = conditionCsvStr,
-                      ingredientConcept = ingredientCsvStr,
-                      nControls = 50,
-                      searchOutcomeControls = TRUE,
-                      siblingLookupLevelsNc = 1)
+    session$setInputs(
+      siblingLookupLevels = 1,
+      conditionConcept = conditionCsvStr,
+      ingredientConcept = ingredientCsvStr,
+      nControls = 50,
+      searchOutcomeControls = TRUE,
+      siblingLookupLevelsNc = 1
+    )
     # test reactives
     ingConcept <- ingredientConceptInput()
     expect_data_frame(ingConcept)
@@ -29,10 +30,18 @@ test_that("explorer loads", {
 })
 
 test_that("module loads and functions", {
-  shiny::testServer(ceExplorerModule, args = list(backend = backend,
-                                                  ingredientConceptInput = shiny::reactive({ data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0) }),
-                                                  conditionConceptInput = shiny::reactive({ data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0) }),
-                                                  siblingLookupLevelsInput = shiny::reactive({ 1 })), {
+  shiny::testServer(ceExplorerModule, args = list(
+    backend = backend,
+    ingredientConceptInput = shiny::reactive({
+      data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0)
+    }),
+    conditionConceptInput = shiny::reactive({
+      data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0)
+    }),
+    siblingLookupLevelsInput = shiny::reactive({
+      1
+    })
+  ), {
     ingConcept <- ingredientConceptInput()
     expect_data_frame(ingConcept)
     condConcept <- conditionConceptInput()
@@ -51,22 +60,30 @@ test_that("module loads and functions", {
     expect_data_frame(relationships)
   })
 
-  shiny::testServer(ceExplorerModule, args = list(backend = backend,
-                                                  conditionConceptInput = shiny::reactive({ data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0) }),
-                                                  siblingLookupLevelsInput = shiny::reactive({ 1 })), {
+  shiny::testServer(ceExplorerModule, args = list(
+    backend = backend,
+    conditionConceptInput = shiny::reactive({
+      data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0)
+    }),
+    siblingLookupLevelsInput = shiny::reactive({
+      1
+    })
+  ), {
     relationships <- getRelationships()
     expect_true(output$errorMessage == "")
     expect_data_frame(relationships)
   })
 
-  shiny::testServer(ceExplorerModule, args = list(backend = backend,
-                                                  ingredientConceptInput = shiny::reactive({ data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0) })), {
-
+  shiny::testServer(ceExplorerModule, args = list(
+    backend = backend,
+    ingredientConceptInput = shiny::reactive({
+      data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0)
+    })
+  ), {
     relationships <- getRelationships()
     expect_true(output$errorMessage == "")
     expect_data_frame(relationships)
   })
-
 })
 
 test_that("Ui functions execute", {
@@ -79,9 +96,15 @@ test_that("Ui functions execute", {
 
 test_that("Negative control module", {
   .GlobalEnv$backend <- backend
-  shiny::testServer(negativeControlSelectorModule, args = list(backend = backend,
-                                                               conceptInput = shiny::reactive({ data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0) }),
-                                                               siblingLookupLevelsInput = shiny::reactive({ 1 })), {
+  shiny::testServer(negativeControlSelectorModule, args = list(
+    backend = backend,
+    conceptInput = shiny::reactive({
+      data.frame(conceptId = 21604296, includeDescendants = 1, isExcluded = 0)
+    }),
+    siblingLookupLevelsInput = shiny::reactive({
+      1
+    })
+  ), {
     ingConcept <- conceptInput()
     expect_equal(siblingLookupLevelsInput(), 1)
     expect_true(output$errorMessage == "")
@@ -91,10 +114,18 @@ test_that("Negative control module", {
     expect_data_frame(ctrls)
   })
 
-  shiny::testServer(negativeControlSelectorModule, args = list(backend = backend,
-                                                               conceptInput = shiny::reactive({ data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0) }),
-                                                               isOutcomeSearch = shiny::reactive({ FALSE }),
-                                                               siblingLookupLevelsInput = shiny::reactive({ 1 })), {
+  shiny::testServer(negativeControlSelectorModule, args = list(
+    backend = backend,
+    conceptInput = shiny::reactive({
+      data.frame(conceptId = 4149320, includeDescendants = 1, isExcluded = 0)
+    }),
+    isOutcomeSearch = shiny::reactive({
+      FALSE
+    }),
+    siblingLookupLevelsInput = shiny::reactive({
+      1
+    })
+  ), {
     ingConcept <- conceptInput()
     expect_equal(siblingLookupLevelsInput(), 1)
     expect_true(output$errorMessage == "")
@@ -104,11 +135,14 @@ test_that("Negative control module", {
     expect_data_frame(ctrls)
   })
 
-  shiny::testServer(negativeControlSelectorModule, args = list(backend = backend,
-                                                               conceptInput = shiny::reactive({ NULL })), {
+  shiny::testServer(negativeControlSelectorModule, args = list(
+    backend = backend,
+    conceptInput = shiny::reactive({
+      NULL
+    })
+  ), {
     ctrls <- getControls()
     expect_true(output$errorMessage == "Invalid concept set")
     expect_data_frame(ctrls)
   })
-
 })

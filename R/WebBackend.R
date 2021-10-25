@@ -26,9 +26,9 @@ CemWebApiBackend <- R6::R6Class(
   public = list(
     apiUrl = NULL,
 
-     #' @description
-     #' initialize object
-     #' @param apiUrl String URL parameter for hosted
+    #' @description
+    #' initialize object
+    #' @param apiUrl String URL parameter for hosted
     initialize = function(apiUrl) {
       # Remove trailing slash
       self$apiUrl <- gsub("/$", "", apiUrl)
@@ -43,8 +43,9 @@ CemWebApiBackend <- R6::R6Class(
     request = function(method, endpoint, ...) {
       url <- paste(self$apiUrl, endpoint, sep = "/")
       callFunc <- switch(method,
-                         "POST" = httr::POST,
-                         "GET" = httr::GET)
+        "POST" = httr::POST,
+        "GET" = httr::GET
+      )
 
       response <- callFunc(url, encode = "json", ...)
       if (response$status_code != 200) {
@@ -56,7 +57,7 @@ CemWebApiBackend <- R6::R6Class(
 
     #' @description
     #' GET server status
-    getStatus = function (){
+    getStatus = function() {
       self$request("GET", "")
     },
 
@@ -67,8 +68,10 @@ CemWebApiBackend <- R6::R6Class(
     getConditionEvidenceSummary = function(conditionConceptSet,
                                            siblingLookupLevels = 0) {
       endpoint <- "conditionEvidenceSummary"
-      content <- self$request("POST", endpoint, body = list(conditionConceptSet = conditionConceptSet,
-                                                            siblingLookupLevels = siblingLookupLevels))
+      content <- self$request("POST", endpoint, body = list(
+        conditionConceptSet = conditionConceptSet,
+        siblingLookupLevels = siblingLookupLevels
+      ))
 
       dplyr::bind_rows(content$result)
     },
@@ -89,8 +92,10 @@ CemWebApiBackend <- R6::R6Class(
     getConditionEvidence = function(conditionConceptSet,
                                     siblingLookupLevels = 0) {
       endpoint <- "conditionEvidence"
-      content <- self$request("POST", endpoint, body = list(conditionConceptSet = conditionConceptSet,
-                                                            siblingLookupLevels = siblingLookupLevels))
+      content <- self$request("POST", endpoint, body = list(
+        conditionConceptSet = conditionConceptSet,
+        siblingLookupLevels = siblingLookupLevels
+      ))
 
       dplyr::bind_rows(content$result)
     },
@@ -111,9 +116,11 @@ CemWebApiBackend <- R6::R6Class(
     #' @param conditionSiblingLookupLevels integer - where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     getRelationships = function(ingredientConceptSet, conditionConceptSet, conditionSiblingLookupLevels = 0) {
       endpoint <- "relationships"
-      content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet,
-                                                            conditionConceptSet = conditionConceptSet,
-                                                            conditionSiblingLookupLevels = conditionSiblingLookupLevels))
+      content <- self$request("POST", endpoint, body = list(
+        ingredientConceptSet = ingredientConceptSet,
+        conditionConceptSet = conditionConceptSet,
+        conditionSiblingLookupLevels = conditionSiblingLookupLevels
+      ))
       dplyr::bind_rows(content$result)
     },
 
@@ -141,8 +148,10 @@ CemWebApiBackend <- R6::R6Class(
     #' @returns data.frame of condition concept_id and concept_name
     getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 50) {
       endpoint <- "suggestedControlConditions"
-      content <- self$request("POST", endpoint, body = list(ingredientConceptSet = ingredientConceptSet,
-                                                            nControls = nControls))
+      content <- self$request("POST", endpoint, body = list(
+        ingredientConceptSet = ingredientConceptSet,
+        nControls = nControls
+      ))
 
       dplyr::bind_rows(content$result)
     },
@@ -157,9 +166,11 @@ CemWebApiBackend <- R6::R6Class(
     #' @returns data.frame of condition concept_id and concept_name
     getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 50) {
       endpoint <- "suggestedControlIngredients"
-      content <- self$request("POST", endpoint, body = list(conditionConceptSet = conditionConceptSet,
-                                                            siblingLookupLevels = siblingLookupLevels,
-                                                            nControls = nControls))
+      content <- self$request("POST", endpoint, body = list(
+        conditionConceptSet = conditionConceptSet,
+        siblingLookupLevels = siblingLookupLevels,
+        nControls = nControls
+      ))
 
       dplyr::bind_rows(content$result)
     }

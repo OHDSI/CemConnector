@@ -2,13 +2,17 @@
 # This will allow testing to see if the implementations return equivalent functioning responses
 
 backend <- CemDatabaseBackend$new(connectionDetails,
-                                  cemSchema = cemTestSchema,
-                                  vocabularySchema = vocabularySchema,
-                                  sourceSchema = sourceInfoSchema)
+  cemSchema = cemTestSchema,
+  vocabularySchema = vocabularySchema,
+  sourceSchema = sourceInfoSchema
+)
 
-withr::defer({
-  backend$finalize()
-}, testthat::teardown_env())
+withr::defer(
+  {
+    backend$finalize()
+  },
+  testthat::teardown_env()
+)
 
 test_that("Abstract class can't be instantiated", {
   expect_error(AbstractCemBackend$new(), "is an abstract class. initialize function should be implemented by child")
@@ -35,13 +39,22 @@ test_that("summary works web", {
   expect_data_frame(sinfo)
 
   # 404 handled
-  expect_error({ webBackend$request("GET", "nonexistentendpoint") }, "Request error 404")
+  expect_error(
+    {
+      webBackend$request("GET", "nonexistentendpoint")
+    },
+    "Request error 404"
+  )
 })
 
 test_that("All excluded fails", {
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(1))
-  expect_error({outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)},
-               regexp = "Invalid concept set. All concepts are excluded from search")
+  expect_error(
+    {
+      outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
+    },
+    regexp = "Invalid concept set. All concepts are excluded from search"
+  )
 })
 
 test_that("get exposure and outcome control concepts evidence", {
@@ -203,5 +216,4 @@ test_that("web backend returns equivalent results", {
   suggestedControlsOutcome <- backend$getSuggestedControlCondtions(srchIngredientSet)
   suggestedControlsOutcomeWeb <- webBackend$getSuggestedControlCondtions(srchIngredientSet)
   expect_true(dplyr::all_equal(suggestedControlsOutcome, suggestedControlsOutcomeWeb))
-
 })

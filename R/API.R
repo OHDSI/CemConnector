@@ -31,23 +31,27 @@
 loadApi <- function(connectionDetails,
                     cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
                     vocabularySchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
-
                     sourceSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
-                    pathToPlumberApi = system.file(file.path("api",
-                                                             "plumber.R"), package = "CemConnector"), envir = new.env(parent = .GlobalEnv)) {
-
+                    pathToPlumberApi = system.file(file.path(
+                      "api",
+                      "plumber.R"
+                    ), package = "CemConnector"), envir = new.env(parent = .GlobalEnv)) {
   checkmate::assert_file_exists(pathToPlumberApi)
 
   envir$cemBackendApi <- CemDatabaseBackend$new(connectionDetails,
-                                                cemSchema = cemSchema,
-                                                vocabularySchema = vocabularySchema,
-                                                sourceSchema = sourceSchema,
-                                                usePooledConnection = getOption("CemConnector.UsePooledConnection", TRUE))
+    cemSchema = cemSchema,
+    vocabularySchema = vocabularySchema,
+    sourceSchema = sourceSchema,
+    usePooledConnection = getOption("CemConnector.UsePooledConnection", TRUE)
+  )
 
   plumb <- plumber::pr(pathToPlumberApi, envir = envir)
-  customOasSpecification <- yaml::read_yaml(system.file(file.path("api",
-                                                                  "cemconnector_openapi.yaml"),
-                                                        package = "CemConnector"))
+  customOasSpecification <- yaml::read_yaml(system.file(file.path(
+    "api",
+    "cemconnector_openapi.yaml"
+  ),
+  package = "CemConnector"
+  ))
   plumb <- plumber::pr_set_api_spec(plumb, customOasSpecification)
 
   plumb <- plumber::pr_hook(plumb, "exit", function() {

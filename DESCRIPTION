@@ -34,7 +34,8 @@ Suggests:
     httpuv,
     knitr,
     rmarkdown,
-    markdown
+    markdown,
+    styler
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true

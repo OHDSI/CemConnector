@@ -27,12 +27,10 @@ ConnectionHandler <- R6::R6Class(
       self$connectionDetails <- connectionDetails
       self$initConnection()
     },
-
     renderTranslateSql = function(query, ...) {
       sql <- SqlRender::render(sql = query, ...)
       SqlRender::translate(sql, targetDialect = self$connectionDetails$dbms)
     },
-
     initConnection = function() {
       if (self$isActive) {
         warning("Closing existing connection")
@@ -41,42 +39,42 @@ ConnectionHandler <- R6::R6Class(
       self$con <- DatabaseConnector::connect(connectionDetails = self$connectionDetails)
       self$isActive <- TRUE
     },
-
     getConnection = function() {
       return(self$con)
     },
-
     closeConnection = function() {
       if (DBI::dbIsValid(dbObj = self$con)) {
         DatabaseConnector::disconnect(self$con)
       }
       self$isActive <- FALSE
     },
-
     finalize = function() {
       if (self$isActive & DBI::dbIsValid(dbObj = self$con)) {
         self$closeConnection()
       }
     },
-
     queryDb = function(query, snakeCaseToCamelCase = TRUE, overrideRowLimit = FALSE, ...) {
       limitRowCount <- as.integer(Sys.getenv("LIMIT_ROW_COUNT"))
       if (!is.na(limitRowCount) & limitRowCount > 0 & !overrideRowLimit) {
         query <- SqlRender::render("SELECT TOP @limit_row_count * FROM (@query) result;",
-                                   query = gsub(";$", "", query), # Remove last semi-colon
-                                   limit_row_count = limitRowCount)
+          query = gsub(";$", "", query), # Remove last semi-colon
+          limit_row_count = limitRowCount
+        )
       }
       sql <- self$renderTranslateSql(query, ...)
 
-      tryCatch({
-        data <- self$queryFunction(sql, snakeCaseToCamelCase = snakeCaseToCamelCase)
-      }, error = function(error) {
-        if (self$connectionDetails$dbms %in% c("postgresql", "redshift")) {
-          DatabaseConnector::dbExecute(self$con, "ABORT;")
+      tryCatch(
+        {
+          data <- self$queryFunction(sql, snakeCaseToCamelCase = snakeCaseToCamelCase)
+        },
+        error = function(error) {
+          if (self$connectionDetails$dbms %in% c("postgresql", "redshift")) {
+            DatabaseConnector::dbExecute(self$con, "ABORT;")
+          }
+          print(sql)
+          stop(error)
         }
-        print(sql)
-        stop(error)
-      })
+      )
 
       return(dplyr::as_tibble(data))
     },
@@ -92,7 +90,6 @@ PooledConnectionHandler <- R6::R6Class(
   "PooledConnectionHandler",
   inherit = ConnectionHandler,
   public = list(
-
     initConnection = function() {
       if (self$isActive) {
         warning("Closing existing connection")
@@ -109,14 +106,12 @@ PooledConnectionHandler <- R6::R6Class(
       )
       self$isActive <- TRUE
     },
-
     closeConnection = function() {
       if (DBI::dbIsValid(dbObj = self$con)) {
         pool::poolClose(pool = self$con)
       }
       self$isActive <- FALSE
     },
-
     queryFunction = function(sql, snakeCaseToCamelCase = TRUE) {
       data <- DatabaseConnector::dbGetQuery(self$con, sql)
       if (snakeCaseToCamelCase) {
