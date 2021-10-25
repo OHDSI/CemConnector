@@ -53,6 +53,8 @@ jobs:
       CEM_DATABASE_SERVER: ${{ secrets.CDM5_POSTGRESQL_SERVER }}
       CEM_DATABASE_USER: ${{ secrets.CDM5_POSTGRESQL_USER }}
 
+      GITHUB_PAT: ${{ secrets.GH_TOKEN }}
+
     steps:
       - uses: actions/checkout@v2
 
