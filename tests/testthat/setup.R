@@ -1,4 +1,4 @@
-if (is.na(devtools::package_info("eunomia")$ondiskversion)) {
+if (!require("Eunomia", character.only = TRUE)) {
   # Everyone loved CRAN
   devtools::install_github("OHDSI/Eunomia")
 }
@@ -110,7 +110,7 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
     {
       # poll status until failure or load
       while (!apiSessionReady()) {
-        Sys.sleep(0.1) # Allow time for process to start, needs to connect to database...
+        Sys.sleep(0.01) # Allow time for process to start, needs to connect to database...
       }
       useTestPlumber <- TRUE
       print("Session started")
