@@ -1,7 +1,5 @@
-if (!require("Eunomia", character.only = TRUE)) {
-  # Everyone loved CRAN
-  devtools::install_github("OHDSI/Eunomia")
-}
+# Everyone loved CRAN
+devtools::install_github("OHDSI/Eunomia", dependencies = TRUE)
 
 # Run extra/test/realInstanceTest.R For testing against a real CEM instance
 apiUrl <- getOption("CemConnector.useHostedUrl")
