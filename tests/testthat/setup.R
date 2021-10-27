@@ -1,6 +1,3 @@
-# Everyone loved CRAN
-devtools::install_github("OHDSI/Eunomia", dependencies = TRUE)
-
 # Run extra/test/realInstanceTest.R For testing against a real CEM instance
 apiUrl <- getOption("CemConnector.useHostedUrl")
 connectionDetails <- getOption("CemConnectionDetails")

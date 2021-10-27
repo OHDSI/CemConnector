@@ -25,6 +25,7 @@ Imports:
     shinycssloaders,
     yaml
 Suggests:
+    remotes,
     testthat,
     devtools,
     RSQLite,
@@ -34,7 +35,9 @@ Suggests:
     knitr,
     rmarkdown,
     markdown,
-    styler
+    styler,
+    Eunomia
+Remotes: github::ohdsi/Eunomia
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true
