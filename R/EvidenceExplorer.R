@@ -350,33 +350,25 @@ parseConceptInput <- function(conceptSetDefinition, inputType) {
   rda
 }
 
+getInputHelpText <- function(inputType) {
+  switch(inputType,
+    "json" = "Copy and paste a json string from an atlas concept set definition export.",
+    "csv" = "Manually input csv required headers: conceptId, includeDescendants, isExcluded",
+    "list" = "Insert comma separated set of values. All will be included in search, descedants will also be searched automatically."
+  )
+}
+
 ceExplorerDashboardServer <- function(input, output, session) {
   env <- globalenv()
   backend <- env$backend
   checkmate::assertClass(backend, "AbstractCemBackend")
 
-  getInputHelpText <- function(inputType) {
-    switch(inputType,
-      "json" = "Copy and paste a json string from an atlas concept set definition export.",
-      "csv" = "Manually input csv required headers: conceptId, includeDescendants, isExcluded",
-      "list" = "Insert comma separated set of values. All will be included in search, descedants will also be searched automatically."
-    )
-  }
-
-  getInputText <- shiny::reactive({
+  output$conceptInputHelpTxt <- shiny::renderText({
     getInputHelpText(input$conceptInputType)
   })
 
-  getInputTextNc <- shiny::reactive({
-    getInputHelpText(input$conceptInputTypeNc)
-  })
-
-  output$conceptInputHelpTxt <- shiny::renderText({
-    getInputText()
-  })
-
   output$conceptInputHelpTxtNc <- shiny::renderText({
-    getInputTextNc()
+    getInputHelpText(input$conceptInputTypeNc)
   })
 
   ingredientConceptInput <- shiny::reactive({
