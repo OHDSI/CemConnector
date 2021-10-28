@@ -168,7 +168,6 @@ negativeControlSelectorModule <- function(id,
     output$errorMessage <- shiny::renderText("")
     getControls <- shiny::reactive({
       inputConceptSet <- conceptInput()
-
       if (!(checkmate::test_data_frame(inputConceptSet, min.rows = 1))) {
         output$errorMessage <- shiny::renderText("Invalid concept set")
         return(data.frame())
@@ -227,12 +226,14 @@ negativeControlSelectorUi <- function(id) {
 #' @importFrom utils packageVersion read.csv
 ceExplorerUi <- function(request) {
   inputArea <- shinydashboard::box(
-    title = "Input concept sets (Raw CSV)",
+    title = "Explore evidence",
     width = 12,
-    shiny::p("Required headers: conceptId"),
-    shiny::p("Optional headers: includeDescendants, isExcluded"),
-    shiny::textAreaInput("ingredientConcept", label = "Ingredient concept set (csv)"),
-    shiny::textAreaInput("conditionConcept", label = "Condition concept set (csv)"),
+    shiny::p("Use CemConnector to explore pharmacovigalence evidence related to standard (RxNorm or ATC class) ingredients,
+     standard conditions (SNOMED concepts) or a combination to find evidence related to these pairs."),
+    shiny::selectInput("conceptInputType", "Input type", c("json", "list", "csv")),
+    shiny::p(shiny::textOutput("conceptInputHelpTxt")),
+    shiny::textAreaInput("ingredientConcept", label = "Ingredient concept set"),
+    shiny::textAreaInput("conditionConcept", label = "Condition concept set"),
     shiny::selectInput("siblingLookupLevels", label = "Condition Sibling Lookup Levels", 0:5, selected = 0),
     shiny::p("If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings.
                                    Siblings are related terms that are shared by a common parent of any specified search terms.
@@ -249,10 +250,12 @@ ceExplorerUi <- function(request) {
   )
 
   controlsInputArea <- shinydashboard::box(
-    title = "Input concept sets (Raw CSV)",
+    title = "Negative control suggestion",
     width = 12,
-    shiny::p("Required headers: conceptId, includeDescendants, isExcluded"),
-    shiny::textAreaInput("conceptSetNc", label = "Concept set (csv)", value = "conceptId,includeDescendants,isExcluded\n1201620,1,0"),
+    shiny::p("Use CemConnector to get a set of negative controls for a given conceptset of interest."),
+    shiny::selectInput("conceptInputTypeNc", "Input type", c("json", "list", "csv"), selected = "list"),
+    shiny::p(shiny::textOutput("conceptInputHelpTxtNc")),
+    shiny::textAreaInput("conceptSetNc", label = "Concept set", value = "1201620"),
     shiny::selectInput("siblingLookupLevelsNc", label = "Condition Sibling Lookup Levels", 0:5, selected = 0),
     shiny::p("When searching for ingredient exposure controls, If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings"),
     shiny::checkboxInput("searchOutcomeControls", "Search for outcome (condition) controls", value = TRUE),
@@ -310,16 +313,49 @@ ceExplorerUi <- function(request) {
   )
 }
 
-.readCsvString <- function(text) {
-  data <- data.frame()
+.readJsonString <- function(text) {
+  definition <- jsonlite::fromJSON(text)
+  conceptSet <- definition$items %>%
+    dplyr::mutate(conceptId = definition$items$concept$CONCEPT_ID) %>%
+    dplyr::select(conceptId, includeDescendants, isExcluded)
+  return(conceptSet)
+}
+
+.readCommaSeparatedList <- function(text) {
+  ids <- sapply(stringr::str_split(text, pattern = ","), as.integer)
+  if (any(is.na(ids)) | !any(is.integer(ids))) {
+    stop("Only valid integers can be used")
+  }
+
+  conceptSet <- data.frame(
+    conceptId = ids,
+    includeDescendants = 1,
+    isExcluded = 0
+  )
+  return(conceptSet)
+}
+
+parseConceptInput <- function(conceptSetDefinition, inputType) {
+  rda <- data.frame()
   tryCatch(
     {
-      data <- utils::read.csv(text = text)
+      rda <- switch(inputType,
+        "list" = .readCommaSeparatedList(conceptSetDefinition),
+        "json" = .readJsonString(conceptSetDefinition),
+        "csv" =  utils::read.csv(text = conceptSetDefinition)
+      )
     },
-    error = function(error) { }
+    error = function(err) { }
   )
+  rda
+}
 
-  data
+getInputHelpText <- function(inputType) {
+  switch(inputType,
+    "json" = "Copy and paste a json string from an atlas concept set definition export.",
+    "csv" = "Manually input csv required headers: conceptId, includeDescendants, isExcluded",
+    "list" = "Insert comma separated set of values. All will be included in search, descedants will also be searched automatically."
+  )
 }
 
 ceExplorerDashboardServer <- function(input, output, session) {
@@ -327,11 +363,19 @@ ceExplorerDashboardServer <- function(input, output, session) {
   backend <- env$backend
   checkmate::assertClass(backend, "AbstractCemBackend")
 
+  output$conceptInputHelpTxt <- shiny::renderText({
+    getInputHelpText(input$conceptInputType)
+  })
+
+  output$conceptInputHelpTxtNc <- shiny::renderText({
+    getInputHelpText(input$conceptInputTypeNc)
+  })
+
   ingredientConceptInput <- shiny::reactive({
-    .readCsvString(input$ingredientConcept)
+    parseConceptInput(input$ingredientConcept, input$conceptInputType)
   })
   conditionConceptInput <- shiny::reactive({
-    .readCsvString(input$conditionConcept)
+    parseConceptInput(input$conditionConcept, input$conceptInputType)
   })
   siblingLookupLevelsInput <- shiny::reactive({
     input$siblingLookupLevels
@@ -355,7 +399,7 @@ ceExplorerDashboardServer <- function(input, output, session) {
   )
 
   conceptInputNc <- shiny::reactive({
-    .readCsvString(input$conceptSetNc)
+    parseConceptInput(input$conceptSetNc, input$conceptInputTypeNc)
   })
   siblingLookupLevelsInputNc <- shiny::reactive({
     input$siblingLookupLevelsNc
