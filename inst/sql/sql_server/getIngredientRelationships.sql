@@ -8,10 +8,10 @@ WITH evidence_summary as (
     INNER JOIN @vocabulary.concept_ancestor ca ON (ca.descendant_concept_id = ms.ingredient_concept_id)
     WHERE ca.ancestor_concept_id IN (@concept_desc)
     AND ms.evidence_exists = 1
-    }
 
+    {@concept_no_desc != ''} ? {UNION}
+    }
     {@concept_no_desc != ''} ? {
-    UNION
     -- Where children of the ingredient concept are explicitly excluded
     SELECT
         ms.condition_concept_id,

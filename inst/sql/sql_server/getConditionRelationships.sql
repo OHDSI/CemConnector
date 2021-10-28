@@ -1,4 +1,6 @@
 WITH evidence_summary as (
+
+   {@condition_concept_desc != ''} ? {
     -- Where children of the ingredient concept are explicitly included
     SELECT
         ms.ingredient_concept_id,
@@ -7,21 +9,9 @@ WITH evidence_summary as (
     INNER JOIN @vocabulary.concept_ancestor ca ON (ca.descendant_concept_id = ms.condition_concept_id)
     WHERE ca.ancestor_concept_id IN (@condition_concept_desc)
     AND ms.evidence_exists = 1
-    -- Where children of the ingredient concept are explicitly excluded
-    {@condition_concept_no_desc != ''} ? {
+
+        {@use_siblings} ? {
     UNION
-
-    SELECT
-        ms.ingredient_concept_id,
-        ms.condition_concept_id
-    FROM @cem_schema.matrix_summary ms
-    WHERE ms.condition_concept_id IN (@condition_concept_no_desc)
-    AND ms.evidence_exists = 1
-    }
-
-    {@use_siblings} ? {
-    UNION
-
     SELECT
         ms.ingredient_concept_id,
         ms.condition_concept_id
@@ -29,6 +19,17 @@ WITH evidence_summary as (
     INNER JOIN @vocabulary.concept_ancestor ca1 ON (ca1.descendant_concept_id = ms.condition_concept_id)
     INNER JOIN @vocabulary.concept_ancestor ca2 ON (ca2.ancestor_concept_id = ca1.ancestor_concept_id AND ca2.max_levels_of_separation <= @sibling_lookup_levels)
     WHERE ca2.descendant_concept_id IN (@condition_concept_desc)
+    AND ms.evidence_exists = 1
+        }
+        {@condition_concept_no_desc != ''} ? {UNION}
+    }
+    -- Where children of the ingredient concept are explicitly excluded
+    {@condition_concept_no_desc != ''} ? {
+    SELECT
+        ms.ingredient_concept_id,
+        ms.condition_concept_id
+    FROM @cem_schema.matrix_summary ms
+    WHERE ms.condition_concept_id IN (@condition_concept_no_desc)
     AND ms.evidence_exists = 1
     }
 )

@@ -20,9 +20,7 @@ AND ca1.ancestor_concept_id  IN (@ingredient_concepts_desc)
 }
 
 {@ingredient_concepts_no_desc != '' & @condition_concepts_no_desc != ''} ? {
-    {@ingredient_concepts_desc != '' & @condition_concepts_desc != ''} ? {
-    UNION
-    }
+    {@ingredient_concepts_desc != '' & @condition_concepts_desc != ''} ? {UNION}
 -- Ingredient no desc, condition no descendants
 SELECT
     c1.concept_name as concept_name_1,
@@ -39,9 +37,7 @@ AND cu.concept_id_2  IN (@condition_concepts_no_desc)
 
 {@ingredient_concepts_no_desc != '' & @condition_concepts_desc != ''} ? {
     {(@ingredient_concepts_desc != '' & @condition_concepts_desc != '') |
-        (@ingredient_concepts_no_desc != '' & @condition_concepts_no_desc != '')} ? {
-        UNION
-    }
+        (@ingredient_concepts_no_desc != '' & @condition_concepts_no_desc != '')} ? {UNION}
 -- Ingredient no desc, condition descendants
 SELECT
     c1.concept_name as concept_name_1,
@@ -62,9 +58,7 @@ AND cu.concept_id_1 IN (@ingredient_concepts_no_desc)
 }
 
 {@ingredient_concepts_desc != '' & @condition_concepts_no_desc != ''} ? {
-    {@condition_concepts_desc != '' | @ingredient_concepts_no_desc != '' | (@ingredient_concepts_no_desc != '' & @condition_concepts_desc != '')} ? {
-            UNION
-    }
+    {@condition_concepts_desc != '' | @ingredient_concepts_no_desc != '' | (@ingredient_concepts_no_desc != '' & @condition_concepts_desc != '')} ? {UNION}
 -- Ingredient desc, condition no descendants
 SELECT
     c1.concept_name as concept_name_1,
