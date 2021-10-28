@@ -11,7 +11,8 @@ test_that("explorer loads", {
       ingredientConcept = ingredientCsvStr,
       nControls = 50,
       searchOutcomeControls = TRUE,
-      siblingLookupLevelsNc = 1
+      siblingLookupLevelsNc = 1,
+      conceptInputType = "csv"
     )
     # test reactives
     ingConcept <- ingredientConceptInput()

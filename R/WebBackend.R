@@ -32,7 +32,16 @@ CemWebApiBackend <- R6::R6Class(
     initialize = function(apiUrl) {
       # Remove trailing slash
       self$apiUrl <- gsub("/$", "", apiUrl)
-      checkmate::assert(self$getStatus()$status == "alive")
+      tryCatch(
+        {
+          self$getVersion()
+        },
+        error = function(err) {
+          # Seems to happen when live app has been inactive for some time.
+          Sys.sleep(0.5)
+          self$getVersion()
+        }
+      )
     },
 
     #' @description

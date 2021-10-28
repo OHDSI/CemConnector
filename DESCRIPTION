@@ -23,7 +23,8 @@ Imports:
     magrittr,
     dplyr,
     shinycssloaders,
-    yaml
+    yaml,
+    jsonlite
 Suggests:
     remotes,
     testthat,
