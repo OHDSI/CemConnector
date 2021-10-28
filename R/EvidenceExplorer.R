@@ -226,10 +226,12 @@ negativeControlSelectorUi <- function(id) {
 #' @importFrom utils packageVersion read.csv
 ceExplorerUi <- function(request) {
   inputArea <- shinydashboard::box(
-    title = "Input concept sets",
+    title = "Explore evidence",
     width = 12,
-    shiny::radioButtons("conceptInputType", "Input type", c("json", "list", "csv")),
-    shiny::p(shiny::renderText("conceptInputHelpTxt")),
+    shiny::p("Use CemConnector to explore pharmacovigalence evidence related to standard (RxNorm or ATC class) ingredients,
+     standard conditions (SNOMED concepts) or a combination to find evidence related to these pairs."),
+    shiny::selectInput("conceptInputType", "Input type", c("json", "list", "csv")),
+    shiny::p(shiny::textOutput("conceptInputHelpTxt")),
     shiny::textAreaInput("ingredientConcept", label = "Ingredient concept set"),
     shiny::textAreaInput("conditionConcept", label = "Condition concept set"),
     shiny::selectInput("siblingLookupLevels", label = "Condition Sibling Lookup Levels", 0:5, selected = 0),
@@ -248,10 +250,12 @@ ceExplorerUi <- function(request) {
   )
 
   controlsInputArea <- shinydashboard::box(
-    title = "Input concept sets",
+    title = "Negative control suggestion",
     width = 12,
-    shiny::radioButtons("conceptInputTypeNc", "Input type", c("json", "list", "csv"), selected = "list"),
-    shiny::p(shiny::renderText("conceptInputHelpTxtNc")),
+
+    shiny::p("Use CemConnector to get a set of negative controls for a given conceptset of interest."),
+    shiny::selectInput("conceptInputTypeNc", "Input type", c("json", "list", "csv"), selected = "list"),
+    shiny::p(shiny::textOutput("conceptInputHelpTxtNc")),
     shiny::textAreaInput("conceptSetNc", label = "Concept set", value = "1201620"),
     shiny::selectInput("siblingLookupLevelsNc", label = "Condition Sibling Lookup Levels", 0:5, selected = 0),
     shiny::p("When searching for ingredient exposure controls, If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings"),
@@ -319,8 +323,12 @@ ceExplorerUi <- function(request) {
 }
 
 .readCommaSeparatedList <- function(text) {
+  ids <- sapply(stringr::str_split(text, pattern = ","), as.integer)
+  if (any(is.na(ids)) | !any(is.integer(ids)))
+    stop("Only valid integers can be used")
+
   conceptSet <- data.frame(
-    conceptId = sapply(stringr::str_split(text, pattern = ","), as.integer),
+    conceptId = ids,
     includeDescendants = 1,
     isExcluded = 0
   )
@@ -338,9 +346,7 @@ parseConceptInput <- function(conceptSetDefinition, inputType) {
         "csv" =  utils::read.csv(text = conceptSetDefinition)
       )
     },
-    error = function(err) {
-
-    }
+    error = function(err) { }
   )
   rda
 }
@@ -355,16 +361,24 @@ ceExplorerDashboardServer <- function(input, output, session) {
       inputType,
       "json" ="Copy and paste a json string from an atlas concept set definition export.",
       "csv" = "Manually input csv required headers: conceptId, includeDescendants, isExcluded",
-      "list" = "Insert comma separated set of values. All will be included, descedants will also be searched automatically."
+      "list" = "Insert comma separated set of values. All will be included in search, descedants will also be searched automatically."
     )
   }
 
-  output$conceptInputHelpTxt <- shiny::renderText({
+  getInputText <- shiny::reactive({
     getInputHelpText(input$conceptInputType)
   })
 
-  output$conceptInputHelpTxtNc <- shiny::renderText({
+  getInputTextNc <- shiny::reactive({
     getInputHelpText(input$conceptInputTypeNc)
+  })
+
+  output$conceptInputHelpTxt <- shiny::renderText({
+    getInputText()
+  })
+
+  output$conceptInputHelpTxtNc <- shiny::renderText({
+    getInputTextNc()
   })
 
   ingredientConceptInput <- shiny::reactive({

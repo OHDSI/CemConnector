@@ -26,8 +26,44 @@ test_that("explorer loads", {
     expect_data_frame(getSourceInfo())
     expect_list(output$sourceInfo)
 
-    session$setInputs(conditionConcept = "", ingredientConcept = "")
+    # JSON input
+    session$setInputs(conditionConcept = readLines("testConditionConceptSet.json"),
+                      ingredientConcept = readLines("testIngredientConceptSet.json"))
+
+    ingConcept <- ingredientConceptInput()
+    expect_data_frame(ingConcept)
+    condConcept <- conditionConceptInput()
+    expect_data_frame(condConcept)
+
+    # Bad JSON input
+    session$setInputs(conditionConcept = "{adsda=asasaw}",
+                      ingredientConcept = "{adsda=asasaw}")
+
+    ingConcept <- ingredientConceptInput()
+    expect_data_frame(ingConcept)
+    condConcept <- conditionConceptInput()
+    expect_data_frame(condConcept)
+
+    # List input
+    session$setInputs(conditionConcept = "11604296, 4149320",
+                      ingredientConcept = "21604296")
+
+    ingConcept <- ingredientConceptInput()
+    expect_data_frame(ingConcept)
+    condConcept <- conditionConceptInput()
+    expect_data_frame(condConcept)
+
+    # Bad List inputs
+    session$setInputs(conditionConcept = "asldkklsd,.skdjsk",
+                      ingredientConcept = "")
+
+    ingConcept <- ingredientConceptInput()
+    expect_data_frame(ingConcept)
+    condConcept <- conditionConceptInput()
+    expect_data_frame(condConcept)
   })
+
+
 })
 
 test_that("module loads and functions", {
