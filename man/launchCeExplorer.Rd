@@ -5,7 +5,7 @@
 \title{CE Explorer shiny application}
 \usage{
 launchCeExplorer(
-  apiUrl = NULL,
+  apiUrl = "https://cem.ohdsi.org",
   connectionDetails = NULL,
   usePooledConnection = TRUE,
   ...

@@ -26,17 +26,19 @@
 #' @param sourceSchema - schema containing source info
 #' @param vocabularySchema - schema for cem vocabulary
 #' @export
-createCemConnection <- function(apiUrl = NULL,
+createCemConnection <- function(apiUrl = "https://cem.ohdsi.org",
                                 connectionDetails = NULL,
                                 cemSchema = NULL,
                                 sourceSchema = NULL,
                                 vocabularySchema = NULL) {
-  if (!is.null(apiUrl)) {
+  if (is.null(connectionDetails) & !is.null(apiUrl)) {
     return(CemWebApiBackend$new(apiUrl = apiUrl))
   }
 
-  return(CemDatabaseBackend$new(connectionDetails = connectionDetails,
-                                cemSchema = cemSchema,
-                                sourceSchema = sourceSchema,
-                                vocabularySchema = vocabularySchema))
+  return(CemDatabaseBackend$new(
+    connectionDetails = connectionDetails,
+    cemSchema = cemSchema,
+    sourceSchema = sourceSchema,
+    vocabularySchema = vocabularySchema
+  ))
 }

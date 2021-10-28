@@ -29,4 +29,3 @@
 #' @importFrom magrittr `%>%`
 #'
 "_PACKAGE"
-

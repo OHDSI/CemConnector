@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CemConnector</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -124,9 +124,28 @@
       
     </div>
 
+    <div id="cemconnector-011" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.1">
+<a href="#cemconnector-011" class="anchor"></a>CemConnector 0.1.1</h1>
+<p>Changes:</p>
+<ol>
+<li>Reformatted table evidence explorer tool to only include relevant columns</li>
+<li>Evidence explorer now launches connecting to default cem.ohdsi.org</li>
+<li>Added withProgress for queries in shiny to improve UX.</li>
+<li>Allow submission of comma separated list and json inputs for concept sets in explorer</li>
+</ol>
+<p>Bug Fixes:</p>
+<ol>
+<li>Fixed display of error messages in evidence explorer</li>
+<li>Fixed searches with backend throwing bad SQL error. Concept sets are now checked to see if all concepts are excluded, with an informative error message.</li>
+<li>Fixed sql error when searching for negative controls with no descendants of concepts only</li>
+<li>Fixed sql error when searching for evidence with no descendants included</li>
+</ol>
+</div>
     <div id="cemconnector-010" class="section level1">
 <h1 class="page-header" data-toc-text="0.1.0">
 <a href="#cemconnector-010" class="anchor"></a>CemConnector 0.1.0</h1>
+<p>Release of first version</p>
 </div>
   </div>
 

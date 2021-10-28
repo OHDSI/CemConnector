@@ -25,3 +25,5 @@ OhdsiRTools::findNonAsciiStringsInFolder()
 
 pkgdown::build_site()
 OhdsiRTools::fixHadesLogo()
+
+styler::style_pkg()

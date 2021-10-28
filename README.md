@@ -80,7 +80,3 @@ CemConnector is licensed under Apache License 2.0
 Development
 ===========
 CemConnector is being developed in R Studio and PyCharm (with R plugins).
-
-### Development status
-
-Early development - not intended for use

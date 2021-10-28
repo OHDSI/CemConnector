@@ -208,3 +208,43 @@ cemConnection$getRelationships(conditionConceptSet = conditionConceptSet, ingred
 Here we see a number of relationship definitions that relate the two concept sets, including PubMed literature (via mesh terms)
 as well as spontaneous reports for adverse eventsand product labels.
 Refer to ```cemConnection$getCemSourceInfo()``` as this will strongly relate to the data sources as well as the date of generation.
+
+# Study packages
+We can use the CemConnector package to pull down a selection of negative control suggestions to use within a population level effect estimate study.
+For an example of a PLE study, see the skeleton package:
+
+https://github.com/OHDSI/SkeletonComparativeEffectStudy
+
+These are outcome pairs for target exposures that have no mapping to literature searches, drug product labels, clinical trials or statistically significant spontaneous adverse event reports.
+```{r eval=FALSE}
+remotes::install_github("ohdsi/CemConnector")
+# URL tbc
+cemUrl <- "https://cem.ohdsi.org"
+cemConnection <- CemConnector::createCemConnection(apiUrl = cemUrl)
+# Celecoxib/Diclofenac cohort concept set
+conceptSet <- data.frame(conceptId = c(1118084, 1124300), includeDescendants = TRUE, isExcluded = FALSE)
+```
+
+Here we selected a concept set that defines the ingredients in our target and comparator exposures.
+The concept set search will automatically exclude any outcomes for which evidence exists.
+Therefore, it is vital to select this concept set with care.
+
+```{r eval=FALSE}
+suggestedControls <- cemConnection$getSuggestedControlCondtions(conceptSet, nControls = 100)
+```
+As evidence mapping is imperfect, it is highly advisable to view the suggested negative controls and refine them before adding them to the study package.
+The `nControls` parameter allows the selection of many controls that can be filtered, by default this is set to 50, the order returned is ranked according to how often the condition/drug pairing appears in OHDSI network studies.
+The selected controls can be appended to the study package, making sure to specify the target and comparator correctly:
+
+```{r eval=FALSE}
+CemConnector::addControlsToStudyPackage(controlConcepts = filteredControls,
+                                        targetId = targetId,
+                                        comparatorId = comparatorId,
+                                        fileName = "inst/settings/NegativeControls.csv",
+                                        type = "outcome")
+```
+We also need logic to convert the concept IDs into cohorts.
+This logic is defined in the file `inst/sql/NegativeControlOutcomes.sql`.
+The default logic simply creates a cohort for every occurrence of the concept ID or any of its descendants in the condition era table.
+If other logic is required the SQL file can be modified.
+Be sure to use template SQL as expected by the `SqlRender` package.

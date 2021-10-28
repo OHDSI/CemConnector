@@ -1,7 +1,7 @@
 Package: CemConnector
 Type: Package
 Title: OHDSI Common Evidence Model (CEM) Connector
-Version: 0.1.0
+Version: 0.1.1
 Author: Jamie Gilbert
 Maintainer: Jamie Gilbert <jpg@azimov.co.uk>
 Description: RESTFul API and Database Backend connections for the OHDSI Common Evidence Model
@@ -23,18 +23,22 @@ Imports:
     magrittr,
     dplyr,
     shinycssloaders,
-    yaml
+    yaml,
+    jsonlite
 Suggests:
+    remotes,
     testthat,
     devtools,
     RSQLite,
-    Eunomia,
     callr,
     withr,
     httpuv,
     knitr,
     rmarkdown,
-    markdown
+    markdown,
+    styler,
+    Eunomia
+Remotes: github::ohdsi/Eunomia
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true

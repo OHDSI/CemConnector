@@ -41,11 +41,13 @@ addControlsToStudyPackage <- function(controlConcepts,
     warning("Small number of negative control concepts selected")
   }
 
-  outputData <- data.frame(targetId = targetId,
-                           comparatorId = comparatorId,
-                           outcomeId = controlConcepts$conceptId,
-                           outcomeName = controlConcepts$conceptName,
-                           type = type)
+  outputData <- data.frame(
+    targetId = targetId,
+    comparatorId = comparatorId,
+    outcomeId = controlConcepts$conceptId,
+    outcomeName = controlConcepts$conceptName,
+    type = type
+  )
 
   if (file.exists(fileName)) {
     # Read existing controls
@@ -54,15 +56,18 @@ addControlsToStudyPackage <- function(controlConcepts,
     if (nrow(existingData)) {
       message("Appending to existing controls")
       checkmate::assertNames(names(existingData),
-                             must.include = c("targetId",
-                                              "comparatorId",
-                                              "outcomeId",
-                                              "outcomeName",
-                                              "type"))
+        must.include = c(
+          "targetId",
+          "comparatorId",
+          "outcomeId",
+          "outcomeName",
+          "type"
+        )
+      )
 
       for (name in names(existingData)) {
         if (!(name %in% names(outputData))) {
-          outputData[,name] <- ''
+          outputData[, name] <- ""
         }
       }
       outputData <- base::rbind(existingData, outputData)

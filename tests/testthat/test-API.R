@@ -1,10 +1,11 @@
 test_that("load function works", {
   tenv <- environment()
   api <- loadApi(connectionDetails,
-                 cemSchema = cemTestSchema,
-                 vocabularySchema = vocabularySchema,
-                 sourceSchema = sourceInfoSchema,
-                 envir = tenv)
+    cemSchema = cemTestSchema,
+    vocabularySchema = vocabularySchema,
+    sourceSchema = sourceInfoSchema,
+    envir = tenv
+  )
   expect_s3_class(api, "Plumber")
   # Test load endpoints
   expect_class(tenv$cemBackendApi, "CemDatabaseBackend")
@@ -33,8 +34,9 @@ test_that("Test get condition evidence", {
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
 
   resp <- httr::POST(paste0(apiUrl, "/conditionEvidenceSummary"),
-                     body = list(conditionConceptSet = srchOutcomeConceptSet, siblingLookupLevels = 1),
-                     encode = "json")
+    body = list(conditionConceptSet = srchOutcomeConceptSet, siblingLookupLevels = 1),
+    encode = "json"
+  )
   content <- httr::content(resp, as = "parsed")
   # Turn response in to data frame
   data <- do.call(rbind.data.frame, content$result)
@@ -46,8 +48,9 @@ test_that("Test get ingredient evidence", {
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
 
   resp <- httr::POST(paste0(apiUrl, "/ingredientEvidenceSummary"),
-                     body = list(ingredientConceptSet = srchIngredientSet),
-                     encode = "json")
+    body = list(ingredientConceptSet = srchIngredientSet),
+    encode = "json"
+  )
   content <- httr::content(resp, as = "parsed")
   # Turn response in to data frame
   data <- do.call(rbind.data.frame, content$result)
@@ -59,8 +62,9 @@ test_that("Test get outcome controls", {
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
 
   resp <- httr::POST(paste0(apiUrl, "/suggestedControlConditions"),
-                     body = list(ingredientConceptSet = srchIngredientSet),
-                     encode = "json")
+    body = list(ingredientConceptSet = srchIngredientSet),
+    encode = "json"
+  )
   content <- httr::content(resp, as = "parsed")
   # Turn response in to data frame
   data <- do.call(rbind.data.frame, content$result)
@@ -72,8 +76,9 @@ test_that("Test get exposure controls", {
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
 
   resp <- httr::POST(paste0(apiUrl, "/suggestedControlIngredients"),
-                     body = list(conditionConceptSet = srchOutcomeConceptSet, siblingLookupLevels = 1),
-                     encode = "json")
+    body = list(conditionConceptSet = srchOutcomeConceptSet, siblingLookupLevels = 1),
+    encode = "json"
+  )
   content <- httr::content(resp, as = "parsed")
   # Turn response in to data frame
   data <- do.call(rbind.data.frame, content$result)
@@ -86,10 +91,13 @@ test_that("Test get relationships", {
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
 
   resp <- httr::POST(paste0(apiUrl, "/ingredientEvidenceSummary"),
-                     body = list(ingredientConceptSet = srchIngredientSet,
-                                 conditionConceptSet = srchOutcomeConceptSet,
-                                 conditionSiblingLookupLevels = 1),
-                     encode = "json")
+    body = list(
+      ingredientConceptSet = srchIngredientSet,
+      conditionConceptSet = srchOutcomeConceptSet,
+      conditionSiblingLookupLevels = 1
+    ),
+    encode = "json"
+  )
 
   content <- httr::content(resp, as = "parsed")
   # Turn response in to data frame

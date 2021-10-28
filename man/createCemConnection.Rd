@@ -5,7 +5,7 @@
 \title{Function creates a connection to}
 \usage{
 createCemConnection(
-  apiUrl = NULL,
+  apiUrl = "https://cem.ohdsi.org",
   connectionDetails = NULL,
   cemSchema = NULL,
   sourceSchema = NULL,

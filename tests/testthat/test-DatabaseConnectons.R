@@ -3,9 +3,12 @@ genericTests <- function(connClass, classes, connectionClass) {
   conn <- connClass$new(Eunomia::getEunomiaConnectionDetails())
   expect_class(conn, classes)
 
-  on.exit({
-    conn$finalize()
-  }, add = TRUE)
+  on.exit(
+    {
+      conn$finalize()
+    },
+    add = TRUE
+  )
 
   expect_class(conn, "ConnectionHandler")
   expect_true(conn$isActive)

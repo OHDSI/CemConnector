@@ -11,11 +11,14 @@ test_that("Write controls to study package", {
   # check output
   ouputData <- read.csv(outpfile)
   checkmate::expect_names(names(ouputData),
-                          must.include = c("targetId",
-                                           "comparatorId",
-                                           "outcomeId",
-                                           "outcomeName",
-                                           "type"))
+    must.include = c(
+      "targetId",
+      "comparatorId",
+      "outcomeId",
+      "outcomeName",
+      "type"
+    )
+  )
   expect_equal(nrow(ouputData), nrow(suggestedControls))
   testRow <- data.frame(conceptId = 999989, conceptName = "Test concept")
   suggestedControls <- rbind(suggestedControls, testRow)
@@ -28,5 +31,5 @@ test_that("Write controls to study package", {
   ouputData2$targetName <- "Foooo"
   write.csv(ouputData2, file = outpfile, row.names = FALSE, quote = FALSE)
   addControlsToStudyPackage(suggestedControls, fileName = outpfile, targetId = 3, comparatorId = 4)
-  expect_warning(addControlsToStudyPackage(suggestedControls[1:5,], fileName = outpfile, targetId = 5, comparatorId = 6))
+  expect_warning(addControlsToStudyPackage(suggestedControls[1:5, ], fileName = outpfile, targetId = 5, comparatorId = 6))
 })
