@@ -252,7 +252,6 @@ ceExplorerUi <- function(request) {
   controlsInputArea <- shinydashboard::box(
     title = "Negative control suggestion",
     width = 12,
-
     shiny::p("Use CemConnector to get a set of negative controls for a given conceptset of interest."),
     shiny::selectInput("conceptInputTypeNc", "Input type", c("json", "list", "csv"), selected = "list"),
     shiny::p(shiny::textOutput("conceptInputHelpTxtNc")),
@@ -324,8 +323,9 @@ ceExplorerUi <- function(request) {
 
 .readCommaSeparatedList <- function(text) {
   ids <- sapply(stringr::str_split(text, pattern = ","), as.integer)
-  if (any(is.na(ids)) | !any(is.integer(ids)))
+  if (any(is.na(ids)) | !any(is.integer(ids))) {
     stop("Only valid integers can be used")
+  }
 
   conceptSet <- data.frame(
     conceptId = ids,
@@ -337,10 +337,9 @@ ceExplorerUi <- function(request) {
 
 parseConceptInput <- function(conceptSetDefinition, inputType) {
   rda <- data.frame()
-  tryCatch (
+  tryCatch(
     {
-      rda <- switch(
-        inputType,
+      rda <- switch(inputType,
         "list" = .readCommaSeparatedList(conceptSetDefinition),
         "json" = .readJsonString(conceptSetDefinition),
         "csv" =  utils::read.csv(text = conceptSetDefinition)
@@ -357,9 +356,8 @@ ceExplorerDashboardServer <- function(input, output, session) {
   checkmate::assertClass(backend, "AbstractCemBackend")
 
   getInputHelpText <- function(inputType) {
-    switch(
-      inputType,
-      "json" ="Copy and paste a json string from an atlas concept set definition export.",
+    switch(inputType,
+      "json" = "Copy and paste a json string from an atlas concept set definition export.",
       "csv" = "Manually input csv required headers: conceptId, includeDescendants, isExcluded",
       "list" = "Insert comma separated set of values. All will be included in search, descedants will also be searched automatically."
     )
