@@ -157,7 +157,7 @@ negativeControlSelectorModule <- function(id,
                                             TRUE
                                           }),
                                           nControls = shiny::reactive({
-                                            50
+                                            100
                                           })) {
   checkmate::assert_class(backend, "AbstractCemBackend")
   checkmate::assert_class(conceptInput, "reactive")
@@ -259,7 +259,7 @@ ceExplorerUi <- function(request) {
     shiny::selectInput("siblingLookupLevelsNc", label = "Condition Sibling Lookup Levels", 0:5, selected = 0),
     shiny::p("When searching for ingredient exposure controls, If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings"),
     shiny::checkboxInput("searchOutcomeControls", "Search for outcome (condition) controls", value = TRUE),
-    shiny::selectInput("nControls", label = "Number of suggestsions", c(10, 20, 50, 100, 500, 5000), selected = 50)
+    shiny::selectInput("nControls", label = "Number of suggestsions", c(10, 20, 50, 100, 500, 5000), selected = 100)
   )
 
   controlsTab <- shiny::fluidRow(
