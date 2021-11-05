@@ -323,6 +323,7 @@ ceExplorerUi <- function(request) {
   return(conceptSet)
 }
 
+#' @importFrom stringr str_split
 .readCommaSeparatedList <- function(text) {
   ids <- sapply(stringr::str_split(text, pattern = ","), as.integer)
   if (any(is.na(ids)) | !any(is.integer(ids))) {

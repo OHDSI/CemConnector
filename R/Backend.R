@@ -19,11 +19,9 @@
 #' Create subclass of this to use functionality.
 #' @import checkmate
 #' @import R6
-#' @export
 AbstractCemBackend <- R6::R6Class(
   "AbstractCemBackend",
   public = list(
-    #' Initialize
     #' @description
     #' initialize backend object. Will fail in an error - this is an abstract class
     #' @param ... params

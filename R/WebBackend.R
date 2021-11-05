@@ -21,6 +21,7 @@
 #' @field apiUrl url for the common evidence model hosted api instance
 #' @import R6
 #' @import checkmate
+#' @import httr
 #' @export
 CemWebApiBackend <- R6::R6Class(
   "CemWebApiBackend",

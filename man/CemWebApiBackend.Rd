@@ -227,7 +227,7 @@ A negative control for a submitted concept_set is valid if there is no evidence 
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getSuggestedControlCondtions(
   ingredientConceptSet,
-  nControls = 50
+  nControls = 100
 )}\if{html}{\out{</div>}}
 }
 
@@ -252,7 +252,7 @@ A negative control for a submitted concept_set is valid if there is no evidence 
 \if{html}{\out{<div class="r">}}\preformatted{CemWebApiBackend$getSuggestedControlIngredients(
   conditionConceptSet,
   siblingLookupLevels = 0,
-  nControls = 50
+  nControls = 100
 )}\if{html}{\out{</div>}}
 }
 
