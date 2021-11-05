@@ -45,6 +45,8 @@ test_that("summary works web", {
     },
     "Request error 404"
   )
+
+  expect_equal(webBackend$getStatus()$status, "alive")
 })
 
 test_that("All excluded fails", {
