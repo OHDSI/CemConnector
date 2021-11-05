@@ -230,7 +230,7 @@ ceExplorerUi <- function(request) {
     width = 12,
     shiny::p("Use CemConnector to explore pharmacovigalence evidence related to standard (RxNorm or ATC class) ingredients,
      standard conditions (SNOMED concepts) or a combination to find evidence related to these pairs."),
-    shiny::selectInput("conceptInputType", "Input type", c("json", "list", "csv")),
+    shiny::selectInput("conceptInputType", "Input type", c("comma-separated list" = "list", "json", "csv"), selected = "list"),
     shiny::p(shiny::textOutput("conceptInputHelpTxt")),
     shiny::textAreaInput("ingredientConcept", label = "Ingredient concept set"),
     shiny::textAreaInput("conditionConcept", label = "Condition concept set"),
@@ -238,7 +238,8 @@ ceExplorerUi <- function(request) {
     shiny::p("If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings.
                                    Siblings are related terms that are shared by a common parent of any specified search terms.
                                    This will lead to increased matches, but will likely result in many more false positives.
-                                   ")
+                                   "),
+    shiny::actionButton("searchEvidence", "Search")
   )
 
   explorerTab <- shiny::fluidRow(
@@ -253,13 +254,14 @@ ceExplorerUi <- function(request) {
     title = "Negative control suggestion",
     width = 12,
     shiny::p("Use CemConnector to get a set of negative controls for a given conceptset of interest."),
-    shiny::selectInput("conceptInputTypeNc", "Input type", c("json", "list", "csv"), selected = "list"),
+    shiny::radioButtons("inputConceptType", "Find", c("negative control outcomes", "negative control exposures")),
+    shiny::selectInput("conceptInputTypeNc", "Input type", c("json", "comma-separated list" = "list", "csv"), selected = "list"),
     shiny::p(shiny::textOutput("conceptInputHelpTxtNc")),
-    shiny::textAreaInput("conceptSetNc", label = "Concept set", value = "1201620"),
+    shiny::textAreaInput("conceptSetNc", label = "Concept set"),
     shiny::selectInput("siblingLookupLevelsNc", label = "Condition Sibling Lookup Levels", 0:5, selected = 0),
     shiny::p("When searching for ingredient exposure controls, If concept matches are poor, condition concepts may be too specfic, consdier looking for siblings"),
-    shiny::checkboxInput("searchOutcomeControls", "Search for outcome (condition) controls", value = TRUE),
-    shiny::selectInput("nControls", label = "Number of suggestsions", c(10, 20, 50, 100, 500, 5000), selected = 100)
+    shiny::selectInput("nControls", label = "Number of suggestsions", c(10, 20, 50, 100, 500, 5000), selected = 100),
+    shiny::actionButton("searchNegativeControls", "Search")
   )
 
   controlsTab <- shiny::fluidRow(
@@ -393,9 +395,9 @@ ceExplorerDashboardServer <- function(input, output, session) {
 
   ceModuleServer <- ceExplorerModule("explorer",
     backend,
-    ingredientConceptInput = ingredientConceptInput,
-    conditionConceptInput = conditionConceptInput,
-    siblingLookupLevelsInput = siblingLookupLevelsInput
+    ingredientConceptInput = shiny::eventReactive(input$searchEvidence, ingredientConceptInput()),
+    conditionConceptInput = shiny::eventReactive(input$searchEvidence, conditionConceptInput()),
+    siblingLookupLevelsInput = shiny::eventReactive(input$searchEvidence, siblingLookupLevelsInput())
   )
 
   conceptInputNc <- shiny::reactive({
@@ -404,18 +406,19 @@ ceExplorerDashboardServer <- function(input, output, session) {
   siblingLookupLevelsInputNc <- shiny::reactive({
     input$siblingLookupLevelsNc
   })
+
   searchOutcomeControls <- shiny::reactive({
-    input$searchOutcomeControls
+    input$inputConceptType == "negative control outcomes"
   })
   nControls <- shiny::reactive({
     input$nControls
   })
   ncModuleServer <- negativeControlSelectorModule("controls",
     backend,
-    conceptInput = conceptInputNc,
-    isOutcomeSearch = searchOutcomeControls,
-    nControls = nControls,
-    siblingLookupLevelsInput = siblingLookupLevelsInputNc
+    conceptInput = shiny::eventReactive(input$searchNegativeControls, conceptInputNc()),
+    isOutcomeSearch = shiny::eventReactive(input$searchNegativeControls, searchOutcomeControls()),
+    nControls = shiny::eventReactive(input$searchNegativeControls, nControls()),
+    siblingLookupLevelsInput = shiny::eventReactive(input$searchNegativeControls, siblingLookupLevelsInputNc())
   )
 }
 

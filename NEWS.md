@@ -1,3 +1,10 @@
+CemConnector 0.1.2
+==================
+Changes:
+1. Search button in explorer, rather than changing on user input
+2. Default suggested number of negative controls is now 100 instead of 50
+
+
 CemConnector 0.1.1
 ==================
 Changes:
