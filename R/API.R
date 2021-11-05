@@ -27,6 +27,7 @@
 #' @returns
 #' Plumber router object
 #' @importFrom plumber pr pr_hook
+#' @import checkmate
 #' @export
 loadApi <- function(connectionDetails,
                     cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),

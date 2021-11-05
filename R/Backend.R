@@ -17,7 +17,9 @@
 #' CEM Abstract Backend Class
 #' @description
 #' Create subclass of this to use functionality.
-#' #' @export
+#' @import checkmate
+#' @import R6
+#' @export
 AbstractCemBackend <- R6::R6Class(
   "AbstractCemBackend",
   public = list(
@@ -70,6 +72,8 @@ AbstractCemBackend <- R6::R6Class(
 #' @field cemSchema schema of CEM database
 #' @field vocabularySchema OMOP vocabulary schema (must include concept and concept ancestor tables)
 #' @field sourceSchema schema containing source_info table
+#' @import checkmate
+#' @import R6
 #' @export
 CemDatabaseBackend <- R6::R6Class(
   "CemDatabaseBackend",
@@ -238,7 +242,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
     #' @returns data.frame of condition concept_id and concept_name
-    getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 50) {
+    getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 100) {
       ingredientConceptSet <- private$checkConceptSet(ingredientConceptSet)
       ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
       ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)
@@ -261,7 +265,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
     #' @returns data.frame of condition concept_id and concept_name
-    getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 50) {
+    getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 100) {
       conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
       conditionConceptDesc <- private$getConceptIdsWithDescendants(conditionConceptSet)
       conditionConceptNoDesc <- private$getConceptIdsWithoutDescendants(conditionConceptSet)

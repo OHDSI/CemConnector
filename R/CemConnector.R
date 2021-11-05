@@ -26,6 +26,5 @@
 #' @import httr
 #' @import dplyr
 #' @import shinydashboard
-#' @importFrom magrittr `%>%`
 #'
 "_PACKAGE"

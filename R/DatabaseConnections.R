@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#' @import checkmate
+#' @import R6
 #' @importFrom DBI dbIsValid
 #' @importFrom SqlRender render translate
 ConnectionHandler <- R6::R6Class(

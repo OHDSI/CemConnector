@@ -10,7 +10,7 @@ test_that("explorer loads", {
       conditionConcept = conditionCsvStr,
       ingredientConcept = ingredientCsvStr,
       nControls = 50,
-      searchOutcomeControls = TRUE,
+      inputConceptType = "negative control outcomes",
       siblingLookupLevelsNc = 1,
       conceptInputType = "csv"
     )

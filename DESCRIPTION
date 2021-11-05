@@ -9,36 +9,29 @@ Description: RESTFul API and Database Backend connections for the OHDSI Common E
 VignetteBuilder: knitr
 Depends:
     R (>= 4.0.0),
+Imports:
     DatabaseConnector (>= 4.0.0),
     checkmate,
-    R6
-Imports:
+    R6,
     shiny,
     shinydashboard,
+    shinycssloaders,
     plumber,
     pool,
     DBI,
     SqlRender,
-    httr,
-    magrittr,
     dplyr,
-    shinycssloaders,
     yaml,
     jsonlite
 Suggests:
-    remotes,
     testthat,
-    devtools,
     RSQLite,
     callr,
     withr,
     httpuv,
     knitr,
     rmarkdown,
-    markdown,
-    styler,
-    Eunomia
-Remotes: github::ohdsi/Eunomia
+    styler
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true

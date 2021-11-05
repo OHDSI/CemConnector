@@ -430,6 +430,7 @@ ceExplorerDashboardServer <- function(input, output, session) {
 #' @param connectionDetails DatabaseConnector::connectionDetails instance for CEM
 #' @param usePooledConnection - use pooled connections (database model only)
 #' @param ... param list paased to CemDatabaseBaackend$new
+#' @import checkmate
 #' @export
 launchCeExplorer <- function(apiUrl = "https://cem.ohdsi.org",
                              connectionDetails = NULL,
