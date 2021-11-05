@@ -25,6 +25,7 @@
 #' @param fileName path of existing negative control file or where file will be written
 #' @param type "outcome" or "exposure" - only outcomes are currently supported by the study package
 #' @importFrom utils read.csv write.csv
+#' @import checkmate
 #' @export
 addControlsToStudyPackage <- function(controlConcepts,
                                       targetId,

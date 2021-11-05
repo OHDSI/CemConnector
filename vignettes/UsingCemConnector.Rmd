@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-devtools::load_all()
+source(file.path("..", "tests", "testthat", "helper.R"))
 sqlidb <- tempfile(fileext = ".sqlite")
 connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sqlite", server = sqlidb)
 .loadCemTestFixtures(connectionDetails)

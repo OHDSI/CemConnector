@@ -20,12 +20,9 @@
 #'
 #' @import DatabaseConnector
 #' @import R6
-#' @import magrittr
 #' @import checkmate
 #' @import shiny
-#' @import httr
 #' @import dplyr
 #' @import shinydashboard
-#' @importFrom magrittr `%>%`
 #'
 "_PACKAGE"

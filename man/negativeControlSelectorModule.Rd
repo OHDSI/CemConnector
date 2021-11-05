@@ -10,7 +10,7 @@ negativeControlSelectorModule(
   conceptInput = NULL,
   siblingLookupLevelsInput = shiny::reactive({     0 }),
   isOutcomeSearch = shiny::reactive({     TRUE }),
-  nControls = shiny::reactive({     50 })
+  nControls = shiny::reactive({     100 })
 )
 }
 \arguments{

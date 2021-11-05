@@ -5,8 +5,6 @@
 \title{CEM Abstract Backend Class}
 \description{
 Create subclass of this to use functionality.
-#' @export
-Initialize
 }
 \section{Methods}{
 \subsection{Public methods}{

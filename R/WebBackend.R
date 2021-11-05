@@ -19,6 +19,9 @@
 #' @description
 #' An interface to the common evidence model that uses http requests
 #' @field apiUrl url for the common evidence model hosted api instance
+#' @import R6
+#' @import checkmate
+#' @import httr
 #' @export
 CemWebApiBackend <- R6::R6Class(
   "CemWebApiBackend",
@@ -155,7 +158,7 @@ CemWebApiBackend <- R6::R6Class(
     #' @param ingredientConceptSet data.frame conforming to conceptset format, must be standard RxNorm Ingredients
     #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
     #' @returns data.frame of condition concept_id and concept_name
-    getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 50) {
+    getSuggestedControlCondtions = function(ingredientConceptSet, nControls = 100) {
       endpoint <- "suggestedControlConditions"
       content <- self$request("POST", endpoint, body = list(
         ingredientConceptSet = ingredientConceptSet,
@@ -173,7 +176,7 @@ CemWebApiBackend <- R6::R6Class(
     #' @param siblingLookupLevels where mapping is not found it may be beneficial to lookup siblings in the concept ancestry. This defines the number of levels to jump
     #' @param nControls topN controls to select - the maximum number will be limited by available concepts without related evidence
     #' @returns data.frame of condition concept_id and concept_name
-    getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 50) {
+    getSuggestedControlIngredients = function(conditionConceptSet, siblingLookupLevels = 0, nControls = 100) {
       endpoint <- "suggestedControlIngredients"
       content <- self$request("POST", endpoint, body = list(
         conditionConceptSet = conditionConceptSet,
