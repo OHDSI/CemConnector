@@ -1,3 +1,8 @@
+CemConnector 0.1.3
+==================
+Bug fixes:
+1. Fixed broken test cases
+
 CemConnector 0.1.2
 ==================
 Changes:
