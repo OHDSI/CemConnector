@@ -2,7 +2,7 @@ test_that("load function works", {
   tenv <- environment()
   api <- loadApi(connectionDetails,
                  cemDatabaseSchema = cemTestSchema,
-                 vocabularyDatabaseSchema = vocabularySchema,
+                 vocabularyDatabaseSchema = vocabularyDatabaseSchema,
                  sourceDatabaseSchema = sourceInfoSchema,
                  envir = tenv
   )

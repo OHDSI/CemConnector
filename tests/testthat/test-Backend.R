@@ -3,7 +3,7 @@
 
 backend <- CemDatabaseBackend$new(connectionDetails,
   cemDatabaseSchema = cemTestSchema,
-  vocabularySchema = vocabularySchema,
+  vocabularyDatabaseSchema = vocabularyDatabaseSchema,
   sourceDatabaseSchema = sourceInfoSchema
 )
 
@@ -23,7 +23,7 @@ test_that("DB Backend loads", {
   expect_class(backend$connection, "ConnectionHandler")
   expect_true(backend$connection$isActive)
   expect_equal(backend$cemDatabaseSchema, cemTestSchema)
-  expect_equal(backend$vocabularySchema, vocabularySchema)
+  expect_equal(backend$vocabularyDatabaseSchema, vocabularyDatabaseSchema)
   expect_equal(backend$sourceDatabaseSchema, sourceInfoSchema)
 })
 
