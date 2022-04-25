@@ -30,9 +30,9 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.get
                                                                 dbms = Sys.getenv("CEM_DATABASE_DBMS"),
                                                                 extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"))
 
-cemSchema <- Sys.getenv("CEM_DATABASE_SCHEMA")
-vocabularySchema <- Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA")
-sourceSchema <- Sys.getenv("CEM_DATABASE_INFO_SCHEMA")
+cemDatabaseSchema <- Sys.getenv("CEM_DATABASE_SCHEMA")
+vocabularyDatabaseSchema <- Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA")
+sourceDatabaseSchema <- Sys.getenv("CEM_DATABASE_INFO_SCHEMA")
 
-api <- CemConnector::loadApi(connectionDetails, cemSchema = cemSchema, vocabularySchema = vocabularySchema, sourceSchema = sourceSchema)
+api <- CemConnector::loadApi(connectionDetails, cemDatabaseSchema = cemDatabaseSchema, vocabularyDatabaseSchema = vocabularyDatabaseSchema, sourceDatabaseSchema = sourceDatabaseSchema)
 api$run(port = as.integer(Sys.getenv("PLUMBER_PORT")), host="0.0.0.0")

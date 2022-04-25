@@ -1,10 +1,10 @@
 test_that("load function works", {
   tenv <- environment()
   api <- loadApi(connectionDetails,
-    cemSchema = cemTestSchema,
-    vocabularySchema = vocabularySchema,
-    sourceSchema = sourceInfoSchema,
-    envir = tenv
+                 cemDatabaseSchema = cemTestSchema,
+                 vocabularyDatabaseSchema = vocabularySchema,
+                 sourceDatabaseSchema = sourceInfoSchema,
+                 envir = tenv
   )
   expect_s3_class(api, "Plumber")
   # Test load endpoints

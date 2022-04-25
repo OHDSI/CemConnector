@@ -22,23 +22,23 @@
 #' Factory pattern creation of abstract  CemBackend classes
 #' @param apiUrl url to cem connector hosted endpoint
 #' @param connectionDetails DatabaseConnector connection details object for connection to db
-#' @param cemSchema schema for cem (if using database backend)
-#' @param sourceSchema - schema containing source info
-#' @param vocabularySchema - schema for cem vocabulary
+#' @param cemDatabaseSchema schema for cem (if using database backend)
+#' @param sourceDatabaseSchema - schema containing source info
+#' @param vocabularyDatabaseSchema - schema for cem vocabulary
 #' @export
 createCemConnection <- function(apiUrl = "https://cem.ohdsi.org",
                                 connectionDetails = NULL,
-                                cemSchema = NULL,
-                                sourceSchema = NULL,
-                                vocabularySchema = NULL) {
+                                cemDatabaseSchema = NULL,
+                                sourceDatabaseSchema = NULL,
+                                vocabularyDatabaseSchema = NULL) {
   if (is.null(connectionDetails) & !is.null(apiUrl)) {
     return(CemWebApiBackend$new(apiUrl = apiUrl))
   }
 
   return(CemDatabaseBackend$new(
     connectionDetails = connectionDetails,
-    cemSchema = cemSchema,
-    sourceSchema = sourceSchema,
-    vocabularySchema = vocabularySchema
+    cemDatabaseSchema = cemDatabaseSchema,
+    sourceDatabaseSchema = sourceDatabaseSchema,
+    vocabularyDatabaseSchema = vocabularyDatabaseSchema
   ))
 }

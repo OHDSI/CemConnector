@@ -21,9 +21,9 @@ sqlidb <- tempfile(fileext = ".sqlite")
 connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "sqlite", server = sqlidb)
 .loadCemTestFixtures(connectionDetails)
 cemConnection <- CemConnector::CemDatabaseBackend$new(connectionDetails = connectionDetails,
-                                                      vocabularySchema = "main",
-                                                      cemSchema = "main",
-                                                      sourceSchema = "main")
+                                                      vocabularyDatabaseSchema = "main",
+                                                      cemDatabaseSchema = "main",
+                                                      sourceDatabaseSchema = "main")
 ```
 
 ```{css echo=FALSE}
@@ -63,9 +63,9 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(user = "mydbuser
                                                                 password = "mysecret")
 
 cemConnection <- CemConnector::CemDatabaseBackend$new(connectionDetails = connectionDetails,
-                                                      vocabularySchema = "vocabulary",
-                                                      cemSchema = "cem_v2",
-                                                      sourceSchema = "cem_v2_source")
+                                                      vocabularyDatabaseSchema = "vocabulary",
+                                                      cemDatabaseSchema = "cem_v2",
+                                                      sourceDatabaseSchema = "cem_v2_source")
 ```
 
 This should connect to the server without error.

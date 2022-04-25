@@ -8,16 +8,16 @@ useTestPlumber <- FALSE
 
 if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   # Load API in separate process
-  serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...) {
+  serverStart <- function(pipe, apiPort, cemDatabaseSchema, vocabularySchema, sourceDatabaseSchema, ...) {
     library(CemConnector)
     connectionDetails <- DatabaseConnector::createConnectionDetails(...)
 
     tryCatch(
       {
         api <- loadApi(connectionDetails,
-          cemSchema = cemSchema,
-          vocabularySchema = vocabularySchema,
-          sourceSchema = sourceSchema
+                       cemDatabaseSchema = cemDatabaseSchema,
+                       vocabularyDatabaseSchema = vocabularySchema,
+                       sourceDatabaseSchema = sourceDatabaseSchema
         )
         api$setDocs(FALSE)
         writeLines("API LOADED", con = pipe)
@@ -64,9 +64,9 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
       apiPort = apiPort,
       dbms = "sqlite",
       server = sqlidb,
-      cemSchema = cemTestSchema,
+      cemDatabaseSchema = cemTestSchema,
       vocabularySchema = vocabularySchema,
-      sourceSchema = sourceInfoSchema
+      sourceDatabaseSchema = sourceInfoSchema
     )
   )
 

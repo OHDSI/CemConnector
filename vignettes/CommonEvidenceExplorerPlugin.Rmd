@@ -36,7 +36,7 @@ launchCeExplorer(apiUrl = baseUrl)
 Alternatively, if database credentials are known the app can launch as follows:
 ```{r, eval = FALSE}
 connectionDetails <- DatabaseConnector::createConnectionDetails("postgres", ...)
-launchCeExplorer(connectionDetails = connectionDetails, cemSchema = "cem", sourceSchema = "cem_v3_sources", )
+launchCeExplorer(connectionDetails = connectionDetails, cemDatabaseSchema = "cem", sourceDatabaseSchema = "cem_v3_sources", vocabularyDatabaseSchema = "vocabulary")
 ```
 Consult your organisations administrator for details on connecting in database mode.
 Unless you are serving a large number of requests, this mode is not required.

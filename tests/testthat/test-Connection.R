@@ -4,9 +4,9 @@ test_that("Connection factory", {
 
   dbBackend <- createCemConnection(
     connectionDetails = connectionDetails,
-    cemSchema = cemTestSchema,
+    cemDatabaseSchema = cemTestSchema,
     vocabularySchema = vocabularySchema,
-    sourceSchema = sourceInfoSchema
+    sourceDatabaseSchema = sourceInfoSchema
   )
 
   expect_class(dbBackend, "CemDatabaseBackend")
