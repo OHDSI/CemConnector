@@ -6,9 +6,9 @@
 \usage{
 loadApi(
   connectionDetails,
-  cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
-  vocabularySchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
-  sourceSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
+  cemDatabaseSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
+  vocabularyDatabaseSchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
+  sourceDatabaseSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
   pathToPlumberApi = system.file(file.path("api", "plumber.R"), package =
     "CemConnector"),
   envir = new.env(parent = .GlobalEnv)
@@ -17,11 +17,11 @@ loadApi(
 \arguments{
 \item{connectionDetails}{DatabaseConnector connection details object}
 
-\item{cemSchema}{schema where matrix summary and merged evidence are found}
+\item{cemDatabaseSchema}{schema where matrix summary and merged evidence are found}
 
-\item{vocabularySchema}{vocabulary schema on database}
+\item{vocabularyDatabaseSchema}{vocabulary schema on database}
 
-\item{sourceSchema}{schema for info about the CEM}
+\item{sourceDatabaseSchema}{schema for info about the CEM}
 
 \item{pathToPlumberApi}{path to plumber script (default is package's)}
 

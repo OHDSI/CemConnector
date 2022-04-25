@@ -2,22 +2,22 @@
 apiUrl <- getOption("CemConnector.useHostedUrl")
 connectionDetails <- getOption("CemConnectionDetails")
 cemTestSchema <- getOption("cemTestSchema")
-vocabularySchema <- getOption("cemVocabularySchema")
+vocabularyDatabaseSchema <- getOption("cemVocabularySchema")
 sourceInfoSchema <- getOption("cemSourceInfoSchema")
 useTestPlumber <- FALSE
 
 if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   # Load API in separate process
-  serverStart <- function(pipe, apiPort, cemSchema, vocabularySchema, sourceSchema, ...) {
+  serverStart <- function(pipe, apiPort, cemDatabaseSchema, vocabularyDatabaseSchema, sourceDatabaseSchema, ...) {
     library(CemConnector)
     connectionDetails <- DatabaseConnector::createConnectionDetails(...)
 
     tryCatch(
       {
         api <- loadApi(connectionDetails,
-          cemSchema = cemSchema,
-          vocabularySchema = vocabularySchema,
-          sourceSchema = sourceSchema
+                       cemDatabaseSchema = cemDatabaseSchema,
+                       vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+                       sourceDatabaseSchema = sourceDatabaseSchema
         )
         api$setDocs(FALSE)
         writeLines("API LOADED", con = pipe)
@@ -42,7 +42,7 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
   )
 
   cemTestSchema <- "main"
-  vocabularySchema <- "main"
+  vocabularyDatabaseSchema <- "main"
   sourceInfoSchema <- "main"
 
   apiPort <- httpuv::randomPort(8000, 8080)
@@ -64,9 +64,9 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
       apiPort = apiPort,
       dbms = "sqlite",
       server = sqlidb,
-      cemSchema = cemTestSchema,
-      vocabularySchema = vocabularySchema,
-      sourceSchema = sourceInfoSchema
+      cemDatabaseSchema = cemTestSchema,
+      vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+      sourceDatabaseSchema = sourceInfoSchema
     )
   )
 

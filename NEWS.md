@@ -1,5 +1,9 @@
 CemConnector 0.1.3
 ==================
+Changes:
+1. Changed use of `cemSchema`, `vocabularySchema`, `sourceSchema` to `cemDatabaseSchema`, `vocabularyDatabaseSchema`, 
+`sourceDatabaseSchema` to be consistent across HADES packages
+
 Bug fixes:
 1. Fixed broken test cases
 

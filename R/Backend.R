@@ -67,9 +67,9 @@ AbstractCemBackend <- R6::R6Class(
 #' @description
 #' An interface to the common evidence model that uses works directly with a database schema
 #' @field connection ConnectionHandlder instance
-#' @field cemSchema schema of CEM database
-#' @field vocabularySchema OMOP vocabulary schema (must include concept and concept ancestor tables)
-#' @field sourceSchema schema containing source_info table
+#' @field cemDatabaseSchema schema of CEM database
+#' @field vocabularyDatabaseSchema OMOP vocabulary schema (must include concept and concept ancestor tables)
+#' @field sourceDatabaseSchema schema containing source_info table
 #' @import checkmate
 #' @import R6
 #' @export
@@ -78,26 +78,26 @@ CemDatabaseBackend <- R6::R6Class(
   inherit = AbstractCemBackend,
   public = list(
     connection = NULL,
-    cemSchema = NULL,
-    vocabularySchema = NULL,
-    sourceSchema = NULL,
+    cemDatabaseSchema = NULL,
+    vocabularyDatabaseSchema = NULL,
+    sourceDatabaseSchema = NULL,
 
     #' @description
     #' initialize backend object.
     #' @param connectionDetails DatabaseConnector connection details object
-    #' @param cemSchema Schema name including CEM unified and matrix_summary tables
-    #' @param vocabularySchema OMOP vocabulary
-    #' @param sourceSchema Schema containing CEM source information table
+    #' @param cemDatabaseSchema Schema name including CEM unified and matrix_summary tables
+    #' @param vocabularyDatabaseSchema OMOP vocabulary
+    #' @param sourceDatabaseSchema Schema containing CEM source information table
     #' @param usePooledConnection Used a pooled connection object rather than a database connector object.
     initialize = function(connectionDetails,
-                          cemSchema,
-                          vocabularySchema,
-                          sourceSchema,
+                          cemDatabaseSchema,
+                          vocabularyDatabaseSchema,
+                          sourceDatabaseSchema,
                           usePooledConnection = FALSE) {
       checkmate::assert_class(connectionDetails, "connectionDetails")
-      checkmate::assert_string(cemSchema, min.chars = 1)
-      checkmate::assert_string(vocabularySchema, min.chars = 1)
-      checkmate::assert_string(sourceSchema, min.chars = 1)
+      checkmate::assert_string(cemDatabaseSchema, min.chars = 1)
+      checkmate::assert_string(vocabularyDatabaseSchema, min.chars = 1)
+      checkmate::assert_string(sourceDatabaseSchema, min.chars = 1)
 
       if (usePooledConnection) {
         self$connection <- PooledConnectionHandler$new(connectionDetails)
@@ -105,9 +105,9 @@ CemDatabaseBackend <- R6::R6Class(
         self$connection <- ConnectionHandler$new(connectionDetails)
       }
 
-      self$cemSchema <- cemSchema
-      self$vocabularySchema <- vocabularySchema
-      self$sourceSchema <- sourceSchema
+      self$cemDatabaseSchema <- cemDatabaseSchema
+      self$vocabularyDatabaseSchema <- vocabularyDatabaseSchema
+      self$sourceDatabaseSchema <- sourceDatabaseSchema
     },
 
     #' @description
@@ -129,8 +129,8 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getConditionEvidenceSummary.sql")
       self$connection$queryDb(sql,
-        vocabulary = self$vocabularySchema,
-        cem_schema = self$cemSchema,
+        vocabulary = self$vocabularyDatabaseSchema,
+        cem_schema = self$cemDatabaseSchema,
         use_siblings = siblingLookupLevels > 0,
         sibling_lookup_levels = siblingLookupLevels,
         condition_concept_desc = conditionConceptDesc,
@@ -150,8 +150,8 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getConditionRelationships.sql")
       self$connection$queryDb(sql,
-        vocabulary = self$vocabularySchema,
-        cem_schema = self$cemSchema,
+        vocabulary = self$vocabularyDatabaseSchema,
+        cem_schema = self$cemDatabaseSchema,
         use_siblings = siblingLookupLevels > 0,
         sibling_lookup_levels = siblingLookupLevels,
         condition_concept_desc = conditionConceptDesc,
@@ -170,8 +170,8 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getIngredientEvidenceSummary.sql")
       self$connection$queryDb(sql,
-        vocabulary = self$vocabularySchema,
-        cem_schema = self$cemSchema,
+        vocabulary = self$vocabularyDatabaseSchema,
+        cem_schema = self$cemDatabaseSchema,
         concept_desc = ingredientConceptDesc,
         concept_no_desc = ingredientConceptNoDesc
       )
@@ -189,8 +189,8 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getIngredientRelationships.sql")
       self$connection$queryDb(sql,
-        vocabulary = self$vocabularySchema,
-        cem_schema = self$cemSchema,
+        vocabulary = self$vocabularyDatabaseSchema,
+        cem_schema = self$cemDatabaseSchema,
         concept_desc = ingredientConceptDesc,
         concept_no_desc = ingredientConceptNoDesc
       ) %>% dplyr::select(-id)
@@ -215,8 +215,8 @@ CemDatabaseBackend <- R6::R6Class(
 
       sql <- private$loadSqlFile("getRelationships.sql")
       self$connection$queryDb(sql,
-        vocabulary = self$vocabularySchema,
-        cem_schema = self$cemSchema,
+        vocabulary = self$vocabularyDatabaseSchema,
+        cem_schema = self$cemDatabaseSchema,
         use_siblings = conditionSiblingLookupLevels > 0,
         sibling_lookup_levels = conditionSiblingLookupLevels,
         ingredient_concepts_desc = ingredientConceptDesc,
@@ -230,7 +230,7 @@ CemDatabaseBackend <- R6::R6Class(
     #' Get CEM source info as a dataframe
     #' @returns data.frame of sources
     getCemSourceInfo = function() {
-      return(self$connection$queryDb("SELECT * FROM @schema.source;", schema = self$sourceSchema))
+      return(self$connection$queryDb("SELECT * FROM @schema.source;", schema = self$sourceDatabaseSchema))
     },
 
     #' @description
@@ -248,8 +248,8 @@ CemDatabaseBackend <- R6::R6Class(
       sql <- private$loadSqlFile("getRankedNcOutcomes.sql")
       self$connection$queryDb(sql,
         n_controls = nControls,
-        vocabulary = self$vocabularySchema,
-        cem_schema = self$cemSchema,
+        vocabulary = self$vocabularyDatabaseSchema,
+        cem_schema = self$cemDatabaseSchema,
         concept_desc = ingredientConceptDesc,
         concept_no_desc = ingredientConceptNoDesc
       )
@@ -271,8 +271,8 @@ CemDatabaseBackend <- R6::R6Class(
       sql <- private$loadSqlFile("getRankedNcExposures.sql")
       self$connection$queryDb(sql,
         n_controls = nControls,
-        vocabulary = self$vocabularySchema,
-        cem_schema = self$cemSchema,
+        vocabulary = self$vocabularyDatabaseSchema,
+        cem_schema = self$cemDatabaseSchema,
         use_siblings = siblingLookupLevels > 0,
         sibling_lookup_levels = siblingLookupLevels,
         condition_concept_desc = conditionConceptDesc,

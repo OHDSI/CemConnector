@@ -2,9 +2,9 @@
 # This will allow testing to see if the implementations return equivalent functioning responses
 
 backend <- CemDatabaseBackend$new(connectionDetails,
-  cemSchema = cemTestSchema,
-  vocabularySchema = vocabularySchema,
-  sourceSchema = sourceInfoSchema
+  cemDatabaseSchema = cemTestSchema,
+  vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+  sourceDatabaseSchema = sourceInfoSchema
 )
 
 withr::defer(
@@ -22,9 +22,9 @@ test_that("DB Backend loads", {
   expect_class(backend, "CemDatabaseBackend")
   expect_class(backend$connection, "ConnectionHandler")
   expect_true(backend$connection$isActive)
-  expect_equal(backend$cemSchema, cemTestSchema)
-  expect_equal(backend$vocabularySchema, vocabularySchema)
-  expect_equal(backend$sourceSchema, sourceInfoSchema)
+  expect_equal(backend$cemDatabaseSchema, cemTestSchema)
+  expect_equal(backend$vocabularyDatabaseSchema, vocabularyDatabaseSchema)
+  expect_equal(backend$sourceDatabaseSchema, sourceInfoSchema)
 })
 
 test_that("summary works", {
