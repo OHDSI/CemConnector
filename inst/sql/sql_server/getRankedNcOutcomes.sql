@@ -38,7 +38,7 @@ INNER JOIN (
         SELECT
             ms.condition_concept_id, max(ms.evidence_exists) as evidence_exists
         FROM @cem_schema.matrix_summary ms
-        WHERE ms.condition_concept_id IN (@concept_no_desc)
+        WHERE ms.ingredient_concept_id IN (@concept_no_desc)
         GROUP BY ms.condition_concept_id
         }
     ) ims

@@ -204,7 +204,6 @@ CemDatabaseBackend <- R6::R6Class(
     getRelationships = function(ingredientConceptSet, conditionConceptSet, conditionSiblingLookupLevels = 0) {
       ingredientConceptSet <- private$checkConceptSet(ingredientConceptSet)
       conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
-      conditionConceptSet <- private$checkConceptSet(conditionConceptSet)
 
       ingredientConceptNoDesc <- private$getConceptIdsWithoutDescendants(ingredientConceptSet)
       ingredientConceptDesc <- private$getConceptIdsWithDescendants(ingredientConceptSet)

@@ -89,11 +89,16 @@ test_that("get exposure and outcome control concepts evidence", {
   sugestedControlsIngredients <- backend$getSuggestedControlIngredients(srchOutcomeConceptSetNoDesc, siblingLookupLevels = 1)
   expect_data_frame(sugestedControlsIngredients)
 
-
   # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_data_frame(outcomeConcepts, min.rows = 10)
+
+  # Same query but does not use descedndants search
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(0), isExcluded = c(0))
+  outcomeConcepts2 <- backend$getIngredientEvidenceSummary(srchIngredientSet)
+  expect_data_frame(outcomeConcepts2, min.rows = 10)
+  expect_identical(outcomeConcepts, outcomeConcepts2)
 
   # ATC class test (Other opioids) - should not be in ingredients but should return set
   srchIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0))

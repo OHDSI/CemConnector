@@ -17,7 +17,7 @@ WITH evidence_summary as (
         ms.condition_concept_id,
         ms.ingredient_concept_id
     FROM @cem_schema.matrix_summary ms
-    WHERE ms.condition_concept_id IN (@concept_no_desc)
+    WHERE ms.ingredient_concept_id IN (@concept_no_desc)
     AND ms.evidence_exists = 1
     }
 )
