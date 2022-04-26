@@ -2,7 +2,7 @@ SELECT
 ims.condition_concept_id, c.concept_name, max(ims.evidence_exists) as evidence_exists
 FROM (
     -- Where children of the ingredient concept are explicitly included
-    {@condition_concept_desc != ''} ? {
+    {@concept_desc != ''} ? {
     SELECT
         ms.condition_concept_id, max(ms.evidence_exists) as evidence_exists
     FROM @cem_schema.matrix_summary ms
@@ -11,12 +11,12 @@ FROM (
     GROUP BY ms.condition_concept_id
     }
     {@concept_no_desc != ''} ? {
-    {@concept_no_desc != '' & @condition_concept_desc != ''} ? { UNION }
+    {@concept_no_desc != '' & @concept_desc != ''} ? { UNION }
     -- Where children of the ingredient concept are explicitly excluded
     SELECT
         ms.condition_concept_id, max(ms.evidence_exists) as evidence_exists
     FROM @cem_schema.matrix_summary ms
-    WHERE ms.condition_concept_id IN (@concept_no_desc)
+    WHERE ms.ingredient_concept_id IN (@concept_no_desc)
     GROUP BY ms.condition_concept_id
     }
 ) ims
