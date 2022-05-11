@@ -5,7 +5,6 @@
 \alias{CemConnector-package}
 \title{CemConnector: OHDSI Common Evidence Model (CEM) Connector}
 \description{
-RESTFul API and Database Backend connections for the OHDSI Common Evidence Model
-    Built around an R Plumber api.
+RESTFul API and Database Backend connections for the OHDSI Common Evidence Model Built around an R Plumber api.
 }
 \keyword{internal}

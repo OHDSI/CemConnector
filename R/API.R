@@ -19,9 +19,9 @@
 #' @description
 #' Loads plumber API for functions
 #' @param connectionDetails   DatabaseConnector connection details object
-#' @param cemSchema           schema where matrix summary and merged evidence are found
-#' @param vocabularySchema    vocabulary schema on database
-#' @param sourceSchema        schema for info about the CEM
+#' @param cemDatabaseSchema           schema where matrix summary and merged evidence are found
+#' @param vocabularyDatabaseSchema    vocabulary schema on database
+#' @param sourceDatabaseSchema        schema for info about the CEM
 #' @param pathToPlumberApi    path to plumber script (default is package's)
 #' @param envir               R environment
 #' @returns
@@ -30,9 +30,9 @@
 #' @import checkmate
 #' @export
 loadApi <- function(connectionDetails,
-                    cemSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
-                    vocabularySchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
-                    sourceSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
+                    cemDatabaseSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
+                    vocabularyDatabaseSchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
+                    sourceDatabaseSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
                     pathToPlumberApi = system.file(file.path(
                       "api",
                       "plumber.R"
@@ -40,9 +40,9 @@ loadApi <- function(connectionDetails,
   checkmate::assert_file_exists(pathToPlumberApi)
 
   envir$cemBackendApi <- CemDatabaseBackend$new(connectionDetails,
-    cemSchema = cemSchema,
-    vocabularySchema = vocabularySchema,
-    sourceSchema = sourceSchema,
+    cemDatabaseSchema = cemDatabaseSchema,
+    vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+    sourceDatabaseSchema = sourceDatabaseSchema,
     usePooledConnection = getOption("CemConnector.UsePooledConnection", TRUE)
   )
 

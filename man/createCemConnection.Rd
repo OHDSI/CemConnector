@@ -7,9 +7,9 @@
 createCemConnection(
   apiUrl = "https://cem.ohdsi.org",
   connectionDetails = NULL,
-  cemSchema = NULL,
-  sourceSchema = NULL,
-  vocabularySchema = NULL
+  cemDatabaseSchema = NULL,
+  sourceDatabaseSchema = NULL,
+  vocabularyDatabaseSchema = NULL
 )
 }
 \arguments{
@@ -17,11 +17,11 @@ createCemConnection(
 
 \item{connectionDetails}{DatabaseConnector connection details object for connection to db}
 
-\item{cemSchema}{schema for cem (if using database backend)}
+\item{cemDatabaseSchema}{schema for cem (if using database backend)}
 
-\item{sourceSchema}{- schema containing source info}
+\item{sourceDatabaseSchema}{- schema containing source info}
 
-\item{vocabularySchema}{- schema for cem vocabulary}
+\item{vocabularyDatabaseSchema}{- schema for cem vocabulary}
 }
 \description{
 Takes either connection details and CEM parameters and returns a backend object that can be used, transparently, to

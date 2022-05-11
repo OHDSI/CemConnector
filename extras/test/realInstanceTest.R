@@ -20,7 +20,7 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.get
   dbms = Sys.getenv("LIVE_CEM_DATABASE_DBMS"), extraSettings = Sys.getenv("LIVE_CEM_DATABASE_EXTRA_SETTINGS"))
 
 cemTestSchema <- Sys.getenv("LIVE_CEM_DATABASE_SCHEMA")
-vocabularySchema <- Sys.getenv("LIVE_CEM_DATABASE_VOCAB_SCHEMA")
+vocabularyDatabaseSchema <- Sys.getenv("LIVE_CEM_DATABASE_VOCAB_SCHEMA")
 sourceInfoSchema <- Sys.getenv("LIVE_CEM_DATABASE_INFO_SCHEMA")
 
 apiPort <- httpuv::randomPort(8000, 8080)
@@ -29,9 +29,9 @@ apiUrl <- paste0("http://localhost:", apiPort)
 serverStart <- function(apiPort, ...) {
   connectionDetails <- DatabaseConnector::createConnectionDetails(...)
   api <- CemConnector::loadApi(connectionDetails,
-                               cemSchema = Sys.getenv("LIVE_CEM_DATABASE_SCHEMA"),
-
-    vocabularySchema = Sys.getenv("LIVE_CEM_DATABASE_VOCAB_SCHEMA"), sourceSchema = Sys.getenv("LIVE_CEM_DATABASE_INFO_SCHEMA"))
+                               cemDatabaseSchema = Sys.getenv("LIVE_CEM_DATABASE_SCHEMA"),
+                               vocabularyDatabaseSchema = Sys.getenv("LIVE_CEM_DATABASE_VOCAB_SCHEMA"),
+                               sourceDatabaseSchema = Sys.getenv("LIVE_CEM_DATABASE_INFO_SCHEMA"))
   api$setDocs(FALSE)
   writeLines("API LOADED", con = stdout())
   api$run(port = apiPort)
@@ -53,5 +53,5 @@ message("Swagger at: ", apiUrl, "/__docs__/")
 options(CemConnector.useHostedUrl = apiUrl,
         CemConnectionDetails = connectionDetails,
         cemTestSchema = cemTestSchema,
-
-  cemVocabularySchema = vocabularySchema, cemSourceInfoSchema = sourceInfoSchema)
+        cemvocabularyDatabaseSchema = vocabularyDatabaseSchema,
+        cemSourceInfoSchema = sourceInfoSchema)

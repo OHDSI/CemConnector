@@ -73,7 +73,6 @@ ConnectionHandler <- R6::R6Class(
           if (self$connectionDetails$dbms %in% c("postgresql", "redshift")) {
             DatabaseConnector::dbExecute(self$con, "ABORT;")
           }
-          print(sql)
           stop(error)
         }
       )

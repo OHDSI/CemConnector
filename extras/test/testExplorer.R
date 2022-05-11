@@ -7,9 +7,9 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.get
                                                                 extraSettings = Sys.getenv("LIVE_CEM_DATABASE_EXTRA_SETTINGS"))
 
 cemTestSchema <- Sys.getenv("LIVE_CEM_DATABASE_SCHEMA")
-vocabularySchema <- Sys.getenv("LIVE_CEM_DATABASE_VOCAB_SCHEMA")
+vocabularyDatabaseSchema <- Sys.getenv("LIVE_CEM_DATABASE_VOCAB_SCHEMA")
 sourceInfoSchema <- Sys.getenv("LIVE_CEM_DATABASE_INFO_SCHEMA")
 
-backend <- CemConnector::CemDatabaseBackend$new(connectionDetails = connectionDetails, cemSchema = cemTestSchema, vocabularySchema = vocabularySchema, sourceSchema = sourceInfoSchema)
+backend <- CemConnector::CemDatabaseBackend$new(connectionDetails = connectionDetails, cemDatabaseSchema = cemTestSchema, vocabularyDatabaseSchema = vocabularyDatabaseSchema, sourceDatabaseSchema = sourceInfoSchema)
 
 CemConnector::launchEvidenceExplorer(backend)

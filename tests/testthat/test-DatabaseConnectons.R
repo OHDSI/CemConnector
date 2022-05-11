@@ -15,12 +15,12 @@ genericTests <- function(connClass, classes, connectionClass) {
   expect_true(DBI::dbIsValid(dbObj = conn$con))
 
   withr::with_envvar(new = c("LIMIT_ROW_COUNT" = 1), {
-    data <- conn$queryDb("SELECT * FROM main.concept;")
+    data <- conn$queryDb("SELECT concept_id FROM main.concept;")
     expect_equal(nrow(data), 1)
   })
 
   withr::with_envvar(new = c("LIMIT_ROW_COUNT" = 5), {
-    data <- conn$queryDb("SELECT * FROM main.concept")
+    data <- conn$queryDb("SELECT concept_id FROM main.concept")
     expect_equal(nrow(data), 5)
   })
 

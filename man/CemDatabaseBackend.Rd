@@ -21,11 +21,11 @@ An interface to the common evidence model that uses works directly with a databa
 \describe{
 \item{\code{connection}}{ConnectionHandlder instance}
 
-\item{\code{cemSchema}}{schema of CEM database}
+\item{\code{cemDatabaseSchema}}{schema of CEM database}
 
-\item{\code{vocabularySchema}}{OMOP vocabulary schema (must include concept and concept ancestor tables)}
+\item{\code{vocabularyDatabaseSchema}}{OMOP vocabulary schema (must include concept and concept ancestor tables)}
 
-\item{\code{sourceSchema}}{schema containing source_info table}
+\item{\code{sourceDatabaseSchema}}{schema containing source_info table}
 }
 \if{html}{\out{</div>}}
 }
@@ -59,9 +59,9 @@ initialize backend object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CemDatabaseBackend$new(
   connectionDetails,
-  cemSchema,
-  vocabularySchema,
-  sourceSchema,
+  cemDatabaseSchema,
+  vocabularyDatabaseSchema,
+  sourceDatabaseSchema,
   usePooledConnection = FALSE
 )}\if{html}{\out{</div>}}
 }
@@ -71,11 +71,11 @@ initialize backend object.
 \describe{
 \item{\code{connectionDetails}}{DatabaseConnector connection details object}
 
-\item{\code{cemSchema}}{Schema name including CEM unified and matrix_summary tables}
+\item{\code{cemDatabaseSchema}}{Schema name including CEM unified and matrix_summary tables}
 
-\item{\code{vocabularySchema}}{OMOP vocabulary}
+\item{\code{vocabularyDatabaseSchema}}{OMOP vocabulary}
 
-\item{\code{sourceSchema}}{Schema containing CEM source information table}
+\item{\code{sourceDatabaseSchema}}{Schema containing CEM source information table}
 
 \item{\code{usePooledConnection}}{Used a pooled connection object rather than a database connector object.}
 }
