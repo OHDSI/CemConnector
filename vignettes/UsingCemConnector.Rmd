@@ -48,7 +48,7 @@ First we need to create a connection to the web api:
 
 ```{r, eval = FALSE}
 
-cemConnection <- CemConnector::CemWebApiBackend(apiUrl = "https://cem.ohdsi.org/")
+cemConnection <- CemConnector::createCemConnection(apiUrl = "https://cem.ohdsi.org/")
 ```
 
 ## Using CEMConnector with a database backend
@@ -62,10 +62,10 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(user = "mydbuser
                                                                 dbms = "redshift",
                                                                 password = "mysecret")
 
-cemConnection <- CemConnector::CemDatabaseBackend$new(connectionDetails = connectionDetails,
-                                                      vocabularyDatabaseSchema = "vocabulary",
-                                                      cemDatabaseSchema = "cem_v2",
-                                                      sourceDatabaseSchema = "cem_v2_source")
+cemConnection <- CemConnector::createCemConnection(connectionDetails = connectionDetails,
+                                                   vocabularyDatabaseSchema = "vocabulary",
+                                                   cemDatabaseSchema = "cem_v2",
+                                                   sourceDatabaseSchema = "cem_v2_source")
 ```
 
 This should connect to the server without error.

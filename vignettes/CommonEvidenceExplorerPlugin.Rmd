@@ -66,7 +66,7 @@ serverFunction <- function(input, output, session) {
 }
 
 uiFunction <- function () {
-  explorerTable <- ceExplorerModuleUi("exporer") # The id for the server module and ui should be the same
+  explorerTable <- ceExplorerModuleUi("explorer") # The id for the server module and ui should be the same
   shiny::fluidPage(explorerTable)
 }
 
