@@ -1,3 +1,17 @@
+CemConnector 0.2.0
+==================
+Changes:
+1. Moved databse connection handlers to use RMM package
+
+CemConnector 0.1.3
+==================
+Changes:
+1. Changed use of `cemSchema`, `vocabularySchema`, `sourceSchema` to `cemDatabaseSchema`, `vocabularyDatabaseSchema`, 
+`sourceDatabaseSchema` to be consistent across HADES packages
+
+Bug fixes:
+1. Fixed broken test cases
+
 CemConnector 0.1.2
 ==================
 Changes:

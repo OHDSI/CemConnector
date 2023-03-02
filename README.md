@@ -2,7 +2,7 @@ CemConnector
 ====================
 
 [![Build Status](https://github.com/OHDSI/CemConnector/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/CemConnector/actions?query=workflow%3AR-CMD-check)
-[![codecov.io](https://codecov.io/github/OHDSI/CemConnector/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/CemConnector?branch=master)
+[![codecov.io](https://codecov.io/github/OHDSI/CemConnector/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/CemConnector?branch=main)
 
 CemConnector is built on top of [HADES](https://ohdsi.github.io/Hades).
 

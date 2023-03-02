@@ -1,7 +1,7 @@
 Package: CemConnector
 Type: Package
 Title: OHDSI Common Evidence Model (CEM) Connector
-Version: 0.1.2
+Version: 0.2.0
 Author: Jamie Gilbert
 Maintainer: Jamie Gilbert <jpg@azimov.co.uk>
 Description: RESTFul API and Database Backend connections for the OHDSI Common Evidence Model
@@ -10,7 +10,8 @@ VignetteBuilder: knitr
 Depends:
     R (>= 4.0.0),
 Imports:
-    DatabaseConnector (>= 4.0.0),
+    DatabaseConnector (>= 6.0.0),
+    ResultModelManager,
     checkmate,
     R6,
     shiny,
@@ -33,7 +34,9 @@ Suggests:
     httpuv,
     knitr,
     rmarkdown,
-    styler
+    styler,
+Remotes:
+    OHDSI/ResultModelManager
 License: Apache License 2.0
 Encoding: UTF-8
 LazyData: true

@@ -20,19 +20,22 @@
 # 3. Run docker run --rm -p8080:8080 --env-file extra/ENV_FILE cemconnector
 
 dbms <- Sys.getenv("CEM_DATABASE_DBMS")
-message(paste("downloading jdbc drivers for", dbms))
-DatabaseConnector::downloadJdbcDrivers(dbms = dbms)
+#message(paste("downloading jdbc drivers for", dbms))
+#DatabaseConnector::downloadJdbcDrivers(dbms = dbms)
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
                                                                 user = Sys.getenv("CEM_DATABASE_USER"),
-                                                                password = Sys.getenv("CEM_DATABASE_PASSWORD"),
+                                                                password = keyring::key_get("ohda-prod-1"),
                                                                 port = Sys.getenv("CEM_DATABASE_PORT"),
                                                                 dbms = Sys.getenv("CEM_DATABASE_DBMS"),
                                                                 extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"))
 
-cemSchema <- Sys.getenv("CEM_DATABASE_SCHEMA")
-vocabularySchema <- Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA")
-sourceSchema <- Sys.getenv("CEM_DATABASE_INFO_SCHEMA")
+cemDatabaseSchema <- Sys.getenv("CEM_DATABASE_SCHEMA")
+vocabularyDatabaseSchema <- Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA")
+sourceDatabaseSchema <- Sys.getenv("CEM_DATABASE_INFO_SCHEMA")
 
-api <- CemConnector::loadApi(connectionDetails, cemSchema = cemSchema, vocabularySchema = vocabularySchema, sourceSchema = sourceSchema)
-api$run(port = as.integer(Sys.getenv("PLUMBER_PORT")), host="0.0.0.0")
+api <- CemConnector::loadApi(connectionDetails,
+                             cemDatabaseSchema = cemDatabaseSchema,
+                             vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+                             sourceDatabaseSchema = sourceDatabaseSchema)
+api$run(port = as.integer(Sys.getenv("PLUMBER_PORT")), host = "0.0.0.0")

@@ -2,9 +2,9 @@
 # This will allow testing to see if the implementations return equivalent functioning responses
 
 backend <- CemDatabaseBackend$new(connectionDetails,
-  cemSchema = cemTestSchema,
-  vocabularySchema = vocabularySchema,
-  sourceSchema = sourceInfoSchema
+  cemDatabaseSchema = cemTestSchema,
+  vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+  sourceDatabaseSchema = sourceInfoSchema
 )
 
 withr::defer(
@@ -22,9 +22,9 @@ test_that("DB Backend loads", {
   expect_class(backend, "CemDatabaseBackend")
   expect_class(backend$connection, "ConnectionHandler")
   expect_true(backend$connection$isActive)
-  expect_equal(backend$cemSchema, cemTestSchema)
-  expect_equal(backend$vocabularySchema, vocabularySchema)
-  expect_equal(backend$sourceSchema, sourceInfoSchema)
+  expect_equal(backend$cemDatabaseSchema, cemTestSchema)
+  expect_equal(backend$vocabularyDatabaseSchema, vocabularyDatabaseSchema)
+  expect_equal(backend$sourceDatabaseSchema, sourceInfoSchema)
 })
 
 test_that("summary works", {
@@ -89,11 +89,16 @@ test_that("get exposure and outcome control concepts evidence", {
   sugestedControlsIngredients <- backend$getSuggestedControlIngredients(srchOutcomeConceptSetNoDesc, siblingLookupLevels = 1)
   expect_data_frame(sugestedControlsIngredients)
 
-
   # Codene - common ingredient
   srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
   expect_data_frame(outcomeConcepts, min.rows = 10)
+
+  # Same query but does not use descedndants search
+  srchIngredientSet <- data.frame(conceptId = c(1201620), includeDescendants = c(0), isExcluded = c(0))
+  outcomeConcepts2 <- backend$getIngredientEvidenceSummary(srchIngredientSet)
+  expect_data_frame(outcomeConcepts2, min.rows = 10)
+  expect_identical(outcomeConcepts, outcomeConcepts2)
 
   # ATC class test (Other opioids) - should not be in ingredients but should return set
   srchIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0))
@@ -173,7 +178,7 @@ test_that("web backend returns equivalent results", {
   ingredientConcepts <- backend$getConditionEvidenceSummary(srchOutcomeConceptSet, siblingLookupLevels = 1)
 
   ingredientConceptsWeb <- webBackend$getConditionEvidenceSummary(srchOutcomeConceptSet, siblingLookupLevels = 1)
-  expect_true(dplyr::all_equal(ingredientConceptsWeb, ingredientConcepts))
+  expect_true(dplyr::all_equal(ingredientConceptsWeb, ingredientConcepts, convert = TRUE))
 
   ingredientConceptEvdience <- backend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
   ingredientConceptEvdienceWeb <- webBackend$getConditionEvidence(srchOutcomeConceptSet, siblingLookupLevels = 1)
@@ -185,7 +190,7 @@ test_that("web backend returns equivalent results", {
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
 
   outcomeConceptsWeb <- webBackend$getIngredientEvidenceSummary(srchIngredientSet)
-  expect_true(dplyr::all_equal(outcomeConcepts, outcomeConceptsWeb))
+  expect_true(dplyr::all_equal(outcomeConcepts, outcomeConceptsWeb, convert = TRUE))
 
   outcomeConceptEvidence <- backend$getIngredientEvidence(srchIngredientSet)
   outcomeConceptEvidenceWeb <- webBackend$getIngredientEvidence(srchIngredientSet)
@@ -194,13 +199,13 @@ test_that("web backend returns equivalent results", {
   srchIngredientSet <- data.frame(conceptId = c(21604296), includeDescendants = c(1), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
   outcomeConceptsWeb <- webBackend$getIngredientEvidenceSummary(srchIngredientSet)
-  expect_true(dplyr::all_equal(outcomeConcepts, outcomeConceptsWeb))
+  expect_true(dplyr::all_equal(outcomeConcepts, outcomeConceptsWeb, convert = TRUE))
 
   # Search grouped sets should not return repeat ids
   srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1, 0), isExcluded = c(0))
   outcomeConcepts <- backend$getIngredientEvidenceSummary(srchIngredientSet)
   outcomeConceptsWeb <- webBackend$getIngredientEvidenceSummary(srchIngredientSet)
-  expect_true(dplyr::all_equal(outcomeConcepts, outcomeConceptsWeb))
+  expect_true(dplyr::all_equal(outcomeConcepts, outcomeConceptsWeb, convert = TRUE))
 
   srchIngredientSet <- data.frame(conceptId = c(21604296, 1201620), includeDescendants = c(1, 0), isExcluded = c(0))
   srchOutcomeConceptSet <- data.frame(conceptId = c(4149320), includeDescendants = c(1), isExcluded = c(0))
@@ -217,5 +222,5 @@ test_that("web backend returns equivalent results", {
 
   suggestedControlsOutcome <- backend$getSuggestedControlCondtions(srchIngredientSet)
   suggestedControlsOutcomeWeb <- webBackend$getSuggestedControlCondtions(srchIngredientSet)
-  expect_true(dplyr::all_equal(suggestedControlsOutcome, suggestedControlsOutcomeWeb))
+  expect_true(dplyr::all_equal(suggestedControlsOutcome, suggestedControlsOutcomeWeb, convert = TRUE))
 })
