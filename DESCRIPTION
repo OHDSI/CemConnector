@@ -19,8 +19,6 @@ Imports:
     shinydashboard,
     shinycssloaders,
     plumber,
-    pool,
-    DBI,
     SqlRender,
     dplyr,
     yaml,
