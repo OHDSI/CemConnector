@@ -17,8 +17,7 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
         api <- loadApi(connectionDetails,
                        cemDatabaseSchema = cemDatabaseSchema,
                        vocabularyDatabaseSchema = vocabularyDatabaseSchema,
-                       sourceDatabaseSchema = sourceDatabaseSchema
-        )
+                       sourceDatabaseSchema = sourceDatabaseSchema)
         api$setDocs(FALSE)
         writeLines("API LOADED", con = pipe)
         api$run(port = apiPort)

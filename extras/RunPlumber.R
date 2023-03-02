@@ -20,12 +20,12 @@
 # 3. Run docker run --rm -p8080:8080 --env-file extra/ENV_FILE cemconnector
 
 dbms <- Sys.getenv("CEM_DATABASE_DBMS")
-message(paste("downloading jdbc drivers for", dbms))
-DatabaseConnector::downloadJdbcDrivers(dbms = dbms)
+#message(paste("downloading jdbc drivers for", dbms))
+#DatabaseConnector::downloadJdbcDrivers(dbms = dbms)
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
                                                                 user = Sys.getenv("CEM_DATABASE_USER"),
-                                                                password = Sys.getenv("CEM_DATABASE_PASSWORD"),
+                                                                password = keyring::key_get("ohda-prod-1"),
                                                                 port = Sys.getenv("CEM_DATABASE_PORT"),
                                                                 dbms = Sys.getenv("CEM_DATABASE_DBMS"),
                                                                 extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"))

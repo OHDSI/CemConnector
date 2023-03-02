@@ -1,3 +1,8 @@
+CemConnector 0.2.0
+==================
+Changes:
+1. Moved databse connection handlers to use RMM package
+
 CemConnector 0.1.3
 ==================
 Changes:

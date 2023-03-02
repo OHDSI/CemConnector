@@ -94,15 +94,15 @@ CemDatabaseBackend <- R6::R6Class(
                           vocabularyDatabaseSchema,
                           sourceDatabaseSchema,
                           usePooledConnection = FALSE) {
-      checkmate::assert_class(connectionDetails, "connectionDetails")
+      checkmate::assert_class(connectionDetails, "ConnectionDetails")
       checkmate::assert_string(cemDatabaseSchema, min.chars = 1)
       checkmate::assert_string(vocabularyDatabaseSchema, min.chars = 1)
       checkmate::assert_string(sourceDatabaseSchema, min.chars = 1)
 
       if (usePooledConnection) {
-        self$connection <- PooledConnectionHandler$new(connectionDetails)
+        self$connection <- ResultModelManager::PooledConnectionHandler$new(connectionDetails)
       } else {
-        self$connection <- ConnectionHandler$new(connectionDetails)
+        self$connection <- ResultModelManager::ConnectionHandler$new(connectionDetails)
       }
 
       self$cemDatabaseSchema <- cemDatabaseSchema
