@@ -24,6 +24,7 @@
 #' @param sourceDatabaseSchema        schema for info about the CEM
 #' @param pathToPlumberApi    path to plumber script (default is package's)
 #' @param envir               R environment
+#' @param openApiSpecPath     path to openApi specification to use
 #' @returns
 #' Plumber router object
 #' @importFrom plumber pr pr_hook
@@ -33,26 +34,20 @@ loadApi <- function(connectionDetails,
                     cemDatabaseSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
                     vocabularyDatabaseSchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
                     sourceDatabaseSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
-                    pathToPlumberApi = system.file(file.path(
-                      "api",
-                      "plumber.R"
-                    ), package = "CemConnector"), envir = new.env(parent = .GlobalEnv)) {
+                    pathToPlumberApi = system.file(file.path("api", "plumber.R"), package = "CemConnector"),
+                    envir = new.env(parent = .GlobalEnv),
+                    openApiSpecPath = system.file(file.path("api", "cemconnector_openapi.yaml"), package = "CemConnector")) {
   checkmate::assert_file_exists(pathToPlumberApi)
-
+  connectionPooling <- getOption("CemConnector.UsePooledConnection", TRUE)
   envir$cemBackendApi <- CemDatabaseBackend$new(connectionDetails,
     cemDatabaseSchema = cemDatabaseSchema,
     vocabularyDatabaseSchema = vocabularyDatabaseSchema,
     sourceDatabaseSchema = sourceDatabaseSchema,
-    usePooledConnection = getOption("CemConnector.UsePooledConnection", TRUE)
+    usePooledConnection = connectionPooling
   )
 
   plumb <- plumber::pr(pathToPlumberApi, envir = envir)
-  customOasSpecification <- yaml::read_yaml(system.file(file.path(
-    "api",
-    "cemconnector_openapi.yaml"
-  ),
-  package = "CemConnector"
-  ))
+  customOasSpecification <- yaml::read_yaml(openApiSpecPath)
   plumb <- plumber::pr_set_api_spec(plumb, customOasSpecification)
 
   plumb <- plumber::pr_hook(plumb, "exit", function() {

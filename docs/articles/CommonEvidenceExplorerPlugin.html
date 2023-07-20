@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,26 +33,17 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CemConnector</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,14 +53,20 @@
       <a href="../articles/CommonEvidenceExplorerPlugin.html">Common Evidence Explorer Plugin</a>
     </li>
     <li>
+      <a href="../articles/DeployingToRsconnect.html">Deploying to RSConnect</a>
+    </li>
+    <li>
       <a href="../articles/UsingCemConnector.html">Using CemConnector</a>
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://ohdsi.github.io/Hades"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
+  <a href="https://ohdsi.github.io/Hades" class="external-link"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a>
 </li>
       </ul>
 </div>
@@ -79,12 +78,12 @@
 
       
 
-      </header><script src="CommonEvidenceExplorerPlugin_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Common Evidence Explorer Plugin</h1>
             
-            <h4 class="date">2021-11-04</h4>
+            <h4 data-toc-skip class="date">2023-07-20</h4>
       
       
       <div class="hidden name"><code>CommonEvidenceExplorerPlugin.Rmd</code></div>
@@ -98,34 +97,42 @@ h1  {
   margin-top: 60px;
 }
 </style>
-<p>The common evidence explorer is a shiny application and module that can be used within other shiny applications that use OMOP standard vocabularies.</p>
-<div id="launching-the-explorer" class="section level2">
-<h2 class="hasAnchor">
-<a href="#launching-the-explorer" class="anchor"></a>Launching the explorer</h2>
-<p>Using the explorer works with either a database cem connector backend or a hosted url solution. The simplest solution is to use an API as follows. This will launch the shiny app:</p>
+<p>The common evidence explorer is a shiny application and module that
+can be used within other shiny applications that use OMOP standard
+vocabularies.</p>
+<div class="section level2">
+<h2 id="launching-the-explorer">Launching the explorer<a class="anchor" aria-label="anchor" href="#launching-the-explorer"></a>
+</h2>
+<p>Using the explorer works with either a database cem connector backend
+or a hosted url solution. The simplest solution is to use an API as
+follows. This will launch the shiny app:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">baseUrl</span> <span class="op">&lt;-</span> <span class="st">"https://cem.ohdsi.org/"</span>
 <span class="fu"><a href="../reference/launchCeExplorer.html">launchCeExplorer</a></span><span class="op">(</span>apiUrl <span class="op">=</span> <span class="va">baseUrl</span><span class="op">)</span></code></pre></div>
-<p>Alternatively, if database credentials are known the app can launch as follows:</p>
+<p>Alternatively, if database credentials are known the app can launch
+as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">connectionDetails</span> <span class="op">&lt;-</span> <span class="fu">DatabaseConnector</span><span class="fu">::</span><span class="fu"><a href="https://ohdsi.github.io/DatabaseConnector/reference/createConnectionDetails.html">createConnectionDetails</a></span><span class="op">(</span><span class="st">"postgres"</span>, <span class="va">...</span><span class="op">)</span>
-<span class="fu"><a href="../reference/launchCeExplorer.html">launchCeExplorer</a></span><span class="op">(</span>connectionDetails <span class="op">=</span> <span class="va">connectionDetails</span>, cemSchema <span class="op">=</span> <span class="st">"cem"</span>, sourceSchema <span class="op">=</span> <span class="st">"cem_v3_sources"</span>, <span class="op">)</span></code></pre></div>
-<p>Consult your organisations administrator for details on connecting in database mode. Unless you are serving a large number of requests, this mode is not required.</p>
+<code class="sourceCode R"><span class="va">connectionDetails</span> <span class="op">&lt;-</span> <span class="fu">DatabaseConnector</span><span class="fu">::</span><span class="fu"><a href="https://ohdsi.github.io/DatabaseConnector/reference/createConnectionDetails.html" class="external-link">createConnectionDetails</a></span><span class="op">(</span><span class="st">"postgres"</span>, <span class="va">...</span><span class="op">)</span>
+<span class="fu"><a href="../reference/launchCeExplorer.html">launchCeExplorer</a></span><span class="op">(</span>connectionDetails <span class="op">=</span> <span class="va">connectionDetails</span>, cemDatabaseSchema <span class="op">=</span> <span class="st">"cem"</span>, sourceDatabaseSchema <span class="op">=</span> <span class="st">"cem_v3_sources"</span>, vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"vocabulary"</span><span class="op">)</span></code></pre></div>
+<p>Consult your organisations administrator for details on connecting in
+database mode. Unless you are serving a large number of requests, this
+mode is not required.</p>
 </div>
-<div id="using-the-explorer-shiny-module" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-the-explorer-shiny-module" class="anchor"></a>Using the explorer shiny module</h2>
-<p>This approach allows you to import the Shiny module in to your shiny application of choice.</p>
+<div class="section level2">
+<h2 id="using-the-explorer-shiny-module">Using the explorer shiny module<a class="anchor" aria-label="anchor" href="#using-the-explorer-shiny-module"></a>
+</h2>
+<p>This approach allows you to import the Shiny module in to your shiny
+application of choice.</p>
 <p>For example:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">serverFunction</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">backend</span> <span class="op">&lt;-</span> <span class="fu">CemConnector</span><span class="fu">::</span><span class="va"><a href="../reference/CemWebApiBackend.html">CemWebApiBackend</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>apiUrl <span class="op">=</span> <span class="st">"https://cem.ohdsi.org/"</span><span class="op">)</span>
   <span class="co"># Define a reactive that returns a dataframe with standard ingredient concepts</span>
-  <span class="va">ingredientConceptInput</span> <span class="op">&lt;-</span> <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html">reactive</a></span><span class="op">(</span><span class="op">{</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>conceptId <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">21604296</span><span class="op">)</span>, includeDescendants <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, isExcluded <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">}</span><span class="op">)</span>
+  <span class="va">ingredientConceptInput</span> <span class="op">&lt;-</span> <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html" class="external-link">reactive</a></span><span class="op">(</span><span class="op">{</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>conceptId <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">21604296</span><span class="op">)</span>, includeDescendants <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, isExcluded <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">}</span><span class="op">)</span>
   <span class="co"># Define a reactive that returns a dataframe with standard condtion concepts</span>
-  <span class="va">conditionConceptInput</span> <span class="op">&lt;-</span> <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html">reactive</a></span><span class="op">(</span><span class="op">{</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>conceptId <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4149320</span><span class="op">)</span>, includeDescendants <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, isExcluded <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">}</span><span class="op">)</span>
+  <span class="va">conditionConceptInput</span> <span class="op">&lt;-</span> <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html" class="external-link">reactive</a></span><span class="op">(</span><span class="op">{</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>conceptId <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4149320</span><span class="op">)</span>, includeDescendants <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, isExcluded <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">}</span><span class="op">)</span>
   <span class="co"># Define a reactive that returns an integer that for looking up higher levels in the heirarchy</span>
-  <span class="va">siblingLookupLevelsInput</span> <span class="op">&lt;-</span> <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html">reactive</a></span><span class="op">(</span><span class="op">{</span> <span class="fl">1</span> <span class="op">}</span><span class="op">)</span>
+  <span class="va">siblingLookupLevelsInput</span> <span class="op">&lt;-</span> <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html" class="external-link">reactive</a></span><span class="op">(</span><span class="op">{</span> <span class="fl">1</span> <span class="op">}</span><span class="op">)</span>
 
   <span class="co"># Call the explorer module</span>
   <span class="va">ceModuleServer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ceExplorerModule.html">ceExplorerModule</a></span><span class="op">(</span><span class="st">"explorer"</span>, <span class="co"># This ID should be unqiue and match the call to ceExplorerModuleUi</span>
@@ -136,12 +143,15 @@ h1  {
 <span class="op">}</span>
 
 <span class="va">uiFunction</span> <span class="op">&lt;-</span> <span class="kw">function</span> <span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">explorerTable</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ceExplorerModuleUi.html">ceExplorerModuleUi</a></span><span class="op">(</span><span class="st">"exporer"</span><span class="op">)</span> <span class="co"># The id for the server module and ui should be the same</span>
-  <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html">fluidPage</a></span><span class="op">(</span><span class="va">explorerTable</span><span class="op">)</span>
+  <span class="va">explorerTable</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ceExplorerModuleUi.html">ceExplorerModuleUi</a></span><span class="op">(</span><span class="st">"explorer"</span><span class="op">)</span> <span class="co"># The id for the server module and ui should be the same</span>
+  <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span><span class="va">explorerTable</span><span class="op">)</span>
 <span class="op">}</span>
 
-<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html">shinyApp</a></span><span class="op">(</span><span class="va">uiFunction</span>, <span class="va">serverFunction</span><span class="op">)</span></code></pre></div>
-<p>The reactive objects for ingredientConceptInput and conditionConceptInput must return data.frames that are either empty or contain the column names <code>conceptId, includeDescendants</code> and <code>isExcluded</code>.</p>
+<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">uiFunction</span>, <span class="va">serverFunction</span><span class="op">)</span></code></pre></div>
+<p>The reactive objects for ingredientConceptInput and
+conditionConceptInput must return data.frames that are either empty or
+contain the column names <code>conceptId, includeDescendants</code> and
+<code>isExcluded</code>.</p>
 </div>
   </div>
 
@@ -156,11 +166,14 @@ h1  {
 
 
       <footer><div class="copyright">
-  <p>Developed by Jamie Gilbert.</p>
+  <p></p>
+<p>Developed by Jamie Gilbert.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>
@@ -168,6 +181,8 @@ h1  {
 
   
 
+
+  
 
   </body>
 </html>

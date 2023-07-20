@@ -1,0 +1,39 @@
+---
+title: "Deploying to RSConnect"
+date: "`r Sys.Date()`"
+output:
+    html_document:
+        number_sections: yes
+        toc: yes
+vignette: >
+ %\VignetteIndexEntry{Using CemConnector}
+ %\VignetteEngine{knitr::rmarkdown}
+ %\VignetteEncoding{UTF-8}
+---
+
+# Deployment
+For convenience, a folder in the `extras/cem_api` folder of this package contains the file `entrypoint.R` for deployment
+of the API to Posit Connect/ShinyApps.io servers.
+To connect to your server in the rstudio api follow the (posit connect instructions)[https://docs.posit.co/connect/user/connecting/]
+
+To deploy `CemConnector` first install required packages:
+```{r eval = F}
+install.packages(c("rsconnect", "renv"))
+remotes::install_github("OHDSI/CemConnector")
+```
+To deploy the api then run the following after adjusting your settings:
+```{r eval = F}
+rsconnect::deployApi(appName = "cem_api",
+                     api = "<path_to_entrypoint>", # Download the file from github or nagivate
+                     envVars = list(
+                       CEM_DATABASE_SERVER = "mydbmsurl",
+                       CEM_DATABASE_USER = "my_user",
+                       CEM_DATABASE_PASSWORD = "mysecret",
+                       CEM_DATABASE_DBMS = "mydbms",
+                       CEM_DATABASE_PORT = 1234,
+                       CEM_DATABASE_SCHEMA = "cem"
+                       CEM_DATABASE_INFO_SCHEMA = "cem_info"
+                       CEM_DATABASE_VOCAB_SCHEMA = "cem_vocab"
+                     ))
+```
+Consult (posit connect instructions)[https://docs.posit.co/] for more information on configuration of the app.

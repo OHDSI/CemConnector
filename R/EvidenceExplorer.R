@@ -345,7 +345,7 @@ parseConceptInput <- function(conceptSetDefinition, inputType) {
       rda <- switch(inputType,
         "list" = .readCommaSeparatedList(conceptSetDefinition),
         "json" = .readJsonString(conceptSetDefinition),
-        "csv" =  utils::read.csv(text = conceptSetDefinition)
+        "csv" = utils::read.csv(text = conceptSetDefinition)
       )
     },
     error = function(err) { }

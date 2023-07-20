@@ -11,7 +11,9 @@ loadApi(
   sourceDatabaseSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
   pathToPlumberApi = system.file(file.path("api", "plumber.R"), package =
     "CemConnector"),
-  envir = new.env(parent = .GlobalEnv)
+  envir = new.env(parent = .GlobalEnv),
+  openApiSpecPath = system.file(file.path("api", "cemconnector_openapi.yaml"), package
+    = "CemConnector")
 )
 }
 \arguments{
@@ -26,6 +28,8 @@ loadApi(
 \item{pathToPlumberApi}{path to plumber script (default is package's)}
 
 \item{envir}{R environment}
+
+\item{openApiSpecPath}{path to openApi specification to use}
 }
 \value{
 Plumber router object
