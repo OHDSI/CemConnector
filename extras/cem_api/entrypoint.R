@@ -20,8 +20,10 @@
 # 3. Run docker run --rm -p8080:8080 --env-file extra/ENV_FILE cemconnector
 
 dbms <- Sys.getenv("CEM_DATABASE_DBMS")
-#message(paste("downloading jdbc drivers for", dbms))
-#DatabaseConnector::downloadJdbcDrivers(dbms = dbms)
+driverExists <- grepl(tolower(dbms), tolower(list.files(Sys.getenv("DATABASECONNECTOR_JAR_FOLDER"))))
+
+if (!any(driverExists))
+  DatabaseConnector::downloadJdbcDrivers(dbms = dbms)
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
                                                                 user = Sys.getenv("CEM_DATABASE_USER"),
@@ -38,4 +40,3 @@ api <- CemConnector::loadApi(connectionDetails,
                              cemDatabaseSchema = cemDatabaseSchema,
                              vocabularyDatabaseSchema = vocabularyDatabaseSchema,
                              sourceDatabaseSchema = sourceDatabaseSchema)
-api$run(port = as.integer(Sys.getenv("PLUMBER_PORT")), host = "0.0.0.0")
