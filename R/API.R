@@ -40,10 +40,11 @@ loadApi <- function(connectionDetails,
   checkmate::assert_file_exists(pathToPlumberApi)
   connectionPooling <- getOption("CemConnector.UsePooledConnection", TRUE)
   envir$cemBackendApi <- CemDatabaseBackend$new(connectionDetails,
-                                                cemDatabaseSchema = cemDatabaseSchema,
-                                                vocabularyDatabaseSchema = vocabularyDatabaseSchema,
-                                                sourceDatabaseSchema = sourceDatabaseSchema,
-                                                usePooledConnection = connectionPooling)
+    cemDatabaseSchema = cemDatabaseSchema,
+    vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+    sourceDatabaseSchema = sourceDatabaseSchema,
+    usePooledConnection = connectionPooling
+  )
 
   plumb <- plumber::pr(pathToPlumberApi, envir = envir)
   customOasSpecification <- yaml::read_yaml(openApiSpecPath)
@@ -71,7 +72,6 @@ deployEntrypoint <- function(appName,
                              sourceDatabaseSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
                              pathToPlumberApi = system.file(file.path("api", "plumber.R"), package = "CemConnector"),
                              envVars = list()) {
-
   checkmate::assertList(envVars)
   # copy files to deployment folder
   envVars$CEM_DATABASE_SCHEMA <- cemDatabaseSchema
@@ -84,6 +84,5 @@ deployEntrypoint <- function(appName,
   }
 
   deploymentCode <-
-
     rsconnect::deployAPI(deploymentFolder, appName = appName, envVars = envVars)
 }

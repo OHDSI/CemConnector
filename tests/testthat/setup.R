@@ -15,9 +15,10 @@ if (is.null(apiUrl) | !("connectionDetails" %in% class(connectionDetails))) {
     tryCatch(
       {
         api <- loadApi(connectionDetails,
-                       cemDatabaseSchema = cemDatabaseSchema,
-                       vocabularyDatabaseSchema = vocabularyDatabaseSchema,
-                       sourceDatabaseSchema = sourceDatabaseSchema)
+          cemDatabaseSchema = cemDatabaseSchema,
+          vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+          sourceDatabaseSchema = sourceDatabaseSchema
+        )
         api$setDocs(FALSE)
         writeLines("API LOADED", con = pipe)
         api$run(port = apiPort)
