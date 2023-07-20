@@ -57,32 +57,3 @@ loadApi <- function(connectionDetails,
 
   plumb
 }
-
-
-#' Deploy rsconnect API
-#' @description
-#' Calls out to rsconnect deployApi to deploy to a platform
-#'
-#' @inheritParams loadApi
-#' @param envVars list of additional optional envrionment variables to set that are required by your system setup
-deployEntrypoint <- function(appName,
-                             deploymentFolder = file.path(tempfile(), appName),
-                             cemDatabaseSchema = Sys.getenv("CEM_DATABASE_SCHEMA"),
-                             vocabularyDatabaseSchema = Sys.getenv("CEM_DATABASE_VOCAB_SCHEMA"),
-                             sourceDatabaseSchema = Sys.getenv("CEM_DATABASE_INFO_SCHEMA"),
-                             pathToPlumberApi = system.file(file.path("api", "plumber.R"), package = "CemConnector"),
-                             envVars = list()) {
-  checkmate::assertList(envVars)
-  # copy files to deployment folder
-  envVars$CEM_DATABASE_SCHEMA <- cemDatabaseSchema
-  envVars$CEM_DATABASE_VOCAB_SCHEMA <- vocabularyDatabaseSchema
-  envVars$CEM_DATABASE_INFO_SCHEMA <- sourceDatabaseSchema
-
-
-  if (!dir.exists(deploymentFolder)) {
-    dir.create(deploymentFolder, recursive = TRUE)
-  }
-
-  deploymentCode <-
-    rsconnect::deployAPI(deploymentFolder, appName = appName, envVars = envVars)
-}

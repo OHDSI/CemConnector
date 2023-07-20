@@ -32,7 +32,7 @@ Suggests:
     httpuv,
     knitr,
     rmarkdown,
-    styler,
+    styler
 Remotes:
     OHDSI/ResultModelManager
 License: Apache License 2.0

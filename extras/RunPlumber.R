@@ -25,7 +25,7 @@ dbms <- Sys.getenv("CEM_DATABASE_DBMS")
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(server = Sys.getenv("CEM_DATABASE_SERVER"),
                                                                 user = Sys.getenv("CEM_DATABASE_USER"),
-                                                                password = Sys.getenv("CEM_DATABASE_PASSWORD"),
+                                                                password = keyring::key_get("ohda-prod-1"),
                                                                 port = Sys.getenv("CEM_DATABASE_PORT"),
                                                                 dbms = Sys.getenv("CEM_DATABASE_DBMS"),
                                                                 extraSettings = Sys.getenv("CEM_DATABASE_EXTRA_SETTINGS"))
