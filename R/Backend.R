@@ -27,11 +27,7 @@ AbstractCemBackend <- R6::R6Class(
     #' @param ... params
     initialize = function(...) {
       stop("Error: this is an abstract class. initialize function should be implemented by child")
-    },
-
-    #' @description
-    #' Connection cleanup etc
-    finalize = function() {}
+    }
   ),
   private = list(
     checkConceptSet = function(conceptSet) {
@@ -109,13 +105,6 @@ CemDatabaseBackend <- R6::R6Class(
       self$vocabularyDatabaseSchema <- vocabularyDatabaseSchema
       self$sourceDatabaseSchema <- sourceDatabaseSchema
     },
-
-    #' @description
-    #' Closes connection
-    finalize = function() {
-      self$connection$finalize()
-    },
-
     #' Condition evidence summary
     #' @description
     #' Returns set of ingredient concepts for a given conceptset of outcomes
@@ -287,6 +276,12 @@ CemDatabaseBackend <- R6::R6Class(
         mustWork = TRUE
       )
       sql <- SqlRender::readSql(pathToSql)
-    }
+    },
+
+    #' @description
+    #' Closes connection
+    finalize = function() {
+      self$connection$closeConnection()
+    },
   )
 )
