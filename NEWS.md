@@ -1,3 +1,9 @@
+CemConnector 0.3.1
+==================
+Changes:
+1. Moved finalize call in R6 class to private declaration
+
+
 CemConnector 0.2.0
 ==================
 Changes:
